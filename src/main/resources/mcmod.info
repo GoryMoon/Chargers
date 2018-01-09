@@ -1,0 +1,16 @@
+[
+{
+  "modid": "chargers",
+  "name": "Chargers",
+  "description": "A mod that adds a item charger",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Gory_Moon"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

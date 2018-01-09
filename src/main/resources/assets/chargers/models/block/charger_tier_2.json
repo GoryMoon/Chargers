@@ -1,0 +1,8 @@
+{
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "side": "chargers:blocks/block_charger_tier_2_side",
+    "bottom": "chargers:blocks/block_charger_tier_2",
+    "top": "chargers:blocks/block_charger_tier_2_top"
+  }
+}

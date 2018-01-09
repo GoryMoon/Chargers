@@ -1,0 +1,180 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url = "http://files.minecraftforge.net/maven" }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "thiakil"
+        url = "http://maven.thiakil.com"
+    }
+}
+
+configurations {
+    deployerJars
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'net.minecraftforge.gradle.forge'
+//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+
+// Define properties file
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+    // Load config.  It shall from now be referenced as simply config or project.config
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
+}
+
+version = "${config.mc_version}-${config.mod_version}.${System.getenv("BUILD_NUMBER") ?: config.local_build}"
+group = "se.gory_moon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "FastCharge"
+
+sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+minecraft {
+    version = "1.12.2-14.23.1.2578"
+    runDir = "run"
+    
+    // the mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   snapshot are built nightly.
+    // stable_#            stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // simply re-run your setup task after changing the mappings to update your workspace.
+    mappings = "snapshot_20171003"
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+
+    replaceIn "ModInfo.java"
+    replace "@MOD_VERSION@", config.mod_version
+    replace "@FINGERPRINT@", project.findProperty('signSHA1')
+}
+
+dependencies {
+    deployerJars "org.apache.maven.wagon:wagon-ftp:2.10"
+
+    deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
+}
+
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", "${config.mob_version}.${System.getenv("BUILD_NUMBER") ?: config.local_build}"
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'version': config.mod_version + ".${System.getenv("BUILD_NUMBER") ?: config.local_build}", 'mcversion': project.minecraft.version
+    }
+        
+    // copy everything else except the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+task devJar(type: Jar, dependsOn: 'classes') {
+    from(sourceSets.main.output) {
+        include '**'
+    }
+
+    extension = 'jar'
+    classifier = 'dev'
+}
+
+artifacts {
+    archives devJar
+    archives sourceJar
+}
+
+task signJar(type: SignJar, dependsOn: ["jar", "devJar"]) {
+    onlyIf {
+        project.hasProperty('keyStore')
+    }
+
+    // findProperty allows us to reference the property without it existing.
+    // Using project.propName would cause the script to fail validation if
+    // the property did not exist.
+    keyStore = project.findProperty('keyStore')
+    alias = project.findProperty('keyStoreAlias')
+    storePass = project.findProperty('keyStorePass')
+    keyPass = project.findProperty('keyStorePass')
+    inputFile = jar.archivePath
+    outputFile = jar.archivePath
+}
+
+// Runs this task automatically when build is ran.
+build.dependsOn signJar
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            if (project.hasProperty("maven_url")) {
+                logger.info('Publishing to files server')
+                configuration = configurations.deployerJars
+
+                repository(url: project.maven_url) {
+                    authentication(userName: project.maven_username ?: "", password: project.maven_password ?: "")
+                }
+            } else if (project.hasProperty("local_maven")) {
+                repository(url: "file://${project.getProperty('local_maven')}")
+            }
+
+            pom {
+                groupId = project.group
+                version = project.version
+                artifactId = project.archivesBaseName
+            }
+
+            pom.project {
+                name project.archivesBaseName
+                packaging 'jar'
+                description 'TallGates'
+                url 'https://github.com/GoryMoon/TallGates/'
+
+                scm {
+                    url 'https://github.com/GoryMoon/TallGates/'
+                    connection 'scm:git:git://github.com/GoryMoon/TallGates.git'
+                    developerConnection 'scm:git:git@github.com/GoryMoon/TallGates.git'
+                }
+
+                issueManagement {
+                    system 'github'
+                    url 'https://github.com/GoryMoon/TallGates/issues'
+                }
+
+                licenses {
+                    license {
+                        name 'GNU Lesser General Public License 3.0'
+                        url 'https://www.gnu.org/licenses/lgpl-3.0.txt'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'Gory_Moon'
+                        name 'Gory_Moon'
+                        roles {
+                            role 'developer'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

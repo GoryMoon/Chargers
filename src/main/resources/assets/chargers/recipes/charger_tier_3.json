@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IDI",
+    "IBI",
+    "IUI"
+  ],
+  "key": {
+    "I": {
+      "type": "forge:ore_dict",
+      "ore": "gemDiamond"
+    },
+    "D": {
+      "item": "minecraft:redstone"
+    },
+    "B": {
+      "item": "minecraft:redstone_block"
+    },
+    "U": {
+      "item": "chargers:charger",
+      "data": 1
+    }
+  },
+  "result": {
+    "item": "chargers:charger",
+    "data": 2
+  }
+}
