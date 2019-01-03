@@ -8,7 +8,6 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -19,7 +18,6 @@ import net.minecraftforge.items.ItemStackHandler;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.blocks.BlockCharger;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityCharger extends TileEntity implements ITickable {
@@ -27,8 +25,6 @@ public class TileEntityCharger extends TileEntity implements ITickable {
     public CustomEnergyStorage storage;
     public final ItemStackHandler inventoryHandler;
     public BlockCharger.Tier tier;
-    private int lastEnergy;
-    private int diff;
 
     public TileEntityCharger(BlockCharger.Tier tier) {
         this();
@@ -74,20 +70,12 @@ public class TileEntityCharger extends TileEntity implements ITickable {
                     }
                 }
             }
-
-            setEnergyDiff(storage.getEnergyStored() - lastEnergy);
-            if (lastEnergy != storage.getEnergyStored()) {
-                lastEnergy = storage.getEnergyStored();
-            }
+            storage.tick();
         }
     }
 
-    public void setEnergyDiff(int diff) {
-        this.diff = diff;
-    }
-
-    public int getEnergyDiff() {
-        return diff;
+    public float getEnergyDiff() {
+        return storage.getAverageChange();
     }
 
     @Override

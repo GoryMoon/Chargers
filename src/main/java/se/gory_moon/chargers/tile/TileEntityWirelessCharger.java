@@ -11,7 +11,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import se.gory_moon.chargers.ChargersMod;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.handler.WirelessHandler;
 import se.gory_moon.chargers.network.MessageUpdatePower;
@@ -76,7 +75,7 @@ public class TileEntityWirelessCharger extends TileEntity implements ITickable {
     }
 
     public boolean isPowered() {
-        return world.isBlockLoaded(getPos()) && world.isBlockIndirectlyGettingPowered(getPos()) > 0;
+        return world.isBlockLoaded(getPos()) && world.getRedstonePowerFromNeighbors(getPos()) > 0;
     }
 
     @Override

@@ -43,7 +43,7 @@ public class ItemRegistry {
     private static void registerItem(Item item, String fieldName) {
         ITEMS.add(item);
         String name = fieldName.toLowerCase(Locale.ENGLISH);
-        item.setRegistryName(MODID, name).setUnlocalizedName(MODID + "." + name);
+        item.setRegistryName(MODID, name).setTranslationKey(MODID + "." + name);
     }
 
     @SubscribeEvent

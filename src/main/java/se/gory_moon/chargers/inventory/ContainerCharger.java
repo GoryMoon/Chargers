@@ -1,6 +1,7 @@
 package se.gory_moon.chargers.inventory;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -8,6 +9,7 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -17,8 +19,6 @@ public class ContainerCharger extends Container {
 
     private static final EntityEquipmentSlot[] EQUIPMENT_SLOTS = new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
     private TileEntityCharger tileCharger;
-    private int lastCharge;
-    private int lastDiff;
 
     public ContainerCharger(final InventoryPlayer inventory, TileEntityCharger tile) {
         tileCharger = tile;
@@ -58,33 +58,17 @@ public class ContainerCharger extends Container {
     }
 
     @Override
-    public void addListener(IContainerListener listener) {
-        super.addListener(listener);
-        listener.sendWindowProperty(this, 0, tileCharger.storage.getEnergyStored());
-        listener.sendWindowProperty(this, 1, tileCharger.getEnergyDiff());
-    }
-
-    @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
-        for (IContainerListener listener: listeners) {
-            if (lastCharge != tileCharger.storage.getEnergyStored())
-                listener.sendWindowProperty(this, 0, tileCharger.storage.getEnergyStored());
-            if (lastDiff != tileCharger.getEnergyDiff())
-                listener.sendWindowProperty(this, 1, tileCharger.getEnergyDiff());
+        final SPacketUpdateTileEntity updatePacket = tileCharger.getUpdatePacket();
+        if (updatePacket != null) {
+            for (IContainerListener containerListener : listeners) {
+                if (containerListener instanceof EntityPlayerMP) {
+                    ((EntityPlayerMP) containerListener).connection.sendPacket(updatePacket);
+                }
+            }
         }
-
-        lastCharge = tileCharger.storage.getEnergyStored();
-        lastDiff = tileCharger.getEnergyDiff();
-    }
-
-    @Override
-    public void updateProgressBar(int id, int data) {
-        if (id == 0)
-            tileCharger.storage.setEnergy(data);
-        else if (id == 1)
-            tileCharger.setEnergyDiff(data);
     }
 
     @Override

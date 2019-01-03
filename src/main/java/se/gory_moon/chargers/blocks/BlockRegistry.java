@@ -51,7 +51,7 @@ public class BlockRegistry {
 
     public static void registerBlock(String name, Block block) {
         BLOCKS.add(block);
-        block.setRegistryName(MODID, name).setUnlocalizedName(MODID + "." + name);
+        block.setRegistryName(MODID, name).setTranslationKey(MODID + "." + name);
 
         ItemBlock item;
         if (block instanceof ICustomItemBlock)
@@ -59,7 +59,7 @@ public class BlockRegistry {
         else
             item = new ItemBlock(block);
         ITEM_BLOCKS.add(item);
-        item.setRegistryName(MODID, name).setUnlocalizedName(MODID + "." + name);
+        item.setRegistryName(MODID, name).setTranslationKey(MODID + "." + name);
     }
 
     @SubscribeEvent
@@ -95,7 +95,7 @@ public class BlockRegistry {
                 ISubtypeItemBlockModelDefinition subtypeBlock = (ISubtypeItemBlockModelDefinition) block;
                 for (int i = 0; i < subtypeBlock.getSubtypeNumber(); i++) {
                     int meta = subtypeBlock.getSubtypeMeta(i);
-                    ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), meta, new ModelResourceLocation(name.getResourceDomain() + ":" + String.format(subtypeBlock.getSubtypeName(meta), name.getResourcePath()), "inventory"));
+                    ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), meta, new ModelResourceLocation(name.getNamespace() + ":" + String.format(subtypeBlock.getSubtypeName(meta), name.getPath()), "inventory"));
                 }
             } else {
                 ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(name, "inventory"));

@@ -4,7 +4,6 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import se.gory_moon.chargers.inventory.ContainerCharger;
@@ -50,7 +49,7 @@ public class GuiCharger extends GuiContainer {
             list.add(I18n.format("gui.chargers.max_in", format.format(charger.storage.getMaxInput())));
             list.add(I18n.format("gui.chargers.max_out", format.format(charger.storage.getMaxOutput())));
             if (charger.getEnergyDiff() != 0) {
-                list.add(I18n.format("gui.chargers.io", (charger.getEnergyDiff() > 0 ? TextFormatting.GREEN + "+": TextFormatting.RED.toString()) + charger.getEnergyDiff()));
+                list.add(I18n.format("gui.chargers.io", (charger.getEnergyDiff() > 0 ? TextFormatting.GREEN + "+": TextFormatting.RED.toString()) + Math.round(charger.getEnergyDiff())));
             }
             drawHoveringText(list, mouseX, mouseY);
         }

@@ -21,11 +21,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import se.gory_moon.chargers.ChargersMod;
+import se.gory_moon.chargers.blocks.BlockRegistry.ICustomItemBlock;
+import se.gory_moon.chargers.blocks.BlockRegistry.ISubtypeItemBlockModelDefinition;
 import se.gory_moon.chargers.items.ItemChargerBlock;
 import se.gory_moon.chargers.proxy.CommonProxy;
 import se.gory_moon.chargers.tile.TileEntityCharger;
-import se.gory_moon.chargers.blocks.BlockRegistry.ISubtypeItemBlockModelDefinition;
-import se.gory_moon.chargers.blocks.BlockRegistry.ICustomItemBlock;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -78,7 +78,7 @@ public class BlockCharger extends Block implements ISubtypeItemBlockModelDefinit
     }
 
     public String getLocalizedName() {
-        return I18n.format(this.getUnlocalizedName() + "." + Tier.I.getName() + ".name");
+        return I18n.format(this.getTranslationKey() + "." + Tier.I.getName() + ".name");
     }
 
     @Nonnull
