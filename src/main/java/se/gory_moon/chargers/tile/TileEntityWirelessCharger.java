@@ -23,6 +23,7 @@ public class TileEntityWirelessCharger extends TileEntity implements ITickable {
     public CustomEnergyStorage storage;
     private boolean registered = false;
     private int lastPowered = -1;
+    private int availableEnergy;
 
     public TileEntityWirelessCharger() {
         storage = new CustomEnergyStorage(Configs.chargers.wireless.wirelessStorage, Configs.chargers.wireless.wirelessMaxInput, Configs.chargers.wireless.wirelessMaxOutput);
@@ -35,14 +36,13 @@ public class TileEntityWirelessCharger extends TileEntity implements ITickable {
         registered = false;
     }
 
-
     @Override
     public void update() {
         if (world.isRemote) return;
 
         if (!registered) {
             WirelessHandler.INSTANCE.register(this);
-            registered = false;
+            registered = true;
         }
         if (lastPowered == -1 || (lastPowered == 0 && storage.getEnergyStored() > 0) || (lastPowered > 0 && storage.getEnergyStored() == 0)) {
             PacketHandler.INSTANCE.sendToAllAround(new MessageUpdatePower(this), this);
@@ -50,9 +50,12 @@ public class TileEntityWirelessCharger extends TileEntity implements ITickable {
         }
     }
 
+    public void updateAvailable() {
+        availableEnergy = Math.min(storage.getMaxOutput(), storage.getEnergyStored());
+    }
+
     public boolean chargeItems(NonNullList<ItemStack> items) {
         boolean charged = false;
-        int availableEnergy = Math.min(storage.getMaxOutput(), storage.getEnergyStored());
         for (int i = 0; i < items.size() && availableEnergy > 0; i++) {
             ItemStack stack = items.get(i);
             if (!stack.isEmpty() && stack.hasCapability(CapabilityEnergy.ENERGY, null)) {

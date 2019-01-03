@@ -42,7 +42,7 @@ public class CustomEnergyStorage extends EnergyStorage {
             energyIn += energy;
         else
             energyOut -= energy;
-        this.energy = energy;
+        this.energy += energy;
     }
 
     @Override
