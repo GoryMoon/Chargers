@@ -1,5 +1,6 @@
 package se.gory_moon.chargers.tile;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -37,16 +38,24 @@ public class TileEntityWirelessCharger extends TileEntity implements ITickable {
     }
 
     @Override
-    public void update() {
-        if (world.isRemote) return;
+    public void markDirty() {
+        final IBlockState state = getWorld().getBlockState(getPos());
+        getWorld().notifyBlockUpdate(getPos(), state, state, 2);
+        super.markDirty();
+    }
 
-        if (!registered) {
+    @Override
+    public void update() {
+        if (world.isRemote && !registered) {
             WirelessHandler.INSTANCE.register(this);
             registered = true;
         }
         if (lastPowered == -1 || (lastPowered == 0 && storage.getEnergyStored() > 0) || (lastPowered > 0 && storage.getEnergyStored() == 0)) {
-            PacketHandler.INSTANCE.sendToAllAround(new MessageUpdatePower(this), this);
+           if (world.isRemote) {
+               PacketHandler.INSTANCE.sendToAllAround(new MessageUpdatePower(this), this);
+           }
             lastPowered = storage.getEnergyStored();
+            markDirty();
         }
     }
 

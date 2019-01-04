@@ -25,7 +25,7 @@ public class ClientProxy extends CommonProxy {
         switch (ID) {
             case GUI_CHARGER:
                 if (tile instanceof TileEntityCharger)
-                    return new GuiCharger(player.inventory, (TileEntityCharger) tile);
+                    return new GuiCharger(player, (TileEntityCharger) tile);
                 break;
         }
         return null;

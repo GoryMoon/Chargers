@@ -25,7 +25,7 @@ public class CommonProxy implements IGuiHandler{
         switch (ID) {
             case GUI_CHARGER:
                 if (tile instanceof TileEntityCharger)
-                    return new ContainerCharger(player.inventory, (TileEntityCharger) tile);
+                    return new ContainerCharger(player, (TileEntityCharger) tile);
                 break;
         }
         return null;

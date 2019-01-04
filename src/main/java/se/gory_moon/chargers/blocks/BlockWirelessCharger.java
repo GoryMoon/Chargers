@@ -15,7 +15,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -57,7 +60,7 @@ public class BlockWirelessCharger extends Block {
                 return false;
             TileEntityWirelessCharger tile = (TileEntityWirelessCharger) tileEntity;
             boolean powered = ((TileEntityWirelessCharger) tileEntity).isPowered();
-            TextComponentTranslation status = new TextComponentTranslation("chat.chargers." + (powered ? "disabled": "enabled"));
+            ITextComponent status = new TextComponentTranslation("chat.chargers." + (powered ? "disabled": "enabled")).setStyle(new Style().setColor(powered ? TextFormatting.RED: TextFormatting.GREEN));
             NumberFormat format = NumberFormat.getInstance();
             player.sendStatusMessage(new TextComponentTranslation("chat.chargers.wireless_charger.info",  status, format.format(tile.storage.getEnergyStored()), format.format(tile.storage.getMaxEnergyStored())), true);
         }

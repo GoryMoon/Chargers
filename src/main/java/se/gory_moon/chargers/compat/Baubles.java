@@ -6,6 +6,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.tile.TileEntityWirelessCharger;
 
@@ -18,9 +20,32 @@ public class Baubles {
         loaded = Loader.isModLoaded("baubles");
     }
 
+    public static boolean isLoaded() {
+        return loaded && Configs.compat.baublesCompat;
+    }
+
+    public static IItemHandler getBaubles(EntityPlayer player) {
+        if (isLoaded()) {
+            return BaublesApi.getBaublesHandler(player);
+        }
+         return null;
+    }
+
+    public static SlotItemHandler getSlot(EntityPlayer player, IItemHandler itemHandler, int slot, int x, int y) {
+        if (isLoaded()) {
+            return new SlotBauble(player, (IBaublesItemHandler) itemHandler, slot, x, y);
+        }
+        return new SlotItemHandler(itemHandler, slot, x, y) {
+            @Override
+            public int getSlotStackLimit() {
+                return 1;
+            }
+        };
+    }
+
     public boolean chargeItems(EntityPlayer player, TileEntityWirelessCharger charger) {
         boolean result = false;
-        if (Configs.compat.baublesCompat && loaded) {
+        if (isLoaded()) {
             IBaublesItemHandler handler = BaublesApi.getBaublesHandler(player);
             if (handler != null) {
                 for (int i = 0; i < handler.getSlots(); i++) {

@@ -38,7 +38,7 @@ public class WirelessHandler {
 
     @SubscribeEvent
     public static void playerTick(TickEvent.PlayerTickEvent event) {
-        if (event.side == Side.CLIENT || event.phase != TickEvent.Phase.END || event.player.isSpectator()) {
+        if (event.side == Side.CLIENT || event.phase != TickEvent.Phase.START || event.player.isSpectator()) {
             return;
         }
         INSTANCE.chargeItems(event.player);

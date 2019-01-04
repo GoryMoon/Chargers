@@ -10,21 +10,26 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.IItemHandler;
+import se.gory_moon.chargers.compat.Baubles;
 import se.gory_moon.chargers.tile.TileEntityCharger;
 
 public class ContainerCharger extends Container {
 
     private static final EntityEquipmentSlot[] EQUIPMENT_SLOTS = new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
     private TileEntityCharger tileCharger;
+    public IItemHandler baubles;
 
-    public ContainerCharger(final InventoryPlayer inventory, TileEntityCharger tile) {
+    public ContainerCharger(EntityPlayer player, TileEntityCharger tile) {
+        InventoryPlayer inventory = player.inventory;
         tileCharger = tile;
+        baubles = Baubles.getBaubles(player);
 
-        addSlotToContainer(new SlotInput(tile.inventoryHandler, 0, 80, 29));
-        addSlotToContainer(new SlotOutput(tile.inventoryHandler, 1, 80, 62));
+        int baublesOffset = baubles != null ? 9: 0;
+        addSlotToContainer(new SlotInput(tile.inventoryHandler, 0, 70 - baublesOffset, 29));
+        addSlotToContainer(new SlotOutput(tile.inventoryHandler, 1, 70 - baublesOffset, 62));
 
         int i;
         for (i = 0; i < 3; ++i)
@@ -34,10 +39,9 @@ public class ContainerCharger extends Container {
         for (i = 0; i < 9; ++i)
             addSlotToContainer(new Slot(inventory, i, 8 + i * 18, 142));
 
-        EntityPlayer player = inventory.player;
         for(i = 0; i < 4; ++i) {
             final EntityEquipmentSlot slot = EQUIPMENT_SLOTS[i];
-            addSlotToContainer(new Slot(inventory, 36 + (3 - i), 102, 8 + i * 18) {
+            addSlotToContainer(new Slot(inventory, 36 + (3 - i), 92 - baublesOffset, 8 + i * 18) {
                 @Override
                 public int getSlotStackLimit() {
                     return 1;
@@ -54,6 +58,18 @@ public class ContainerCharger extends Container {
                     return ItemArmor.EMPTY_SLOT_NAMES[slot.getIndex()];
                 }
             });
+        }
+        addSlotToContainer(new Slot(inventory, 40, 112 + baublesOffset, 62) {
+            @SideOnly(Side.CLIENT)
+            public String getSlotTexture() {
+                return "minecraft:items/empty_armor_slot_shield";
+            }
+        });
+
+        if (baubles != null) {
+            for (i = 0; i < 7; i++) {
+                addSlotToContainer(Baubles.getSlot(player, baubles, i, 103 + (i / 4) * 18, 8 + (i % 4) * 18));
+            }
         }
     }
 
@@ -82,21 +98,26 @@ public class ContainerCharger extends Container {
         int hotbarEnd = hotbarStart + 8;
         int armorStart = hotbarEnd + 1;
         int armorEnd = armorStart + 3;
+        int offhand = armorEnd + 1;
+        int baublesStart = offhand + 1;
+        int baublesEnd = baublesStart + 6;
 
         if (slot != null && slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             itemstack = stack.copy();
 
             if (index == 1 || index == 0) {
-                if (!mergeItemStack(stack, inventoryStart, armorEnd + 1, true))
+                if (Baubles.isLoaded() && (!mergeItemStack(stack, baublesStart, baublesEnd, false) && !mergeItemStack(stack, inventoryStart, armorEnd + 1, true)))
+                    return ItemStack.EMPTY;
+                else if (!Baubles.isLoaded() && !mergeItemStack(stack, inventoryStart, armorEnd + 1, true))
                     return ItemStack.EMPTY;
                 slot.onSlotChange(stack, itemstack);
             } else {
-                if (!stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
+                if (!tileCharger.inventoryHandler.isItemValid(0, stack)) {
                     if (index <= inventoryEnd) {
                         if (!mergeItemStack(stack, hotbarStart, hotbarEnd + 1, false))
                             return ItemStack.EMPTY;
-                    } else if (index >= inventoryEnd + 1 && index < hotbarEnd + 1 && !mergeItemStack(stack, inventoryStart, inventoryEnd + 1, false))
+                    } else if (index < hotbarEnd + 1 && !mergeItemStack(stack, inventoryStart, inventoryEnd + 1, false))
                         return ItemStack.EMPTY;
                 } else if (!mergeItemStack(stack, 0, 1, false))
                     return ItemStack.EMPTY;
