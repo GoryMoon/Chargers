@@ -1,6 +1,5 @@
 package se.gory_moon.chargers.blocks;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -10,6 +9,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -23,13 +23,16 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import se.gory_moon.chargers.blocks.BlockRegistry.ICustomItemBlock;
+import se.gory_moon.chargers.items.ItemWirelessChargerBlock;
 import se.gory_moon.chargers.tile.TileEntityWirelessCharger;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
 import java.util.List;
 
-public class BlockWirelessCharger extends Block {
+public class BlockWirelessCharger extends BlockEnergy implements ICustomItemBlock {
 
     public static PropertyBool POWERED = PropertyBool.create("powered");
 
@@ -38,6 +41,7 @@ public class BlockWirelessCharger extends Block {
         setHardness(5);
         setResistance(10);
         setCreativeTab(CreativeTabs.REDSTONE);
+        setHarvestLevel("pickaxe", 0);
     }
 
     @Override
@@ -47,6 +51,12 @@ public class BlockWirelessCharger extends Block {
             return state.withProperty(POWERED, ((TileEntityWirelessCharger) tileEntity).canCharge());
         }
         return state;
+    }
+
+    @Nonnull
+    @Override
+    public ItemBlock getItemBlock() {
+        return new ItemWirelessChargerBlock(this);
     }
 
     @Override

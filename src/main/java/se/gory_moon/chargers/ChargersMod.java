@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.gory_moon.chargers.blocks.BlockRegistry;
 import se.gory_moon.chargers.lib.ModInfo;
-import se.gory_moon.chargers.network.PacketHandler;
 import se.gory_moon.chargers.proxy.CommonProxy;
 import se.gory_moon.chargers.tile.TileRegistry;
 
@@ -33,7 +32,6 @@ public class ChargersMod {
         ConfigManager.sync(ModInfo.MODID, Config.Type.INSTANCE);
 
         NetworkRegistry.INSTANCE.registerGuiHandler(INSTANCE, proxy);
-        PacketHandler.INSTANCE.preInit();
 
         BlockRegistry.preInit();
     }

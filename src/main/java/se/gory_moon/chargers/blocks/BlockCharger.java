@@ -1,6 +1,5 @@
 package se.gory_moon.chargers.blocks;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -9,7 +8,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -21,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import se.gory_moon.chargers.ChargersMod;
+import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.blocks.BlockRegistry.ICustomItemBlock;
 import se.gory_moon.chargers.blocks.BlockRegistry.ISubtypeItemBlockModelDefinition;
 import se.gory_moon.chargers.items.ItemChargerBlock;
@@ -30,7 +29,7 @@ import se.gory_moon.chargers.tile.TileEntityCharger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockCharger extends Block implements ISubtypeItemBlockModelDefinition, ICustomItemBlock {
+public class BlockCharger extends BlockEnergy implements ISubtypeItemBlockModelDefinition, ICustomItemBlock {
 
     public static PropertyEnum<Tier> TIERS = PropertyEnum.create("tier", Tier.class);
 
@@ -39,6 +38,7 @@ public class BlockCharger extends Block implements ISubtypeItemBlockModelDefinit
         setCreativeTab(CreativeTabs.REDSTONE);
         setHardness(5);
         setResistance(10);
+        setHarvestLevel("pickaxe", 0);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class BlockCharger extends Block implements ISubtypeItemBlockModelDefinit
                 for(int i = 0; i < tile.inventoryHandler.getSlots(); ++i) {
                     ItemStack stack = tile.inventoryHandler.getStackInSlot(i);
                     if (!stack.isEmpty())
-                        InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+                        spawnAsEntity(world, pos, stack);
                 }
             }
         }
@@ -134,7 +134,7 @@ public class BlockCharger extends Block implements ISubtypeItemBlockModelDefinit
         return "%s_" + Tier.byMetadata(meta).getName();
     }
 
-    public enum Tier implements IStringSerializable{
+    public enum Tier implements IStringSerializable {
         I("tier_1", 0, MapColor.GRAY),
         II("tier_2", 1, MapColor.GOLD),
         III("tier_3", 2, MapColor.CYAN);
@@ -162,6 +162,18 @@ public class BlockCharger extends Block implements ISubtypeItemBlockModelDefinit
         @Override
         public String getName() {
             return unloc;
+        }
+
+        public int getStorage() {
+            return this == BlockCharger.Tier.I ? Configs.chargers.tier1.storage: this == BlockCharger.Tier.II ? Configs.chargers.tier2.storage: Configs.chargers.tier3.storage;
+        }
+
+        public int getMaxIn() {
+            return this == BlockCharger.Tier.I ? Configs.chargers.tier1.maxInput: this == BlockCharger.Tier.II ? Configs.chargers.tier2.maxInput: Configs.chargers.tier3.maxInput;
+        }
+
+        public int getMaxOut() {
+            return this == BlockCharger.Tier.I ? Configs.chargers.tier1.maxOutput: this == BlockCharger.Tier.II ? Configs.chargers.tier2.maxOutput: Configs.chargers.tier3.maxOutput;
         }
 
         public static BlockCharger.Tier byMetadata(int meta) {

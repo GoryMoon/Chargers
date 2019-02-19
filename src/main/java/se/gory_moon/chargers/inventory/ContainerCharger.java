@@ -1,19 +1,17 @@
 package se.gory_moon.chargers.inventory;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import se.gory_moon.chargers.compat.Baubles;
+import se.gory_moon.chargers.network.PacketHandler;
 import se.gory_moon.chargers.tile.TileEntityCharger;
 
 public class ContainerCharger extends Container {
@@ -77,14 +75,7 @@ public class ContainerCharger extends Container {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
 
-        final SPacketUpdateTileEntity updatePacket = tileCharger.getUpdatePacket();
-        if (updatePacket != null) {
-            for (IContainerListener containerListener : listeners) {
-                if (containerListener instanceof EntityPlayerMP) {
-                    ((EntityPlayerMP) containerListener).connection.sendPacket(updatePacket);
-                }
-            }
-        }
+        PacketHandler.sendToListeningPlayers(listeners, tileCharger.getUpdatePacket());
     }
 
     @Override

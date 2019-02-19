@@ -1,4 +1,4 @@
-package se.gory_moon.chargers.tile;
+package se.gory_moon.chargers.power;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.energy.EnergyStorage;
@@ -37,11 +37,15 @@ public class CustomEnergyStorage extends EnergyStorage {
         energyOut = 0;
     }
 
-    public void setEnergy(int energy) {
+    private void setEnergy(int energy) {
         if (energy > 0)
             energyIn += energy;
         else
             energyOut -= energy;
+        setEnergyInternal(energy);
+    }
+
+    protected void setEnergyInternal(int energy) {
         this.energy += energy;
     }
 
@@ -50,7 +54,7 @@ public class CustomEnergyStorage extends EnergyStorage {
         if (!canReceive())
             return 0;
 
-        int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
+        int energyReceived = Math.min(capacity - getEnergyStored(), Math.min(getMaxInput(), maxReceive));
         if (!simulate)
             setEnergy(energyReceived);
         return energyReceived;
@@ -61,7 +65,7 @@ public class CustomEnergyStorage extends EnergyStorage {
         if (!canExtract())
             return 0;
 
-        int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
+        int energyExtracted = Math.min(getEnergyStored(), Math.min(getMaxOutput(), maxExtract));
         if (!simulate)
             setEnergy(-energyExtracted);
         return energyExtracted;
