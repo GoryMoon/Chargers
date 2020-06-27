@@ -2,6 +2,7 @@ package se.gory_moon.chargers.tile;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.ItemStackHandler;
@@ -10,7 +11,7 @@ import javax.annotation.Nonnull;
 
 public class CustomItemStackHandler extends ItemStackHandler {
 
-    private int size;
+    private final int size;
     public CustomItemStackHandler(int size) {
         super(NonNullList.withSize(size, ItemStack.EMPTY));
         this.size = size;
@@ -23,9 +24,9 @@ public class CustomItemStackHandler extends ItemStackHandler {
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-        if (!stack.isEmpty() && stack.hasCapability(CapabilityEnergy.ENERGY, null)) {
-            IEnergyStorage storage = stack.getCapability(CapabilityEnergy.ENERGY, null);
-            return storage != null && storage.receiveEnergy(1, true) > 0;
+        if (!stack.isEmpty()) {
+            LazyOptional<IEnergyStorage> capability = stack.getCapability(CapabilityEnergy.ENERGY);
+            return capability.map(energyStorage -> energyStorage.receiveEnergy(1, true)).orElse(0) > 0;
         }
         return false;
     }

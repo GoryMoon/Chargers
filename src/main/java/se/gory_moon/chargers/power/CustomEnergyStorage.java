@@ -1,6 +1,6 @@
 package se.gory_moon.chargers.power;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.energy.EnergyStorage;
 
 public class CustomEnergyStorage extends EnergyStorage {
@@ -9,8 +9,8 @@ public class CustomEnergyStorage extends EnergyStorage {
         super(capacity, maxReceive, maxExtract);
     }
 
-    private AverageCalculator in = new AverageCalculator();
-    private AverageCalculator out = new AverageCalculator();
+    private final AverageCalculator in = new AverageCalculator();
+    private final AverageCalculator out = new AverageCalculator();
     private int energyIn;
     private int energyOut;
     private float averageIn;
@@ -22,10 +22,6 @@ public class CustomEnergyStorage extends EnergyStorage {
 
     public int getMaxOutput() {
         return maxExtract;
-    }
-
-    public float getAverageChange() {
-        return averageIn - averageOut;
     }
 
     public void tick() {
@@ -71,24 +67,32 @@ public class CustomEnergyStorage extends EnergyStorage {
         return energyExtracted;
     }
 
-    public void readFromNBT(NBTTagCompound compound){
-        energy = compound.getInteger("Energy");
-        averageIn = compound.getFloat("In");
-        averageOut = compound.getFloat("Out");
+    public void readFromNBT(CompoundNBT compound){
+        energy = compound.getInt("Energy");
+        this.averageIn = compound.getFloat("In");
+        this.averageOut = compound.getFloat("Out");
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound compound){
-        compound.setInteger("Energy", this.getEnergyStored());
-        compound.setFloat("In", in.getAverage());
-        compound.setFloat("Out", out.getAverage());
+    public CompoundNBT writeToNBT(CompoundNBT compound){
+        compound.putInt("Energy", this.getEnergyStored());
+        compound.putFloat("In", in.getAverage());
+        compound.putFloat("Out", out.getAverage());
         return compound;
+    }
+
+    public float getAverageIn() {
+        return averageIn;
+    }
+
+    public float getAverageOut() {
+        return averageOut;
     }
 
     private static class AverageCalculator {
 
         private int lastTotal;
         private int tickCount;
-        private float[] cache;
+        private final float[] cache;
         private int writeIndex;
         private int writeSize;
 

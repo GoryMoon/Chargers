@@ -1,18 +1,12 @@
 package se.gory_moon.chargers.compat;
 
-import baubles.api.IBauble;
-import baubles.api.cap.BaublesCapabilities;
-import baubles.api.cap.IBaublesItemHandler;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.SlotItemHandler;
-
+/*
 public class SlotBauble extends SlotItemHandler {
 
     private int baubleSlot;
-    private EntityPlayer player;
+    private PlayerEntity player;
 
-    public SlotBauble(EntityPlayer player, IBaublesItemHandler itemHandler, int index, int xPosition, int yPosition) {
+    public SlotBauble(PlayerEntity player, IBaublesItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
         this.player = player;
         this.baubleSlot = index;
@@ -24,7 +18,7 @@ public class SlotBauble extends SlotItemHandler {
     }
 
     @Override
-    public boolean canTakeStack(EntityPlayer player) {
+    public boolean canTakeStack(PlayerEntity player) {
         ItemStack stack = getStack();
         if(stack.isEmpty() && !stack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null))
             return false;
@@ -34,7 +28,7 @@ public class SlotBauble extends SlotItemHandler {
     }
 
     @Override
-    public ItemStack onTake(EntityPlayer playerIn, ItemStack stack) {
+    public ItemStack onTake(PlayerEntity playerIn, ItemStack stack) {
         if (!getHasStack() && stack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
             stack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(stack, playerIn);
         }
@@ -63,3 +57,4 @@ public class SlotBauble extends SlotItemHandler {
         return 1;
     }
 }
+*/

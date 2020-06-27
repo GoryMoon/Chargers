@@ -1,80 +1,168 @@
 buildscript {
     repositories {
-        mavenCentral()
+        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        name = "thiakil"
-        url = "http://maven.thiakil.com"
-    }
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id "com.wynprice.cursemaven" version "2.1.5"
 }
 
-apply plugin: 'java'
-apply plugin: 'net.minecraftforge.gradle.forge'
-//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
 
 version = mod_version
 group = "se.gory_moon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Chargers-" + mc_version
+archivesBaseName = "Chargers-$mc_version"
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 if (System.getenv().BUILD_NUMBER != null) {//adds the build number to the end of the version string if on a build server
     version += ".${System.getenv().BUILD_NUMBER}"
 }
 
-sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
+minecraft {
+    // The mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   Snapshot are built nightly.
+    // stable_#            Stables are built at the discretion of the MCP team.
+    // Use non-default mappings at your own risk. they may not always work.
+    // Simply re-run your setup task after changing the mappings to update your workspace.
+    mappings channel: mcp_channel, version: mcp_mappings
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'CORE,LOADING,REGISTRIES'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                chargers {
+                    source sourceSets.main
+                }
+            }
+            // Intellij stuff
+            ideaModule "${project.name}.main"
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'CORE,LOADING,REGISTRIES'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                chargers {
+                    source sourceSets.main
+                }
+            }
+            // Intellij stuff
+            ideaModule "${project.name}.main"
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'CORE,LOADING,REGISTRIES'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'chargers', '--all', '--output', file('src/generated_resources/'), '--existing', file('src/main/resources/')
+
+            mods {
+                chargers {
+                    source sourceSets.main
+                }
+            }
+            // Intellij stuff
+            ideaModule "${project.name}.main"
+        }
+    }
 }
 
-minecraft {
-    version = mc_version + "-" + forge_version
-    runDir = "run"
+configurations {
+    shade
+}
 
-    mappings = "stable_39"
+shadowJar {
+    configurations = [project.configurations.shade]
+    relocate 'com.tterrag.registrate', 'se.gory_moon.chargers.repack.registrate'
+    classifier = ''
+}
 
-    replaceIn "ModInfo.java"
-    replace "@MOD_VERSION@", project.version
-    replace "@FINGERPRINT@", project.findProperty('signSHA1')
+reobf {
+    shadowJar {}
+}
+
+build.dependsOn shadowJar
+
+build.dependsOn reobfShadowJar
+
+repositories {
+    mavenCentral()
+    maven { // curios
+        url "https://maven.theillusivec4.top/"
+    }
+    maven { // Registrate
+        url "http://maven.tterrag.com/"
+    }
 }
 
 dependencies {
-    deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
+    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
+    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
+    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
+    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+
+    //deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios:${curios_version}")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios:${curios_version}:api")
+
+    def registrate = "com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}"
+    implementation fg.deobf(registrate)
+    shade registrate
+
+    runtimeOnly fg.deobf("curse.maven:immersive-engineering:2980321")
 }
 
-processResources {
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version': project.version, 'mcversion': project.minecraft.version
-    }
-        
-    // copy everything else except the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
-
-task devJar(type: Jar, dependsOn: 'classes') {
-    from(sourceSets.main.output) {
-        include '**'
-    }
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+task devJar(type: ShadowJar, dependsOn: 'classes') {
+    from sourceSets.main.output
+    configurations = [project.configurations.shade]
+    relocate 'com.tterrag.registrate', 'se.gory_moon.chargers.repack.registrate'
 
     extension = 'jar'
     classifier = 'dev'
+}
+
+task sourceJar(type: Jar) {
+    from(sourceSets.main.allSource) {
+        include '**'
+    }
+    extension = 'jar'
+    classifier = 'sources'
 }
 
 artifacts {
@@ -82,25 +170,49 @@ artifacts {
     archives sourceJar
 }
 
-task signJar(type: SignJar, dependsOn: ["jar", "devJar"]) {
-    onlyIf {
-        project.hasProperty('keyStore')
+// Example for how to get properties into the manifest for reading by the runtime..
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "chargers",
+            "Specification-Vendor": "Gory_Moon",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"Gory_Moon",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
     }
-
-    // findProperty allows us to reference the property without it existing.
-    // Using project.propName would cause the script to fail validation if
-    // the property did not exist.
-    keyStore = project.findProperty('keyStore')
-    alias = project.findProperty('keyStoreAlias')
-    storePass = project.findProperty('keyStorePass')
-    keyPass = project.findProperty('keyStorePass')
-    inputFile = jar.archivePath
-    outputFile = jar.archivePath
 }
 
-// Runs this task automatically when build is ran.
-build.dependsOn signJar
+if (project.hasProperty("local_maven")) {
+    // Example configuration to allow publishing using the maven-publish task
+    // we define a custom artifact that is sourced from the reobfJar output task
+    // and then declare that to be published
+    // Note you'll need to add a repository here
+    def reobfFile = file("$buildDir/reobfJar/output.jar")
+    def reobfArtifact = artifacts.add('default', reobfFile) {
+        type 'jar'
+        builtBy 'reobfShadowJar'
+    }
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                version = "$mc_version-${project.getVersion()}"
+                artifact reobfArtifact
+                artifact devJar
+                artifact sourceJar
+            }
+        }
+        repositories {
+            maven {
+                url "file://${project.getProperty('local_maven')}"
+            }
+        }
+    }
+}
 
+/*
 task("uploadJars", dependsOn: "build") {
     description = "uploads JARs"
     if (project.hasProperty("local_maven")) {
@@ -115,4 +227,4 @@ task("uploadJars", dependsOn: "build") {
             }
         }
     }
-}
+}*/

@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube_all",
-  "textures": {
-    "all": "chargers:blocks/block_wireless_charger_disabled"
-  }
-}

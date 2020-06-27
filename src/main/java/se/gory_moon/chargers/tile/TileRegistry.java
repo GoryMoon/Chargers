@@ -1,52 +1,34 @@
 package se.gory_moon.chargers.tile;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.datafix.FixTypes;
-import net.minecraft.util.datafix.IFixableData;
-import net.minecraftforge.common.util.ModFixs;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import se.gory_moon.chargers.lib.ModInfo;
+import com.tterrag.registrate.Registrate;
+import com.tterrag.registrate.util.entry.RegistryEntry;
+import com.tterrag.registrate.util.entry.TileEntityEntry;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.tileentity.TileEntityType;
+import se.gory_moon.chargers.ChargersMod;
+import se.gory_moon.chargers.Constants;
+import se.gory_moon.chargers.client.ChargerScreen;
+import se.gory_moon.chargers.inventory.ContainerCharger;
+
+import static se.gory_moon.chargers.Constants.CHARGER_TILE;
+import static se.gory_moon.chargers.Constants.WIRELESS_CHARGER_TILE;
+import static se.gory_moon.chargers.blocks.BlockRegistry.*;
 
 public class TileRegistry {
-    private TileRegistry() { }
+    private static final Registrate REGISTRATE = ChargersMod.getRegistrate();
 
-    public static void init() {
-        registerTileEntity(TileEntityCharger.class, "charger");
-        registerTileEntity(TileEntityWirelessCharger.class, "wireless_charger");
+    public static final TileEntityEntry<ChargerTileEntity> CHARGER_TE = REGISTRATE.object(CHARGER_TILE)
+            .tileEntity(ChargerTileEntity::new)
+            .validBlocks(() -> CHARGER_BLOCK_T1.get(), () -> CHARGER_BLOCK_T2.get(), () -> CHARGER_BLOCK_T3.get())
+            .register();
 
-        ModFixs fixes = FMLCommonHandler.instance().getDataFixer().init(ModInfo.MODID, 1);
-        fixes.registerFix(FixTypes.BLOCK_ENTITY, new TileEntityFixer());
-    }
+    public static final TileEntityEntry<WirelessChargerTileEntity> WIRELESS_CHARGER_TE = TileEntityEntry.cast(REGISTRATE.get(WIRELESS_CHARGER_TILE, TileEntityType.class));
 
-    private static void registerTileEntity(Class<? extends TileEntity> cls, String baseName) {
-            GameRegistry.registerTileEntity(cls, new ResourceLocation(ModInfo.MODID, baseName));
-    }
 
-    private static class TileEntityFixer implements IFixableData {
+    public static final RegistryEntry<ContainerType<ContainerCharger>> CHARGER_CONTAINER = REGISTRATE.object(Constants.CHARGER_CONTAINER)
+            .container(ContainerCharger::new, () -> ChargerScreen::new)
+            .register();
 
-        @Override
-        public int getFixVersion() {
-            return 1;
-        }
-
-        private boolean needReplacing(String id) {
-            return "tile.fastcharge.charger".equals(id) || "tile.fastcharge.wireless_charger".equals(id);
-        }
-
-        private String getId(String id) {
-            return id.replaceAll("tile.fastcharge.", "");
-        }
-
-        @Override
-        public NBTTagCompound fixTagCompound(NBTTagCompound compound) {
-            String id = compound.getString("id");
-            if(needReplacing(id)) {
-                compound.setString("id", ModInfo.MODID + ":" + getId(id));
-            }
-            return compound;
-        }
-    }
+    private TileRegistry() {}
+    public static void init() {}
 }

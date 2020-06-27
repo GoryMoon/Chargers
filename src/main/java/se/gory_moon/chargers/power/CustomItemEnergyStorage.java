@@ -1,31 +1,31 @@
 package se.gory_moon.chargers.power;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 
 public class CustomItemEnergyStorage extends CustomEnergyStorage {
 
-    private ItemStack stack;
+    private final ItemStack stack;
 
     public CustomItemEnergyStorage(ItemStack stack, int capacity, int maxReceive, int maxExtract) {
         super(capacity, maxReceive, maxExtract);
         this.stack = stack;
     }
 
-    public static NBTTagCompound getOrCreateTag(ItemStack stack) {
-        if (!stack.hasTagCompound()) {
-            stack.setTagCompound(new NBTTagCompound());
+    public static CompoundNBT getOrCreateTag(ItemStack stack) {
+        if (!stack.isEmpty() && stack.getTag() == null) {
+            stack.setTag(new CompoundNBT());
         }
-        return stack.getTagCompound();
+        return stack.getTag();
     }
 
     @Override
     public int getEnergyStored() {
-        return getOrCreateTag(stack).getInteger("Energy");
+        return getOrCreateTag(stack).getInt("Energy");
     }
 
     @Override
     protected void setEnergyInternal(int energy) {
-        getOrCreateTag(stack).setInteger("Energy", getEnergyStored() + energy);
+        getOrCreateTag(stack).putInt("Energy", getEnergyStored() + energy);
     }
 }

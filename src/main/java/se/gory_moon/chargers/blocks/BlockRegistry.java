@@ -1,164 +1,154 @@
 package se.gory_moon.chargers.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.registries.IForgeRegistry;
+import com.tterrag.registrate.Registrate;
+import com.tterrag.registrate.util.DataIngredient;
+import com.tterrag.registrate.util.entry.BlockEntry;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
+import net.minecraft.data.ShapedRecipeBuilder;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.Rarity;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.ToolType;
 import se.gory_moon.chargers.ChargersMod;
-import se.gory_moon.chargers.lib.ModInfo;
+import se.gory_moon.chargers.items.ChargerBlockItem;
+import se.gory_moon.chargers.items.ItemRegistry;
+import se.gory_moon.chargers.items.WirelessChargerBlockItem;
+import se.gory_moon.chargers.tile.WirelessChargerTileEntity;
 
-import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
-import java.util.*;
+import static se.gory_moon.chargers.Constants.*;
 
-import static se.gory_moon.chargers.lib.ModInfo.MODID;
-
-@Mod.EventBusSubscriber(modid = ModInfo.MODID)
 public class BlockRegistry {
+    private static final Registrate REGISTRATE = ChargersMod.getRegistrate();
 
-    public static final Block CHARGER = new BlockCharger();
-    public static final Block WIRELESS_CHARGER = new BlockWirelessCharger();
+    public static BlockEntry<ChargerBlock> CHARGER_BLOCK_T1 = REGISTRATE.object(CHARGER_T1_BLOCK)
+            .block(ChargerBlock::new)
+            .initialProperties(Material.IRON, MaterialColor.GRAY)
+            .lang(CHARGER_T1_NAME)
+            .properties(properties -> properties.hardnessAndResistance(5, 10).harvestLevel(0).harvestTool(ToolType.PICKAXE))
+            .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
+                    provider.models().cubeBottomTop("charger_tier_1",
+                            provider.modLoc("block/charger_tier_1_side"),
+                            provider.modLoc("block/charger_tier_1"),
+                            provider.modLoc("block/charger_tier_1_top"))))
+            .item(ChargerBlockItem::new)
+                .properties(p -> p.rarity(Rarity.COMMON).group(ItemGroup.REDSTONE))
+                .recipe((context, provider) -> {
+                    DataIngredient iron = DataIngredient.tag(Tags.Items.INGOTS_IRON);
+                    DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
+                    DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
 
-    public static final Set<Block> BLOCKS = new LinkedHashSet<>();
-    public static final List<ItemBlock> ITEM_BLOCKS = new ArrayList<ItemBlock>();
+                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shapedRecipe(context.get())
+                            .key('I', iron)
+                            .key('R', redstone)
+                            .key('B', redstoneBlock);
+                    builder.patternLine("IRI").patternLine("IBI").patternLine("IRI");
+                    builder.addCriterion("has_" + provider.safeName(iron), iron.getCritereon(provider))
+                            .addCriterion("has_" + provider.safeName(redstone), redstone.getCritereon(provider))
+                            .addCriterion("has_" + provider.safeName(redstoneBlock), redstoneBlock.getCritereon(provider));
+                    builder.build(provider, provider.safeId(context.get()));
+                })
+                .build()
+            .register();
 
-    public static void preInit() {
-        try {
-            for (Field field : BlockRegistry.class.getDeclaredFields()) {
-                Object obj = field.get(null);
-                if (obj instanceof Block) {
-                    Block block = (Block) obj;
-                    String name = field.getName().toLowerCase(Locale.ENGLISH);
-                    registerBlock(name, block);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public static BlockEntry<ChargerBlock> CHARGER_BLOCK_T2 = REGISTRATE.object(CHARGER_T2_BLOCK)
+            .block(ChargerBlock::new)
+            .initialProperties(Material.IRON, MaterialColor.GOLD)
+            .lang(CHARGER_T2_NAME)
+            .properties(properties -> properties.hardnessAndResistance(5, 10).harvestLevel(0).harvestTool(ToolType.PICKAXE))
+            .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
+                    provider.models().cubeBottomTop("charger_tier_2",
+                            provider.modLoc("block/charger_tier_2_side"),
+                            provider.modLoc("block/charger_tier_2"),
+                            provider.modLoc("block/charger_tier_2_top"))))
+            .item(ChargerBlockItem::new)
+                .properties(p -> p.rarity(Rarity.UNCOMMON).group(ItemGroup.REDSTONE))
+                .recipe((context, provider) -> {
+                    DataIngredient gold = DataIngredient.tag(Tags.Items.INGOTS_GOLD);
+                    DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
+                    DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
+                    DataIngredient charger_t1 = DataIngredient.items(ItemRegistry.CHARGER_T1_ITEM.get());
 
-    public static void registerBlock(String name, Block block) {
-        BLOCKS.add(block);
-        block.setRegistryName(MODID, name).setTranslationKey(MODID + "." + name);
+                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shapedRecipe(context.get())
+                            .key('G', gold)
+                            .key('R', redstone)
+                            .key('B', redstoneBlock)
+                            .key('C', charger_t1);
+                    builder.patternLine("GRG").patternLine("GBG").patternLine("GCG");
+                    builder.addCriterion("has_" + provider.safeName(charger_t1), charger_t1.getCritereon(provider));
+                    builder.build(provider, provider.safeId(context.get()));
+                })
+                .build()
+            .register();
 
-        ItemBlock item;
-        if (block instanceof ICustomItemBlock)
-            item = ((ICustomItemBlock) block).getItemBlock();
-        else
-            item = new ItemBlock(block);
-        ITEM_BLOCKS.add(item);
-        item.setRegistryName(MODID, name).setTranslationKey(MODID + "." + name);
-    }
+    public static BlockEntry<ChargerBlock> CHARGER_BLOCK_T3 = REGISTRATE.object(CHARGER_T3_BLOCK)
+            .block(ChargerBlock::new)
+            .initialProperties(Material.IRON, MaterialColor.CYAN)
+            .lang(CHARGER_T3_NAME)
+            .properties(properties -> properties.hardnessAndResistance(5, 10).harvestLevel(0).harvestTool(ToolType.PICKAXE))
+            .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
+                    provider.models().cubeBottomTop("charger_tier_3",
+                            provider.modLoc("block/charger_tier_3_side"),
+                            provider.modLoc("block/charger_tier_3"),
+                            provider.modLoc("block/charger_tier_3_top"))))
+            .item(ChargerBlockItem::new)
+                .properties(p -> p.rarity(Rarity.RARE).group(ItemGroup.REDSTONE))
+                .recipe((context, provider) -> {
+                    DataIngredient diamond = DataIngredient.tag(Tags.Items.GEMS_DIAMOND);
+                    DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
+                    DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
+                    DataIngredient charger_t2 = DataIngredient.items(ItemRegistry.CHARGER_T2_ITEM.get());
 
-    @SubscribeEvent
-    public static void registerBlock(RegistryEvent.Register<Block> event) {
-        final IForgeRegistry<Block> registry = event.getRegistry();
-        for (Block block : BLOCKS) {
-            registry.register(block);
-        }
-    }
+                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shapedRecipe(context.get())
+                            .key('D', diamond)
+                            .key('R', redstone)
+                            .key('B', redstoneBlock)
+                            .key('C', charger_t2);
+                    builder.patternLine("DRD").patternLine("DBD").patternLine("DCD");
+                    builder.addCriterion("has_" + provider.safeName(charger_t2), charger_t2.getCritereon(provider));
+                    builder.build(provider, provider.safeId(context.get()));
+                })
+                .build()
+            .register();
 
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public static void registerBlockRenderers(ModelRegistryEvent event) {
-        for (Block block : BlockRegistry.BLOCKS) {
-            if (block instanceof IStateMappedBlock) {
-                StateMap.Builder builder = new StateMap.Builder();
+    public static final BlockEntry<WirelessChargerBlock> WIRELESS_CHARGER = REGISTRATE.object(WIRELESS_CHARGER_BLOCK)
+            .block(WirelessChargerBlock::new)
+            .initialProperties(Material.IRON, MaterialColor.GRAY)
+            .simpleTileEntity(WirelessChargerTileEntity::new)
+            .lang(WIRELESS_CHARGER_NAME)
+            .properties(properties -> properties.hardnessAndResistance(5, 10).harvestTool(ToolType.PICKAXE).harvestLevel(0))
+            .blockstate((ctx, provider) -> provider.getVariantBuilder(ctx.get())
+                    .partialState().with(WirelessChargerBlock.POWERED, false)
+                        .modelForState().modelFile(provider.models().cubeAll("wireless_charger_disabled", provider.modLoc("block/wireless_charger_disabled"))).addModel()
+                    .partialState().with(WirelessChargerBlock.POWERED, true)
+                        .modelForState().modelFile(provider.models().cubeAll("wireless_charger_enabled", provider.modLoc("block/wireless_charger_enabled"))).addModel()
+            )
+            .item(WirelessChargerBlockItem::new)
+                .properties(properties -> properties.group(ItemGroup.REDSTONE))
+                .model((context, provider) -> provider.blockItem(() -> context.get().getBlock(), "_disabled"))
+                .recipe((context, provider) -> {
+                    DataIngredient iron = DataIngredient.tag(Tags.Items.INGOTS_IRON);
+                    DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
+                    DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
+                    DataIngredient enderPearls = DataIngredient.tag(Tags.Items.ENDER_PEARLS);
 
-                ((IStateMappedBlock) block).setStateMapper(builder);
-                ModelLoader.setCustomStateMapper(block, builder.build());
-            }
-            if (block instanceof ICustomItemBlock) {
-                ICustomItemBlock customItemBlock = (ICustomItemBlock) block;
-                ItemStack renderedItem = customItemBlock.getRenderedItem();
-                if (!renderedItem.isEmpty()) {
-                    Map<Integer, ResourceLocation> map = ChargersMod.proxy.getItemModelMap(renderedItem.getItem());
-                    ModelResourceLocation model = (ModelResourceLocation) map.get(renderedItem.getMetadata());
-                    ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, model);
-                    continue;
-                }
-            }
-            ResourceLocation name = block.getRegistryName();
-            if (block instanceof ISubtypeItemBlockModelDefinition) {
-                ISubtypeItemBlockModelDefinition subtypeBlock = (ISubtypeItemBlockModelDefinition) block;
-                for (int i = 0; i < subtypeBlock.getSubtypeNumber(); i++) {
-                    int meta = subtypeBlock.getSubtypeMeta(i);
-                    ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), meta, new ModelResourceLocation(name.getNamespace() + ":" + String.format(subtypeBlock.getSubtypeName(meta), name.getPath()), "inventory"));
-                }
-            } else {
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(name, "inventory"));
-            }
-        }
-    }
+                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shapedRecipe(context.get())
+                            .key('I', iron)
+                            .key('R', redstone)
+                            .key('B', redstoneBlock)
+                            .key('E', enderPearls);
+                    builder.patternLine("IEI").patternLine("IBI").patternLine("IRI");
+                    builder.addCriterion("has_" + provider.safeName(enderPearls), enderPearls.getCritereon(provider))
+                            .addCriterion("has_" + provider.safeName(iron), iron.getCritereon(provider))
+                            .addCriterion("has_" + provider.safeName(redstone), redstone.getCritereon(provider))
+                            .addCriterion("has_" + provider.safeName(redstoneBlock), redstoneBlock.getCritereon(provider));
+                    builder.build(provider, provider.safeId(context.get()));
+                })
+                .build()
+            .register();
 
-    public interface ICustomItemBlock {
-        /**
-         * @return Returns a custom item for this block.
-         */
-        @Nonnull
-        default ItemBlock getItemBlock() {
-            if (Item.getItemFromBlock((Block) this) != Items.AIR)
-                return (ItemBlock) Item.getItemFromBlock((Block) this);
-            else
-                return new ItemBlock((Block)this);
-        }
 
-        /**
-         * @return Returns which item this block should be rendered as
-         */
-        @SideOnly(Side.CLIENT)
-        default ItemStack getRenderedItem() {
-            return ItemStack.EMPTY;
-        }
-    }
+    private BlockRegistry() {}
 
-    public interface ISubtypeItemBlockModelDefinition {
-        /**
-         * Returns the amount of subtypes
-         *
-         * @return
-         */
-        int getSubtypeNumber();
-
-        /**
-         * Returns the name of this subtype.
-         * String is formatted, use %s for the normal registry name.
-         *
-         * @param meta
-         * @return
-         */
-        String getSubtypeName(int meta);
-
-        /**
-         * Returns the metadata for the specified subtype
-         *
-         * @param subtype
-         * @return
-         */
-        default int getSubtypeMeta(int subtype) {
-            return subtype;
-        }
-    }
-
-    public interface IStateMappedBlock {
-        /**
-         * Sets the statemap
-         *
-         * @param builder The statemap build to use
-         */
-        @SideOnly(Side.CLIENT)
-        void setStateMapper(StateMap.Builder builder);
-    }
+    public static void init() {}
 }

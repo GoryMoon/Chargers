@@ -1,0 +1,18 @@
+{
+  "block.chargers.charger_t1": "I \u0279\u01DD\u0131\u27D8 \u0279\u01DDb\u0279\u0250\u0265\u0186",
+  "block.chargers.charger_t2": "II \u0279\u01DD\u0131\u27D8 \u0279\u01DDb\u0279\u0250\u0265\u0186",
+  "block.chargers.charger_t3": "III \u0279\u01DD\u0131\u27D8 \u0279\u01DDb\u0279\u0250\u0265\u0186",
+  "block.chargers.wireless_charger": "\u0279\u01DDb\u0279\u0250\u0265\u0186 ss\u01DD\u05DF\u01DD\u0279\u0131M",
+  "chat.chargers.disabled": "p\u01DD\u05DFq\u0250s\u0131\u15E1",
+  "chat.chargers.enabled": "p\u01DD\u05DFq\u0250u\u018E",
+  "chat.chargers.stored.info": "\u018E\u2132 %s/%s :\u0279\u01DD\u028Do\u0500",
+  "chat.chargers.wireless_charger.info": "\u018E\u2132 %s/%s :\u0279\u01DD\u028Do\u0500 '%s :sn\u0287\u0250\u0287S",
+  "container.chargers.charger_t1": "I \u0279\u01DD\u0131\u27D8 \u0279\u01DDb\u0279\u0250\u0265\u0186",
+  "container.chargers.charger_t2": "II \u0279\u01DD\u0131\u27D8 \u0279\u01DDb\u0279\u0250\u0265\u0186",
+  "container.chargers.charger_t3": "III \u0279\u01DD\u0131\u27D8 \u0279\u01DDb\u0279\u0250\u0265\u0186",
+  "gui.chargers.energy": "\u018E\u2132 %s/%s",
+  "gui.chargers.io": "\u0287/\u018E\u2132 %s :O/I",
+  "gui.chargers.max_in": "\u0287/\u018E\u2132 %s :uI x\u0250W",
+  "gui.chargers.max_out": "\u0287/\u018E\u2132 %s :\u0287nO x\u0250W",
+  "tooltip.chargers.wireless_charger": "\u0279\u01DD\u028Dod \u01DDuo\u0287sp\u01DD\u0279 \u0265\u0287\u0131\u028D p\u01DD\u05DFq\u0250s\u0131p \u01DDq u\u0250\u0186"
+}

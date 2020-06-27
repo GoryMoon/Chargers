@@ -1,0 +1,18 @@
+{
+  "block.chargers.charger_t1": "Charger Tier I",
+  "block.chargers.charger_t2": "Charger Tier II",
+  "block.chargers.charger_t3": "Charger Tier III",
+  "block.chargers.wireless_charger": "Wireless Charger",
+  "chat.chargers.disabled": "Disabled",
+  "chat.chargers.enabled": "Enabled",
+  "chat.chargers.stored.info": "Power: %s/%s FE",
+  "chat.chargers.wireless_charger.info": "Status: %s, Power: %s/%s FE",
+  "container.chargers.charger_t1": "Charger Tier I",
+  "container.chargers.charger_t2": "Charger Tier II",
+  "container.chargers.charger_t3": "Charger Tier III",
+  "gui.chargers.energy": "%s/%s FE",
+  "gui.chargers.io": "I/O: %s FE/t",
+  "gui.chargers.max_in": "Max In: %s FE/t",
+  "gui.chargers.max_out": "Max Out: %s FE/t",
+  "tooltip.chargers.wireless_charger": "Can be disabled with redstone power"
+}
