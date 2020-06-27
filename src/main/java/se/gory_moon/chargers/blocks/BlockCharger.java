@@ -18,6 +18,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import se.gory_moon.chargers.ChargersMod;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.blocks.BlockRegistry.ICustomItemBlock;
@@ -77,6 +79,7 @@ public class BlockCharger extends BlockEnergy implements ISubtypeItemBlockModelD
         super.breakBlock(world, pos, state);
     }
 
+    @SideOnly(Side.CLIENT)
     public String getLocalizedName() {
         return I18n.format(this.getTranslationKey() + "." + Tier.I.getName() + ".name");
     }
