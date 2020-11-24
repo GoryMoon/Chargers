@@ -30,9 +30,6 @@ public class Configs {
         public Wireless wireless = new Wireless();
 
         Server(ForgeConfigSpec.Builder builder) {
-            builder.comment("Server configs")
-                    .push("server");
-
             builder.comment("Chargers configs")
                     .push("chargers");
 
@@ -50,7 +47,7 @@ public class Configs {
 
             builder.push("wireless");
                 wireless.build(builder);
-            builder.pop(3);
+            builder.pop(2);
         }
 
         public static class Tier {

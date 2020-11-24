@@ -2,7 +2,6 @@ package se.gory_moon.chargers.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -14,12 +13,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import se.gory_moon.chargers.LangKeys;
 import se.gory_moon.chargers.tile.TileRegistry;
 import se.gory_moon.chargers.tile.WirelessChargerTileEntity;
 
@@ -47,9 +46,9 @@ public class WirelessChargerBlock extends EnergyBlock {
                 return ActionResultType.FAIL;
             WirelessChargerTileEntity tile = (WirelessChargerTileEntity) tileEntity;
             boolean powered = ((WirelessChargerTileEntity) tileEntity).isPowered();
-            ITextComponent status = new TranslationTextComponent("chat.chargers." + (powered ? "disabled": "enabled")).setStyle(new Style().setColor(powered ? TextFormatting.RED: TextFormatting.GREEN));
+            ITextComponent status = new TranslationTextComponent((powered ? LangKeys.CHAT_DISABLED.key(): LangKeys.CHAT_ENABLED.key())).setStyle(Style.EMPTY.setFormatting(powered ? TextFormatting.RED: TextFormatting.GREEN));
             NumberFormat format = NumberFormat.getInstance();
-            player.sendStatusMessage(new TranslationTextComponent("chat.chargers.wireless_charger.info",  status, format.format(tile.getStorage().getEnergyStored()), format.format(tile.getStorage().getMaxEnergyStored())), true);
+            player.sendStatusMessage(new TranslationTextComponent(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, format.format(tile.getStorage().getEnergyStored()), format.format(tile.getStorage().getMaxEnergyStored())), true);
         }
 
         return ActionResultType.SUCCESS;
@@ -62,7 +61,7 @@ public class WirelessChargerBlock extends EnergyBlock {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(new StringTextComponent(I18n.format("tooltip.chargers.wireless_charger")));
+        tooltip.add(new TranslationTextComponent(LangKeys.TOOLTIP_WIRELESS_CHARGER_INFO.key()));
     }
 
     @Nullable

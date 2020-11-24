@@ -1,11 +1,12 @@
 package se.gory_moon.chargers.handler;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -23,7 +24,7 @@ import java.util.Iterator;
 public class WirelessHandler {
 
     public static WirelessHandler INSTANCE = new WirelessHandler();
-    private final Int2ObjectMap<ObjectSet<BlockPos>> dimensionChargers = new Int2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<ResourceLocation, ObjectSet<BlockPos>> dimensionChargers = new Object2ObjectOpenHashMap<>();
 
     public void register(WirelessChargerTileEntity charger) {
         ObjectSet<BlockPos> chargers = getDimensionChargers(charger.getWorld());
@@ -93,6 +94,6 @@ public class WirelessHandler {
     }
 
     private ObjectSet<BlockPos> getDimensionChargers(World world) {
-        return dimensionChargers.computeIfAbsent(world.getDimension().getType().getId(), integer -> new ObjectOpenHashSet<>());
+        return dimensionChargers.computeIfAbsent(world.getDimensionKey().getLocation(), location -> new ObjectOpenHashSet<>());
     }
 }

@@ -1,5 +1,6 @@
 package se.gory_moon.chargers.tile;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -67,14 +68,15 @@ public abstract class EnergyHolderTileEntity extends TileEntity implements ITick
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        super.read(compound);
-        storage.readFromNBT(compound);
+    public void read(BlockState state, CompoundNBT compound) {
+        super.read(state, compound);
+        storage.readFromNBT(compound.getCompound("Storage"));
     }
 
     @Override
     public CompoundNBT write(CompoundNBT compound) {
-        return storage.writeToNBT(super.write(compound));
+        super.write(compound).put("Storage", storage.writeToNBT(new CompoundNBT()));
+        return compound;
     }
 
     @Nullable
@@ -85,7 +87,7 @@ public abstract class EnergyHolderTileEntity extends TileEntity implements ITick
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        handleUpdateTag(pkt.getNbtCompound());
+        handleUpdateTag(getBlockState(), pkt.getNbtCompound());
     }
 
     @Override

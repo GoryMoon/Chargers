@@ -1,5 +1,6 @@
 package se.gory_moon.chargers.tile;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -16,6 +17,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
+import se.gory_moon.chargers.LangKeys;
 import se.gory_moon.chargers.blocks.ChargerBlock;
 import se.gory_moon.chargers.inventory.ContainerCharger;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
@@ -66,13 +68,13 @@ public class ChargerTileEntity extends EnergyHolderTileEntity implements INameab
     }
 
     @Override
-    public void read(CompoundNBT compound) {
+    public void read(BlockState state, CompoundNBT compound) {
         inventoryHandler.deserializeNBT(compound.getCompound("Inventory"));
         setTier(ChargerBlock.Tier.byID(compound.getInt("Tier")));
         if (compound.contains("CustomName", 8)) {
-            this.customName = ITextComponent.Serializer.fromJson(compound.getString("CustomName"));
+            this.customName = ITextComponent.Serializer.getComponentFromJson(compound.getString("CustomName"));
         }
-        super.read(compound);
+        super.read(state, compound);
     }
 
     @Override
@@ -104,13 +106,13 @@ public class ChargerTileEntity extends EnergyHolderTileEntity implements INameab
         if (name == null) {
             switch (tier) {
                 case I:
-                    name = new TranslationTextComponent("container.chargers.charger_t1");
+                    name = new TranslationTextComponent(LangKeys.CONTAINER_CHARGER_T1.key());
                     break;
                 case II:
-                    name = new TranslationTextComponent("container.chargers.charger_t2");
+                    name = new TranslationTextComponent(LangKeys.CONTAINER_CHARGER_T2.key());
                     break;
                 case III:
-                    name = new TranslationTextComponent("container.chargers.charger_t3");
+                    name = new TranslationTextComponent(LangKeys.CONTAINER_CHARGER_T3.key());
                     break;
             }
         }

@@ -15,10 +15,14 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
+apply from: 'https://raw.githubusercontent.com/MinecraftModDevelopment/Gradle-Collection/master/generic/secrets.gradle'
+
+if (project.hasProperty('secretFile')) {
+    loadSecrets(new File((String) findProperty('secretFile')))
+}
 
 version = mod_version
 group = "se.gory_moon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -30,19 +34,10 @@ if (System.getenv().BUILD_NUMBER != null) {//adds the build number to the end of
     version += ".${System.getenv().BUILD_NUMBER}"
 }
 
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    // The mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   Snapshot are built nightly.
-    // stable_#            Stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // Simply re-run your setup task after changing the mappings to update your workspace.
     mappings channel: mcp_channel, version: mcp_mappings
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
             workingDirectory project.file('run')
@@ -58,8 +53,6 @@ minecraft {
                     source sourceSets.main
                 }
             }
-            // Intellij stuff
-            ideaModule "${project.name}.main"
         }
 
         server {
@@ -76,8 +69,6 @@ minecraft {
                     source sourceSets.main
                 }
             }
-            // Intellij stuff
-            ideaModule "${project.name}.main"
         }
 
         data {
@@ -89,18 +80,18 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'chargers', '--all', '--output', file('src/generated_resources/'), '--existing', file('src/main/resources/')
+            args '--mod', 'chargers', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
                 chargers {
                     source sourceSets.main
                 }
             }
-            // Intellij stuff
-            ideaModule "${project.name}.main"
         }
     }
 }
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 configurations {
     shade
@@ -112,13 +103,9 @@ shadowJar {
     classifier = ''
 }
 
-reobf {
-    shadowJar {}
-}
-
 build.dependsOn shadowJar
 
-build.dependsOn reobfShadowJar
+shadowJar.finalizedBy('reobfJar')
 
 repositories {
     mavenCentral()
@@ -137,40 +124,47 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
     //deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios:${curios_version}")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios:${curios_version}:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
-    def registrate = "com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}"
+    def registrate = "com.tterrag.registrate:Registrate:MC1.16.2-${registrate_version}"
     implementation fg.deobf(registrate)
     shade registrate
 
-    runtimeOnly fg.deobf("curse.maven:immersive-engineering:2980321")
+    runtimeOnly fg.deobf("curse.maven:immersive-engineering:3102280")
 }
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-task devJar(type: ShadowJar, dependsOn: 'classes') {
-    from sourceSets.main.output
-    configurations = [project.configurations.shade]
-    relocate 'com.tterrag.registrate', 'se.gory_moon.chargers.repack.registrate'
-
-    extension = 'jar'
-    classifier = 'dev'
-}
-
-task sourceJar(type: Jar) {
-    from(sourceSets.main.allSource) {
-        include '**'
-    }
-    extension = 'jar'
+task sourcesJar(type: Jar, dependsOn: classes) {
+    description = 'Creates a JAR containing the source code.'
+    from sourceSets.main.allSource
     classifier = 'sources'
 }
 
-artifacts {
-    archives devJar
-    archives sourceJar
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+task deobfJar(type: ShadowJar) {
+    description = 'Creates a JAR containing the non-obfuscated compiled code.'
+    from sourceSets.main.output
+
+    configurations = [project.configurations.shade]
+    relocate 'com.tterrag.registrate', 'se.gory_moon.chargers.repack.registrate'
+
+    classifier = 'deobf'
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
+task forgelibJar(type: Jar) {
+    description = 'Creates a compiled JAR which also contains raw sources.'
+    from sourceSets.main.output
+    from sourceSets.main.allJava
+    classifier = 'forgelib'
+}
+
+
+artifacts {
+    archives sourcesJar
+    archives deobfJar
+    archives forgelibJar
+}
+
 jar {
     manifest {
         attributes([
@@ -186,45 +180,72 @@ jar {
 }
 
 if (project.hasProperty("local_maven")) {
-    // Example configuration to allow publishing using the maven-publish task
-    // we define a custom artifact that is sourced from the reobfJar output task
-    // and then declare that to be published
-    // Note you'll need to add a repository here
-    def reobfFile = file("$buildDir/reobfJar/output.jar")
-    def reobfArtifact = artifacts.add('default', reobfFile) {
-        type 'jar'
-        builtBy 'reobfShadowJar'
-    }
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 version = "$mc_version-${project.getVersion()}"
-                artifact reobfArtifact
-                artifact devJar
-                artifact sourceJar
+
+                // Allows the maven pom file to be modified.
+                pom.withXml {
+                    // Go through all the dependencies.
+                    asNode().dependencies.dependency.each { dep ->
+
+                        // Check if the dependency has been mapped with MCP
+                        if (dep.version.last().value().last().contains('_mapped_snapshot_') || dep.version.last().value().last().contains('_mapped_stable_')) {
+
+                            // Remove the MCP mapped artifact from the dependency list.
+                            println 'Surpressing MCP mapped artifact ' + dep.artifactId.last().value().last() + ' from maven dependencies.'
+                            assert dep.parent().remove(dep)
+                        }
+                    }
+                }
+
+                // Adds the sources as an artifact.
+                artifact sourcesJar {
+                    classifier 'sources'
+                }
+
+                // Adds the deobfuscated jar as an artifact.
+                artifact deobfJar {
+                    classifier 'deobf'
+                }
+
+                artifact forgelibJar {
+                    classifier 'forgelib'
+
+                }
             }
-        }
-        repositories {
-            maven {
-                url "file://${project.getProperty('local_maven')}"
+            repositories {
+                maven {
+                    url "file://${project.getProperty('local_maven')}"
+                }
             }
         }
     }
 }
 
-/*
-task("uploadJars", dependsOn: "build") {
-    description = "uploads JARs"
-    if (project.hasProperty("local_maven")) {
-        apply plugin: 'maven'
-        uploadArchives {
-            repositories {
-                mavenDeployer {
-                    repository(url: "file://${local_maven}")
-                    pom.artifactId = "Chargers"
-                    pom.version = mc_version + "-" + project.version
-                }
-            }
-        }
+// Jar Signing
+import net.minecraftforge.gradle.common.task.SignJar
+task signJar(type: SignJar, dependsOn: shadowJar) {
+
+    onlyIf {
+        project.hasProperty('keyStore')
     }
-}*/
+
+    if (project.hasProperty('keyStore')) {
+        project.logger.info('Signing jar ' + jar.archivePath.getName());
+
+        keyStore = project.findProperty('keyStore')
+        alias = project.findProperty('keyStoreAlias')
+        storePass = project.findProperty('keyStorePass')
+        keyPass = project.findProperty('keyStorePass')
+        inputFile = jar.archivePath
+        outputFile = jar.archivePath
+    }
+
+    else {
+        project.logger.warn('Could not sign ' + jar.archivePath.getName() + '. No keyStore property could be found')
+    }
+}
+
+build.dependsOn signJar

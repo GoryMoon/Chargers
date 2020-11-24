@@ -9,9 +9,10 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.tile.WirelessChargerTileEntity;
-import top.theillusivec4.curios.api.CuriosAPI;
-import top.theillusivec4.curios.api.capability.ICurioItemHandler;
-import top.theillusivec4.curios.api.inventory.CurioStackHandler;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
+import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -51,17 +52,18 @@ public class Curios {
     public boolean chargeItems(PlayerEntity player, WirelessChargerTileEntity charger) {
         AtomicBoolean result = new AtomicBoolean(false);
         if (isLoaded()) {
-            LazyOptional<ICurioItemHandler> lazyOptional = CuriosAPI.getCuriosHandler(player);
+            LazyOptional<ICuriosItemHandler> lazyOptional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
             lazyOptional.ifPresent(handler -> {
-                for (CurioStackHandler itemHandler : handler.getCurioMap().values()) {
+                for (ICurioStacksHandler itemHandler : handler.getCurios().values()) {
                     if (charger.getAvailableEnergy() <= 0) break;
                     for (int i = 0; i < itemHandler.getSlots(); i++) {
                         if (charger.getAvailableEnergy() <= 0) break;
-                        ItemStack stack = itemHandler.getStackInSlot(i);
+                        IDynamicStackHandler stacks = itemHandler.getStacks();
+                        ItemStack stack = stacks.getStackInSlot(i);
                         if (!stack.isEmpty()) {
                             stack = stack.copy();
                             if (charger.chargeItems(NonNullList.from(ItemStack.EMPTY, stack))) {
-                                itemHandler.setStackInSlot(i, stack);
+                                stacks.setStackInSlot(i, stack);
                                 result.set(true);
                             }
                         }

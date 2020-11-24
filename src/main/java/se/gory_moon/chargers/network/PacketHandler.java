@@ -18,9 +18,6 @@ public class PacketHandler {
             .networkProtocolVersion(() -> "1")
             .simpleChannel();
 
-    public static void init() {
-    }
-
 
     public static void sendToListeningPlayers(List<IContainerListener> listeners, IPacket<?> packet) {
         for (IContainerListener containerListener : listeners) {
