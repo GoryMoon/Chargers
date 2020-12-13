@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import se.gory_moon.chargers.LangKeys;
+import se.gory_moon.chargers.Utils;
 import se.gory_moon.chargers.blocks.ChargerBlock.Tier;
 import se.gory_moon.chargers.power.CustomItemEnergyStorage;
 
@@ -50,7 +51,7 @@ public class ChargerBlockItem extends BlockItem {
     public static void addEnergyTooltip(ItemStack stack, List<ITextComponent> tooltip) {
         stack.getCapability(CapabilityEnergy.ENERGY, null).ifPresent(energyStorage -> {
             NumberFormat format = NumberFormat.getInstance();
-            tooltip.add(new TranslationTextComponent(LangKeys.CHAT_STORED_INFO.key(), format.format(energyStorage.getEnergyStored()), format.format(energyStorage.getMaxEnergyStored())));
+            tooltip.add(new TranslationTextComponent(LangKeys.CHAT_STORED_INFO.key(), Utils.clean(format.format(energyStorage.getEnergyStored())), Utils.clean(format.format(energyStorage.getMaxEnergyStored()))));
         });
     }
 

@@ -115,9 +115,10 @@ public class ContainerCharger extends Container {
             itemstack = stack.copy();
 
             if (index == 1 || index == 0) {
-                if (Curios.isLoaded() && (!mergeItemStack(stack, curiosStart, curiosEnd, false) && !mergeItemStack(stack, inventoryStart, armorEnd + 1, true)))
+                /*if (Curios.isLoaded() && (!mergeItemStack(stack, curiosStart, curiosEnd, false) && !mergeItemStack(stack, inventoryStart, armorEnd + 1, true)))
                     return ItemStack.EMPTY;
-                else if (!Curios.isLoaded() && !mergeItemStack(stack, inventoryStart, armorEnd + 1, true))
+                else */
+                if (/*!Curios.isLoaded() && */!mergeItemStack(stack, inventoryStart, armorEnd + 1, true))
                     return ItemStack.EMPTY;
                 slot.onSlotChange(stack, itemstack);
             } else {

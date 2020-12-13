@@ -10,6 +10,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import se.gory_moon.chargers.Constants;
 import se.gory_moon.chargers.LangKeys;
+import se.gory_moon.chargers.Utils;
 import se.gory_moon.chargers.inventory.ContainerCharger;
 
 import java.text.NumberFormat;
@@ -74,11 +75,11 @@ public class ChargerScreen extends ContainerScreen<ContainerCharger> {
         if (mouseX >= guiLeft + 48/* - (curios ? 9: 0)*/ && mouseX <= guiLeft + 48 + 16/* - (curios ? 9: 0) */&& mouseY >= guiTop + 8 && mouseY <= guiTop + 78) {
             NumberFormat format = NumberFormat.getInstance();
             List<ITextComponent> list = new ArrayList<>();
-            list.add(new TranslationTextComponent(LangKeys.GUI_ENERGY.key(), format.format(container.getEnergy()), format.format(container.getEnergyMax()) + TextFormatting.GRAY));
-            list.add(new TranslationTextComponent(LangKeys.GUI_MAX_IN.key(), format.format(container.getMaxIn()) + TextFormatting.GRAY));
-            list.add(new TranslationTextComponent(LangKeys.GUI_MAX_OUT.key(), format.format(container.getMaxOut()) + TextFormatting.GRAY));
+            list.add(new TranslationTextComponent(LangKeys.GUI_ENERGY.key(), Utils.clean(format.format(container.getEnergy())), Utils.clean(format.format(container.getEnergyMax())) + TextFormatting.GRAY));
+            list.add(new TranslationTextComponent(LangKeys.GUI_MAX_IN.key(), Utils.clean(format.format(container.getMaxIn())) + TextFormatting.GRAY));
+            list.add(new TranslationTextComponent(LangKeys.GUI_MAX_OUT.key(), Utils.clean(format.format(container.getMaxOut())) + TextFormatting.GRAY));
             if (container.getEnergyDiff() != 0) {
-                list.add(new TranslationTextComponent(LangKeys.GUI_IO.key(), (container.getEnergyDiff() > 0 ? TextFormatting.GREEN + "+": TextFormatting.RED.toString()) + Math.round(container.getEnergyDiff()) + TextFormatting.GRAY));
+                list.add(new TranslationTextComponent(LangKeys.GUI_IO.key(), (container.getEnergyDiff() > 0 ? TextFormatting.GREEN + "+": TextFormatting.RED.toString()) + Utils.clean(format.format(container.getEnergyDiff())) + TextFormatting.GRAY));
             }
             func_243308_b(matrixStack, list, mouseX, mouseY);
         }
