@@ -6,12 +6,14 @@ import com.tterrag.registrate.util.NonNullLazyValue;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.gory_moon.chargers.blocks.BlockRegistry;
 import se.gory_moon.chargers.items.ItemRegistry;
+import se.gory_moon.chargers.network.PacketHandler;
 import se.gory_moon.chargers.tile.TileRegistry;
 
 @Mod(Constants.MOD_ID)
@@ -22,6 +24,7 @@ public class ChargersMod {
 
     public ChargersMod() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::gatherData);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         BlockRegistry.init();
         TileRegistry.init();
         ItemRegistry.init();
@@ -33,6 +36,9 @@ public class ChargersMod {
         return REGISTRATE.get();
     }
 
+    private void setup(FMLCommonSetupEvent event) {
+        PacketHandler.init();
+    }
     private void gatherData(GatherDataEvent event) {
         getRegistrate().addDataGenerator(ProviderType.LANG, prov -> {
             prov.add(LangKeys.CONTAINER_CHARGER_T1.key(), "Charger Tier I");

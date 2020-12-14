@@ -1,5 +1,6 @@
 package se.gory_moon.chargers.inventory;
 
+import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,13 +14,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.IntArray;
+import net.minecraft.util.IntReferenceHolder;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.items.IItemHandler;
 import se.gory_moon.chargers.blocks.BlockRegistry;
 import se.gory_moon.chargers.compat.Curios;
+import se.gory_moon.chargers.network.PacketHandler;
+import se.gory_moon.chargers.network.WindowPropPacket;
 import se.gory_moon.chargers.tile.CustomItemStackHandler;
+
+import java.util.List;
 
 import static net.minecraft.inventory.container.PlayerContainer.*;
 
@@ -31,6 +38,7 @@ public class ContainerCharger extends Container {
     private final IItemHandler itemHandler;
     private final IIntArray energyData;
     private final IWorldPosCallable pos;
+    private final List<IntReferenceHolder> customTracked = Lists.newArrayList();
 
     public ContainerCharger(ContainerType<ContainerCharger> containerType, int windowId, PlayerInventory inventory) {
         this(containerType, windowId, inventory, new CustomItemStackHandler(2), new IntArray(6), IWorldPosCallable.DUMMY);
@@ -92,7 +100,26 @@ public class ContainerCharger extends Container {
                 addSlot(Curios.getSlot(player, curios, i, 103 + (i / 4) * 18, 8 + (i % 4) * 18));
             }
         }
-        trackIntArray(energyData);
+        for(i = 0; i < energyData.size(); ++i) {
+            customTracked.add(IntReferenceHolder.create(energyData, i));
+        }
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        for(int j = 0; j < customTracked.size(); ++j) {
+            IntReferenceHolder intreferenceholder = customTracked.get(j);
+            if (intreferenceholder.isDirty()) {
+                PacketHandler.sendToListeningPlayers(listeners, PacketHandler.INSTANCE.toVanillaPacket(new WindowPropPacket(this.windowId, j, intreferenceholder.get()), NetworkDirection.PLAY_TO_CLIENT));
+            }
+        }
+
+        super.detectAndSendChanges();
+    }
+
+    @Override
+    public void updateProgressBar(int id, int data) {
+        customTracked.get(id).set(data);
     }
 
     @Override

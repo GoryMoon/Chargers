@@ -3,6 +3,7 @@ package se.gory_moon.chargers.network;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.network.IPacket;
+import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import se.gory_moon.chargers.Constants;
@@ -17,6 +18,14 @@ public class PacketHandler {
             .serverAcceptedVersions(s -> Objects.equals(s, "1"))
             .networkProtocolVersion(() -> "1")
             .simpleChannel();
+
+    public static void init() {
+        INSTANCE.messageBuilder(WindowPropPacket.class, 0, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(WindowPropPacket::encode)
+                .decoder(WindowPropPacket::new)
+                .consumer(WindowPropPacket::handle)
+                .add();
+    }
 
 
     public static void sendToListeningPlayers(List<IContainerListener> listeners, IPacket<?> packet) {
