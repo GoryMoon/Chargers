@@ -23,7 +23,7 @@ A mod that adds item charger blocks in tiers and a wireless one
 [[dependencies.chargers]]
     modId="curios"
     mandatory=false
-    versionRange="[4.0.0.1,)"
+    versionRange="[4.0.0.1,1.16.4-4.0.5.1,)"
     ordering="BEFORE"
     side="BOTH"
 
