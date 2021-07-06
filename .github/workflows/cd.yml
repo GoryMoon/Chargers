@@ -47,7 +47,7 @@ jobs:
           name: artifacts
           path: ./libs
       - name: generate-changelog-action
-        uses: ScottBrenner/generate-changelog-action@1.0.2
+        uses: ScottBrenner/generate-changelog-action@master
         id: changelog
         env:
           REPO: ${{ github.repository }}
