@@ -5,13 +5,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
     }
 }
 
 plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
-    id "com.wynprice.cursemaven" version "2.1.5"
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -28,7 +27,7 @@ version = mod_version
 group = "se.gory_moon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Chargers-$mc_version"
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8
 
 if (System.getenv().GITHUB_RUN_NUMBER  != null) {//adds the build number to the end of the version string if on a build server
     version += ".${System.getenv().GITHUB_RUN_NUMBER}"
@@ -49,6 +48,10 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            // Make mixins work on dependencies
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
             mods {
                 chargers {
                     source sourceSets.main
@@ -64,6 +67,10 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+
+            // Make mixins work on dependencies
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             mods {
                 chargers {
@@ -113,8 +120,15 @@ repositories {
     maven { // curios
         url "https://maven.theillusivec4.top/"
     }
-    maven { // Registrate
+    maven { // Registrate / TOP
         url "http://maven.tterrag.com/"
+    }
+    maven { // Immersive Engineering
+        url "https://modmaven.dev/"
+        content {
+            includeGroup 'blusunrize.immersiveengineering'
+            includeGroup 'malte0811'
+        }
     }
 }
 
@@ -124,15 +138,15 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
 
-    //deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
-    def registrate = "com.tterrag.registrate:Registrate:MC1.16.2-${registrate_version}"
+    def registrate = "com.tterrag.registrate:Registrate:MC1.16.5-${registrate_version}"
     implementation fg.deobf(registrate)
     shade registrate
 
-    runtimeOnly fg.deobf("curse.maven:immersive-engineering:3102280")
+    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
+    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-135")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[35,)"
 license="LGPLv3"
 issueTrackerURL="https://github.com/GoryMoon/Chargers/issues"
 
@@ -16,20 +16,20 @@ A mod that adds item charger blocks in tiers and a wireless one
 [[dependencies.chargers]]
     modId="forge"
     mandatory=true
-    versionRange="[34,)"
+    versionRange="[35,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.chargers]]
     modId="curios"
     mandatory=false
-    versionRange="[4.0.0.1,1.16.4-4.0.5.1,)"
+    versionRange="[1.16.5-4.0.5.0,)"
     ordering="BEFORE"
     side="BOTH"
 
 [[dependencies.chargers]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3,1.17)"
+    versionRange="[1.16.4,1.17)"
     ordering="NONE"
     side="BOTH"
