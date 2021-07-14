@@ -47,19 +47,16 @@ public class ChargerTileEntity extends EnergyHolderTileEntity implements INameab
         if (getWorld() != null && !getWorld().isRemote) {
             ItemStack input = inventoryHandler.getStackInSlot(0);
             ItemStack output = inventoryHandler.getStackInSlot(1);
-            if (!input.isEmpty() && output.isEmpty() && getStorage().getEnergyStored() > 0) {
+            if (!input.isEmpty() && input.getCount() == 1 && output.isEmpty() && getStorage().getEnergyStored() > 0) {
                 LazyOptional<IEnergyStorage> capability = input.getCapability(CapabilityEnergy.ENERGY);
                 capability.ifPresent(energyStorage -> {
-                    if (input.getCount() == 1) {
-                        int transferred = energyStorage.receiveEnergy(getStorage().extractEnergy(getStorage().getEnergyStored(), true), false);
-                        if (transferred > 0) {
-                            getStorage().extractEnergy(transferred, false);
-                        }
-                        if (energyStorage.getEnergyStored() >= energyStorage.getMaxEnergyStored()) {
-                            inventoryHandler.setStackInSlot(1, input.copy());
-                            input.shrink(1);
-                            inventoryHandler.setStackInSlot(0, input.getCount() <= 0 ? ItemStack.EMPTY: input);
-                        }
+                    int transferred = energyStorage.receiveEnergy(getStorage().extractEnergy(getStorage().getEnergyStored(), true), false);
+                    if (transferred > 0) {
+                        getStorage().extractEnergy(transferred, false);
+                    }
+                    if (energyStorage.getEnergyStored() >= energyStorage.getMaxEnergyStored()) {
+                        inventoryHandler.setStackInSlot(1, input);
+                        inventoryHandler.setStackInSlot(0, ItemStack.EMPTY);
                     }
                 });
             }
