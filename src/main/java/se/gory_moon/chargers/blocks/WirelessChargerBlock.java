@@ -19,6 +19,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import se.gory_moon.chargers.LangKeys;
+import se.gory_moon.chargers.Utils;
 import se.gory_moon.chargers.tile.TileRegistry;
 import se.gory_moon.chargers.tile.WirelessChargerTileEntity;
 
@@ -48,7 +49,7 @@ public class WirelessChargerBlock extends EnergyBlock {
             boolean powered = ((WirelessChargerTileEntity) tileEntity).isPowered();
             ITextComponent status = new TranslationTextComponent((powered ? LangKeys.CHAT_DISABLED.key(): LangKeys.CHAT_ENABLED.key())).setStyle(Style.EMPTY.setFormatting(powered ? TextFormatting.RED: TextFormatting.GREEN));
             NumberFormat format = NumberFormat.getInstance();
-            player.sendStatusMessage(new TranslationTextComponent(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, format.format(tile.getStorage().getEnergyStored()), format.format(tile.getStorage().getMaxEnergyStored())), true);
+            player.sendStatusMessage(new TranslationTextComponent(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.clean(format.format(tile.getStorage().getEnergyStored())), Utils.clean(format.format(tile.getStorage().getMaxEnergyStored()))), true);
         }
 
         return ActionResultType.SUCCESS;
