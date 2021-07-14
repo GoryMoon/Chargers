@@ -54,18 +54,25 @@ public class Curios {
         if (isLoaded()) {
             LazyOptional<ICuriosItemHandler> lazyOptional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
             lazyOptional.ifPresent(handler -> {
+                NonNullList<ItemStack> chargeList = NonNullList.create();
+                chargeList.add(ItemStack.EMPTY);
+
                 for (ICurioStacksHandler itemHandler : handler.getCurios().values()) {
-                    if (charger.getAvailableEnergy() <= 0) break;
+                    if (charger.getAvailableEnergy() <= 0) break; // Early exit if we are out of energy this tick
+
+                    IDynamicStackHandler stacks = itemHandler.getStacks();
                     for (int i = 0; i < itemHandler.getSlots(); i++) {
-                        if (charger.getAvailableEnergy() <= 0) break;
-                        IDynamicStackHandler stacks = itemHandler.getStacks();
-                        ItemStack stack = stacks.getStackInSlot(i);
-                        if (!stack.isEmpty()) {
-                            stack = stack.copy();
-                            if (charger.chargeItems(NonNullList.from(ItemStack.EMPTY, stack))) {
-                                stacks.setStackInSlot(i, stack);
-                                result.set(true);
+                        if (charger.getAvailableEnergy() <= 0) break; // Early exit if we are out of energy this tick
+
+                        ItemStack stack = stacks.extractItem(i, 2, true); // Test extract to make sure only one item
+                        if (!stack.isEmpty() && stack.getCount() == 1) {
+                            stack = stacks.extractItem(i, 1, false);
+                            chargeList.set(0, stack);
+
+                            if (charger.chargeItems(chargeList)) {
+                                result.set(true); // Successful charge of an item
                             }
+                            stacks.insertItem(i, stack, false);
                         }
                     }
                 }
