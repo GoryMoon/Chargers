@@ -55,21 +55,12 @@ jobs:
           package-dir: '.github/package.json'
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ncipollo/release-action@v1.8.10
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          artifacts: "./libs/*.jar"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Release ${{ github.ref }}
           body: |
             ${{ steps.changelog.outputs.changelog }}
           draft: false
           prerelease: false
-      - name: Upload Release Assets
-        id: upload-release-assets
-        uses: alexellis/upload-assets@0.2.3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          asset_paths: '["./libs/*"]'
-          asset_content_type: application/zip
