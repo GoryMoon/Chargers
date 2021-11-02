@@ -1,11 +1,10 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
+        maven { url = 'https://maven.minecraftforge.net' }
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
 
@@ -121,7 +120,7 @@ repositories {
         url "https://maven.theillusivec4.top/"
     }
     maven { // Registrate / TOP
-        url "http://maven.tterrag.com/"
+        url "https://maven.tterrag.com/"
     }
     maven { // Immersive Engineering
         url "https://modmaven.dev/"
@@ -146,7 +145,7 @@ dependencies {
     shade registrate
 
     runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
-    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.0-135")
+    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.5-140")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -195,7 +194,7 @@ jar {
 }
 
 // Jar Signing
-import net.minecraftforge.gradle.common.task.SignJar
+import net.minecraftforge.gradle.common.tasks.SignJar
 task signJar(type: SignJar, dependsOn: shadowJar) {
 
     onlyIf {
