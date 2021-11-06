@@ -54,17 +54,23 @@ public class Curios {
         if (isLoaded()) {
             LazyOptional<ICuriosItemHandler> lazyOptional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
             lazyOptional.ifPresent(handler -> {
+                NonNullList<ItemStack> chargeList = NonNullList.create();
+                chargeList.add(ItemStack.EMPTY);
+
                 for (ICurioStacksHandler itemHandler : handler.getCurios().values()) {
-                    if (charger.getAvailableEnergy() <= 0) break;
+                    if (charger.getAvailableEnergy() <= 0) break; // Early exit if we are out of energy this tick
+
+                    IDynamicStackHandler stacks = itemHandler.getStacks();
                     for (int i = 0; i < itemHandler.getSlots(); i++) {
-                        if (charger.getAvailableEnergy() <= 0) break;
-                        IDynamicStackHandler stacks = itemHandler.getStacks();
+                        if (charger.getAvailableEnergy() <= 0) break; // Early exit if we are out of energy this tick
+
                         ItemStack stack = stacks.getStackInSlot(i);
-                        if (!stack.isEmpty()) {
-                            stack = stack.copy();
-                            if (charger.chargeItems(NonNullList.from(ItemStack.EMPTY, stack))) {
+                        if (!stack.isEmpty() && stack.getCount() == 1) {
+                            chargeList.set(0, stack = stack.copy());
+
+                            if (charger.chargeItems(chargeList)) {
                                 stacks.setStackInSlot(i, stack);
-                                result.set(true);
+                                result.set(true); // Successful charge of an item
                             }
                         }
                     }
