@@ -48,7 +48,7 @@ jobs:
           path: ./libs
       - name: Create Release
         id: create_release
-        uses: ncipollo/release-action@v1.9
+        uses: ncipollo/release-action@v1.9.0
         with:
           artifacts: "./libs/*.jar"
           token: ${{ secrets.GITHUB_TOKEN }}
