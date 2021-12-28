@@ -46,21 +46,13 @@ jobs:
         with:
           name: artifacts
           path: ./libs
-      - name: generate-changelog-action
-        uses: ScottBrenner/generate-changelog-action@master
-        id: changelog
-        env:
-          REPO: ${{ github.repository }}
-        with:
-          package-dir: '.github/package.json'
       - name: Create Release
         id: create_release
-        uses: ncipollo/release-action@v1.8.10
+        uses: ncipollo/release-action@v1.9
         with:
           artifacts: "./libs/*.jar"
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: Release ${{ github.ref }}
-          body: |
-            ${{ steps.changelog.outputs.changelog }}
+          name: Release ${{ github.ref_name }}
+          generateReleaseNotes: true
           draft: false
           prerelease: false
