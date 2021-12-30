@@ -27,8 +27,8 @@ public abstract class EnergyBlock extends Block {
     }
 
     @Override
-    public void harvestBlock(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
-        if (!world.isRemote && !world.restoringBlockSnapshots) {
+    public void playerDestroy(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
+        if (!world.isClientSide && !world.restoringBlockSnapshots) {
             ItemStack drop = new ItemStack(this, 1);
 
             if (te instanceof EnergyHolderTileEntity) {
@@ -36,14 +36,14 @@ public abstract class EnergyBlock extends Block {
                 CustomItemEnergyStorage.getOrCreateTag(drop).putInt("Energy", energyBlock.getStorage().getEnergyStored());
             }
 
-            spawnAsEntity(world, pos, drop);
+            popResource(world, pos, drop);
         }
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if ((stack.getItem() instanceof WirelessChargerBlockItem || stack.getItem() instanceof ChargerBlockItem) && stack.getCapability(CapabilityEnergy.ENERGY).isPresent()) {
-            TileEntity tileentity = world.getTileEntity(pos);
+            TileEntity tileentity = world.getBlockEntity(pos);
             LazyOptional<IEnergyStorage> capability = stack.getCapability(CapabilityEnergy.ENERGY);
 
             if (tileentity instanceof EnergyHolderTileEntity) {

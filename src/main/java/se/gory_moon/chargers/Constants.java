@@ -22,6 +22,4 @@ public class Constants {
     public static final String WIRELESS_CHARGER_BLOCK = "wireless_charger";
     public static final String WIRELESS_CHARGER_NAME = "Wireless Charger";
     public static final String WIRELESS_CHARGER_TILE = WIRELESS_CHARGER_BLOCK;
-
-    public static final String FINGERPRINT = "@FINGERPRINT@";
 }

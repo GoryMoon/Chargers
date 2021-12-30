@@ -27,13 +27,13 @@ public class WirelessHandler {
     private final Object2ObjectMap<ResourceLocation, ObjectSet<BlockPos>> dimensionChargers = new Object2ObjectOpenHashMap<>();
 
     public void register(WirelessChargerTileEntity charger) {
-        ObjectSet<BlockPos> chargers = getDimensionChargers(charger.getWorld());
-        chargers.add(charger.getPos().toImmutable());
+        ObjectSet<BlockPos> chargers = getDimensionChargers(charger.getLevel());
+        chargers.add(charger.getBlockPos().immutable());
     }
 
     public void unRegister(WirelessChargerTileEntity charger) {
-        ObjectSet<BlockPos> chargers = getDimensionChargers(charger.getWorld());
-        chargers.remove(charger.getPos().toImmutable());
+        ObjectSet<BlockPos> chargers = getDimensionChargers(charger.getLevel());
+        chargers.remove(charger.getBlockPos().immutable());
     }
 
     @SubscribeEvent
@@ -45,15 +45,15 @@ public class WirelessHandler {
     }
 
     public void chargeItems(PlayerEntity player) {
-        ObjectSet<BlockPos> chargers = getDimensionChargers(player.world);
+        ObjectSet<BlockPos> chargers = getDimensionChargers(player.level);
         if (chargers.isEmpty()) return;
 
-        BlockPos playerPos = player.getPosition();
+        BlockPos playerPos = player.blockPosition();
         for (Iterator<BlockPos> iterator = chargers.iterator(); iterator.hasNext();) {
             BlockPos pos = iterator.next();
-            WirelessChargerTileEntity charger = getCharger(player.world, pos);
+            WirelessChargerTileEntity charger = getCharger(player.level, pos);
             if (charger != null) {
-                if (charger.canCharge() && inRange(charger.getPos(), playerPos)) {
+                if (charger.canCharge() && inRange(charger.getBlockPos(), playerPos)) {
                     if (chargeItems(player, charger))
                         return;
                 }
@@ -64,8 +64,8 @@ public class WirelessHandler {
     }
 
     private WirelessChargerTileEntity getCharger(IWorld world, BlockPos pos) {
-        if (world.isBlockLoaded(pos)) {
-            TileEntity te = world.getTileEntity(pos);
+        if (world.hasChunkAt(pos)) {
+            TileEntity te = world.getBlockEntity(pos);
             if (te instanceof WirelessChargerTileEntity)
                 return (WirelessChargerTileEntity) te;
         }
@@ -74,12 +74,12 @@ public class WirelessHandler {
 
     private boolean chargeItems(PlayerEntity player, WirelessChargerTileEntity charger) {
         charger.updateAvailable();
-        boolean result = charger.chargeItems(player.inventory.armorInventory);
-        result |= charger.chargeItems(player.inventory.mainInventory);
-        result |= charger.chargeItems(player.inventory.offHandInventory);
+        boolean result = charger.chargeItems(player.inventory.armor);
+        result |= charger.chargeItems(player.inventory.items);
+        result |= charger.chargeItems(player.inventory.offhand);
         result |= Curios.INSTANCE.chargeItems(player, charger);
         if (result)
-            player.container.detectAndSendChanges();
+            player.inventoryMenu.broadcastChanges();
         return result;
     }
 
@@ -94,6 +94,6 @@ public class WirelessHandler {
     }
 
     private ObjectSet<BlockPos> getDimensionChargers(World world) {
-        return dimensionChargers.computeIfAbsent(world.getDimensionKey().getLocation(), location -> new ObjectOpenHashSet<>());
+        return dimensionChargers.computeIfAbsent(world.dimension().location(), location -> new ObjectOpenHashSet<>());
     }
 }

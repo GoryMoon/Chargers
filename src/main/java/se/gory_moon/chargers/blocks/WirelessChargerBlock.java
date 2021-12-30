@@ -24,7 +24,6 @@ import se.gory_moon.chargers.tile.TileRegistry;
 import se.gory_moon.chargers.tile.WirelessChargerTileEntity;
 
 import javax.annotation.Nullable;
-import java.text.NumberFormat;
 import java.util.List;
 
 public class WirelessChargerBlock extends EnergyBlock {
@@ -33,35 +32,34 @@ public class WirelessChargerBlock extends EnergyBlock {
 
     public WirelessChargerBlock(Block.Properties properties) {
         super(properties);
-        setDefaultState(getStateContainer().getBaseState().with(POWERED, false));
+        registerDefaultState(getStateDefinition().any().setValue(POWERED, false));
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        if (world.isRemote)
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        if (world.isClientSide)
             return ActionResultType.SUCCESS;
 
-        TileEntity tileEntity = world.getTileEntity(pos);
+        TileEntity tileEntity = world.getBlockEntity(pos);
         if (tileEntity instanceof WirelessChargerTileEntity) {
-            if (player.isSneaking())
+            if (player.isShiftKeyDown())
                 return ActionResultType.FAIL;
             WirelessChargerTileEntity tile = (WirelessChargerTileEntity) tileEntity;
             boolean powered = ((WirelessChargerTileEntity) tileEntity).isPowered();
-            ITextComponent status = new TranslationTextComponent((powered ? LangKeys.CHAT_DISABLED.key(): LangKeys.CHAT_ENABLED.key())).setStyle(Style.EMPTY.setFormatting(powered ? TextFormatting.RED: TextFormatting.GREEN));
-            NumberFormat format = NumberFormat.getInstance();
-            player.sendStatusMessage(new TranslationTextComponent(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.clean(format.format(tile.getStorage().getEnergyStored())), Utils.clean(format.format(tile.getStorage().getMaxEnergyStored()))), true);
+            ITextComponent status = new TranslationTextComponent((powered ? LangKeys.CHAT_DISABLED.key(): LangKeys.CHAT_ENABLED.key())).setStyle(Style.EMPTY.withColor(powered ? TextFormatting.RED: TextFormatting.GREEN));
+            player.displayClientMessage(new TranslationTextComponent(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.formatAndClean(tile.getStorage().getEnergyStored()), Utils.formatAndClean(tile.getStorage().getMaxEnergyStored())), true);
         }
 
         return ActionResultType.SUCCESS;
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(POWERED);
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         tooltip.add(new TranslationTextComponent(LangKeys.TOOLTIP_WIRELESS_CHARGER_INFO.key()));
     }
 

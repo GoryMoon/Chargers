@@ -44,7 +44,7 @@ public class ChargerTileEntity extends EnergyHolderTileEntity implements INameab
 
     @Override
     public void tick() {
-        if (getWorld() != null && !getWorld().isRemote) {
+        if (getLevel() != null && !getLevel().isClientSide) {
             ItemStack input = inventoryHandler.getStackInSlot(0);
             ItemStack output = inventoryHandler.getStackInSlot(1);
             if (!input.isEmpty() && input.getCount() == 1 && output.isEmpty() && getStorage().getEnergyStored() > 0) {
@@ -65,18 +65,18 @@ public class ChargerTileEntity extends EnergyHolderTileEntity implements INameab
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT compound) {
+    public void load(BlockState state, CompoundNBT compound) {
         inventoryHandler.deserializeNBT(compound.getCompound("Inventory"));
         setTier(ChargerBlock.Tier.byID(compound.getInt("Tier")));
         if (compound.contains("CustomName", 8)) {
-            this.customName = ITextComponent.Serializer.getComponentFromJson(compound.getString("CustomName"));
+            this.customName = ITextComponent.Serializer.fromJson(compound.getString("CustomName"));
         }
-        super.read(state, compound);
+        super.load(state, compound);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        compound = super.write(compound);
+    public CompoundNBT save(CompoundNBT compound) {
+        compound = super.save(compound);
         compound.put("Inventory", inventoryHandler.serializeNBT());
         compound.putInt("Tier", tier.getId());
         if (this.customName != null) {
@@ -135,6 +135,6 @@ public class ChargerTileEntity extends EnergyHolderTileEntity implements INameab
     @Nullable
     @Override
     public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new ContainerCharger(TileRegistry.CHARGER_CONTAINER.get(), windowId, playerInventory, inventoryHandler, energyData, IWorldPosCallable.of(getWorld(), getPos()));
+        return new ContainerCharger(TileRegistry.CHARGER_CONTAINER.get(), windowId, playerInventory, inventoryHandler, energyData, IWorldPosCallable.create(getLevel(), getBlockPos()));
     }
 }

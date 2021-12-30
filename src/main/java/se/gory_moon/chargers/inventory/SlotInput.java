@@ -18,13 +18,13 @@ public class SlotInput extends SlotItemHandler {
     }
 
     @Override
-    public boolean canTakeStack(PlayerEntity playerIn) {
+    public boolean mayPickup(PlayerEntity playerIn) {
         return !((CustomItemStackHandler)getItemHandler()).extractItemInternal(index, 1, true).isEmpty();
     }
 
     @Nonnull
     @Override
-    public ItemStack decrStackSize(int amount) {
+    public ItemStack remove(int amount) {
         return ((CustomItemStackHandler)getItemHandler()).extractItemInternal(index, amount, false);
     }
 }

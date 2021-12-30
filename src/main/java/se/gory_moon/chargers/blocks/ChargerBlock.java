@@ -26,46 +26,46 @@ public class ChargerBlock extends EnergyBlock {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        if (world.isRemote)
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        if (world.isClientSide)
             return ActionResultType.SUCCESS;
 
-        TileEntity tileEntity = world.getTileEntity(pos);
+        TileEntity tileEntity = world.getBlockEntity(pos);
         if (tileEntity instanceof ChargerTileEntity) {
-            if (player.isSneaking())
+            if (player.isShiftKeyDown())
                 return ActionResultType.FAIL;
 
-            player.openContainer((ChargerTileEntity) tileEntity);
+            player.openMenu((ChargerTileEntity) tileEntity);
         }
 
         return ActionResultType.SUCCESS;
     }
 
     @Override
-    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!world.isRemote) {
-            TileEntity aTile = world.getTileEntity(pos);
+    public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!world.isClientSide) {
+            TileEntity aTile = world.getBlockEntity(pos);
             if (aTile instanceof ChargerTileEntity) {
                 ChargerTileEntity tile = (ChargerTileEntity)aTile;
                 for(int i = 0; i < tile.inventoryHandler.getSlots(); ++i) {
                     ItemStack stack = tile.inventoryHandler.getStackInSlot(i);
                     if (!stack.isEmpty())
-                        InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+                        InventoryHelper.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
                 }
             }
         }
-        super.onReplaced(state, world, pos, newState, isMoving);
+        super.onRemove(state, world, pos, newState, isMoving);
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        if (stack.hasDisplayName()) {
-            TileEntity tileentity = world.getTileEntity(pos);
+    public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        if (stack.hasCustomHoverName()) {
+            TileEntity tileentity = world.getBlockEntity(pos);
             if (tileentity instanceof ChargerTileEntity) {
-                ((ChargerTileEntity)tileentity).setCustomName(stack.getDisplayName());
+                ((ChargerTileEntity)tileentity).setCustomName(stack.getHoverName());
             }
         }
-        super.onBlockPlacedBy(world, pos, state, placer, stack);
+        super.setPlacedBy(world, pos, state, placer, stack);
     }
 
     @Override
