@@ -2,7 +2,7 @@ package se.gory_moon.chargers;
 
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.providers.ProviderType;
-import com.tterrag.registrate.util.NonNullLazyValue;
+import net.minecraft.util.LazyValue;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -19,7 +19,7 @@ import se.gory_moon.chargers.tile.TileRegistry;
 @Mod(Constants.MOD_ID)
 public class ChargersMod {
 
-    public static final NonNullLazyValue<Registrate> REGISTRATE = new NonNullLazyValue<>(() -> Registrate.create(Constants.MOD_ID));
+    public static final LazyValue<Registrate> REGISTRATE = new LazyValue<>(() -> Registrate.create(Constants.MOD_ID));
     public static final Logger LOGGER = LogManager.getLogger();
 
     public ChargersMod() {
@@ -58,5 +58,4 @@ public class ChargersMod {
             prov.add(LangKeys.GUI_IO.key(), "I/O: %s FE/t");
         });
     }
-
 }

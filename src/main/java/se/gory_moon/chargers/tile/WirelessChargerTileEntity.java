@@ -29,43 +29,43 @@ public class WirelessChargerTileEntity extends EnergyHolderTileEntity {
     }
 
     @Override
-    public void remove() {
-        super.remove();
+    public void setRemoved() {
+        super.setRemoved();
         WirelessHandler.INSTANCE.unRegister(this);
         registered = false;
     }
 
     @Override
-    public void markDirty() {
-        final BlockState state = getWorld().getBlockState(getPos());
-        getWorld().notifyBlockUpdate(getPos(), state, state, 2);
-        super.markDirty();
+    public void setChanged() {
+        final BlockState state = getLevel().getBlockState(getBlockPos());
+        getLevel().sendBlockUpdated(getBlockPos(), state, state, 2);
+        super.setChanged();
     }
 
     @Override
     public void tick() {
-        World world = getWorld();
+        World world = getLevel();
         if (world == null)
             return;
 
-        if (!world.isRemote && !registered) {
+        if (!world.isClientSide && !registered) {
             WirelessHandler.INSTANCE.register(this);
             registered = true;
         }
-        if (!world.isRemote) {
-            Boolean powered = getBlockState().get(WirelessChargerBlock.POWERED);
+        if (!world.isClientSide) {
+            Boolean powered = getBlockState().getValue(WirelessChargerBlock.POWERED);
             if (canCharge() != powered) {
-                getWorld().setBlockState(getPos(), getBlockState().with(WirelessChargerBlock.POWERED, canCharge()));
+                getLevel().setBlockAndUpdate(getBlockPos(), getBlockState().setValue(WirelessChargerBlock.POWERED, canCharge()));
             }
         }
 
         super.tick();
         if (lastPowered == -1 || (lastPowered == 0 && getStorage().getEnergyStored() > 0) || (lastPowered > 0 && getStorage().getEnergyStored() == 0)) {
-           if (!world.isRemote) {
-               PacketDistributor.TRACKING_CHUNK.with(() -> getWorld().getChunkAt(getPos())).send(getUpdatePacket());
+           if (!world.isClientSide) {
+               PacketDistributor.TRACKING_CHUNK.with(() -> getLevel().getChunkAt(getBlockPos())).send(getUpdatePacket());
            }
             lastPowered = getStorage().getEnergyStored();
-            markDirty();
+            setChanged();
         }
     }
 
@@ -98,7 +98,7 @@ public class WirelessChargerTileEntity extends EnergyHolderTileEntity {
     }
 
     public boolean isPowered() {
-        return world.isBlockLoaded(getPos()) && world.getRedstonePowerFromNeighbors(getPos()) > 0;
+        return level.hasChunkAt(getBlockPos()) && level.getBestNeighborSignal(getBlockPos()) > 0;
     }
 
     public int getAvailableEnergy() {

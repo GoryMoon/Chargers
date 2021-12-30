@@ -13,7 +13,6 @@ import se.gory_moon.chargers.LangKeys;
 import se.gory_moon.chargers.Utils;
 import se.gory_moon.chargers.inventory.ContainerCharger;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +24,11 @@ public class ChargerScreen extends ContainerScreen<ContainerCharger> {
 
     public ChargerScreen(ContainerCharger container, PlayerInventory playerInventory, ITextComponent title) {
         super(container, playerInventory, title);
-        ySize = 172;
+        imageHeight = 172;
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
         this.renderBackground(matrixStack);
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -37,13 +36,13 @@ public class ChargerScreen extends ContainerScreen<ContainerCharger> {
         /*if (curios) {
             minecraft.getTextureManager().bindTexture(CHARGER_BAUBLES_GUI_TEXTURE);
         } else {*/
-            minecraft.getTextureManager().bindTexture(CHARGER_GUI_TEXTURE);
+            minecraft.getTextureManager().bind(CHARGER_GUI_TEXTURE);
         //}
-        blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
+        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
-        if (container.hasEnergy()) {
-            int progress = container.getEnergyScaled(70);
-            blit(matrixStack, guiLeft + 48/* - (curios ? 9: 0)*/, guiTop + 78 + 6 - progress, 0, 236 + 6 - progress, 16, progress);
+        if (menu.hasEnergy()) {
+            int progress = menu.getEnergyScaled(70);
+            blit(matrixStack, leftPos + 48/* - (curios ? 9: 0)*/, topPos + 78 + 6 - progress, 0, 236 + 6 - progress, 16, progress);
         }
 
         /*if (curios) {
@@ -62,27 +61,26 @@ public class ChargerScreen extends ContainerScreen<ContainerCharger> {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int mouseX, int mouseY) {
-        this.font.func_238422_b_(matrixStack, title.func_241878_f(), xSize / 2f - this.font.getStringPropertyWidth(title) / 2f, 4.0F, 4210752);
+    protected void renderLabels(MatrixStack matrixStack, int mouseX, int mouseY) {
+        this.font.draw(matrixStack, title.getVisualOrderText(), imageWidth / 2f - this.font.width(title) / 2f, 4.0F, 4210752);
     }
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
-        renderHoveredTooltip(matrixStack, mouseX, mouseY);
+        renderTooltip(matrixStack, mouseX, mouseY);
         //boolean curios = Curios.isLoaded();
 
-        if (mouseX >= guiLeft + 48/* - (curios ? 9: 0)*/ && mouseX <= guiLeft + 48 + 16/* - (curios ? 9: 0) */&& mouseY >= guiTop + 8 && mouseY <= guiTop + 78) {
-            NumberFormat format = NumberFormat.getInstance();
+        if (mouseX >= leftPos + 48/* - (curios ? 9: 0)*/ && mouseX <= leftPos + 48 + 16/* - (curios ? 9: 0) */&& mouseY >= topPos + 8 && mouseY <= topPos + 78) {
             List<ITextComponent> list = new ArrayList<>();
-            list.add(new TranslationTextComponent(LangKeys.GUI_ENERGY.key(), Utils.clean(format.format(container.getEnergy())), Utils.clean(format.format(container.getEnergyMax())) + TextFormatting.GRAY));
-            list.add(new TranslationTextComponent(LangKeys.GUI_MAX_IN.key(), Utils.clean(format.format(container.getMaxIn())) + TextFormatting.GRAY));
-            list.add(new TranslationTextComponent(LangKeys.GUI_MAX_OUT.key(), Utils.clean(format.format(container.getMaxOut())) + TextFormatting.GRAY));
-            if (container.getEnergyDiff() != 0) {
-                list.add(new TranslationTextComponent(LangKeys.GUI_IO.key(), (container.getEnergyDiff() > 0 ? TextFormatting.GREEN + "+": TextFormatting.RED.toString()) + Utils.clean(format.format(container.getEnergyDiff())) + TextFormatting.GRAY));
+            list.add(new TranslationTextComponent(LangKeys.GUI_ENERGY.key(), Utils.formatAndClean(menu.getEnergy()), Utils.formatAndClean(menu.getEnergyMax()) + TextFormatting.GRAY));
+            list.add(new TranslationTextComponent(LangKeys.GUI_MAX_IN.key(), Utils.formatAndClean(menu.getMaxIn()) + TextFormatting.GRAY));
+            list.add(new TranslationTextComponent(LangKeys.GUI_MAX_OUT.key(), Utils.formatAndClean(menu.getMaxOut()) + TextFormatting.GRAY));
+            if (menu.getEnergyDiff() != 0) {
+                list.add(new TranslationTextComponent(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? TextFormatting.GREEN + "+": TextFormatting.RED.toString()) + Utils.formatAndClean(menu.getEnergyDiff()) + TextFormatting.GRAY));
             }
-            func_243308_b(matrixStack, list, mouseX, mouseY);
+            renderComponentTooltip(matrixStack, list, mouseX, mouseY);
         }
-        renderHoveredTooltip(matrixStack, mouseX, mouseY);
+        renderTooltip(matrixStack, mouseX, mouseY);
     }
 }

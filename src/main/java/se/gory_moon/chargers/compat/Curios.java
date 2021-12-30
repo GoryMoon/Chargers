@@ -43,7 +43,7 @@ public class Curios {
         }*/
         return new SlotItemHandler(itemHandler, slot, x, y) {
             @Override
-            public int getSlotStackLimit() {
+            public int getMaxStackSize() {
                 return 1;
             }
         };

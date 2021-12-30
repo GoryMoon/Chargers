@@ -32,8 +32,8 @@ public class WindowPropPacket {
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.player.openContainer != null && mc.player.openContainer.windowId == windowId) {
-                mc.player.openContainer.updateProgressBar(property, value);
+            if (mc.player != null && mc.player.containerMenu != null && mc.player.containerMenu.containerId == windowId) {
+                mc.player.containerMenu.setData(property, value);
             }
         });
         ctx.get().setPacketHandled(true);

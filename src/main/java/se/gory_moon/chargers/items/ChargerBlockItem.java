@@ -18,7 +18,6 @@ import se.gory_moon.chargers.blocks.ChargerBlock.Tier;
 import se.gory_moon.chargers.power.CustomItemEnergyStorage;
 
 import javax.annotation.Nullable;
-import java.text.NumberFormat;
 import java.util.List;
 
 import static se.gory_moon.chargers.items.ItemRegistry.CHARGER_T1_ITEM;
@@ -38,20 +37,19 @@ public class ChargerBlockItem extends BlockItem {
     }
 
     @Override
-    public void onCreated(ItemStack stack, World worldIn, PlayerEntity playerIn) {
+    public void onCraftedBy(ItemStack stack, World worldIn, PlayerEntity playerIn) {
         stack.getCapability(CapabilityEnergy.ENERGY, null).ifPresent(energyStorage -> energyStorage.receiveEnergy(0, false));
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         addEnergyTooltip(stack, tooltip);
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
     }
 
     public static void addEnergyTooltip(ItemStack stack, List<ITextComponent> tooltip) {
         stack.getCapability(CapabilityEnergy.ENERGY, null).ifPresent(energyStorage -> {
-            NumberFormat format = NumberFormat.getInstance();
-            tooltip.add(new TranslationTextComponent(LangKeys.CHAT_STORED_INFO.key(), Utils.clean(format.format(energyStorage.getEnergyStored())), Utils.clean(format.format(energyStorage.getMaxEnergyStored()))));
+            tooltip.add(new TranslationTextComponent(LangKeys.CHAT_STORED_INFO.key(), Utils.formatAndClean(energyStorage.getEnergyStored()), Utils.formatAndClean(energyStorage.getMaxEnergyStored())));
         });
     }
 

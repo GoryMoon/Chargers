@@ -43,7 +43,7 @@ public abstract class EnergyHolderTileEntity extends TileEntity implements ITick
 
         public void set(int index, int value) {}
 
-        public int size() {
+        public int getCount() {
             return 6;
         }
     };
@@ -68,31 +68,31 @@ public abstract class EnergyHolderTileEntity extends TileEntity implements ITick
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT compound) {
-        super.read(state, compound);
+    public void load(BlockState state, CompoundNBT compound) {
+        super.load(state, compound);
         storage.readFromNBT(compound.getCompound("Storage"));
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
-        super.write(compound).put("Storage", storage.writeToNBT(new CompoundNBT()));
+    public CompoundNBT save(CompoundNBT compound) {
+        super.save(compound).put("Storage", storage.writeToNBT(new CompoundNBT()));
         return compound;
     }
 
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.pos, -1, getUpdateTag());
+        return new SUpdateTileEntityPacket(this.worldPosition, -1, getUpdateTag());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        handleUpdateTag(getBlockState(), pkt.getNbtCompound());
+        handleUpdateTag(getBlockState(), pkt.getTag());
     }
 
     @Override
     public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
 

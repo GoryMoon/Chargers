@@ -9,18 +9,12 @@ buildscript {
 }
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-
-apply from: 'https://raw.githubusercontent.com/MinecraftModDevelopment/Gradle-Collection/master/generic/secrets.gradle'
-
-if (project.hasProperty('secretFile')) {
-    loadSecrets(new File((String) findProperty('secretFile')))
-}
 
 version = mod_version
 group = "se.gory_moon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -110,8 +104,7 @@ shadowJar {
     classifier = ''
 }
 
-build.dependsOn shadowJar
-
+jar.finalizedBy('signJar', 'shadowJar')
 shadowJar.finalizedBy('reobfJar')
 
 repositories {
@@ -145,7 +138,7 @@ dependencies {
     shade registrate
 
     runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
-    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.5-140")
+    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.7-143")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -216,5 +209,3 @@ task signJar(type: SignJar, dependsOn: shadowJar) {
         project.logger.warn('Could not sign ' + jar.archivePath.getName() + '. No keyStore property could be found')
     }
 }
-
-build.dependsOn signJar

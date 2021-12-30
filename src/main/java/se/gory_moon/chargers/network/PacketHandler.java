@@ -31,7 +31,7 @@ public class PacketHandler {
     public static void sendToListeningPlayers(List<IContainerListener> listeners, IPacket<?> packet) {
         for (IContainerListener containerListener : listeners) {
             if (containerListener instanceof ServerPlayerEntity) {
-                ((ServerPlayerEntity) containerListener).connection.sendPacket(packet);
+                ((ServerPlayerEntity) containerListener).connection.send(packet);
             }
         }
     }

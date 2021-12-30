@@ -41,7 +41,7 @@ public class ContainerCharger extends Container {
     private final List<IntReferenceHolder> customTracked = Lists.newArrayList();
 
     public ContainerCharger(ContainerType<ContainerCharger> containerType, int windowId, PlayerInventory inventory) {
-        this(containerType, windowId, inventory, new CustomItemStackHandler(2), new IntArray(6), IWorldPosCallable.DUMMY);
+        this(containerType, windowId, inventory, new CustomItemStackHandler(2), new IntArray(6), IWorldPosCallable.NULL);
     }
     public ContainerCharger(ContainerType<ContainerCharger> container, int windowId, PlayerInventory playerInventory, CustomItemStackHandler itemHandler, IIntArray energyData, IWorldPosCallable pos) {
         super(container, windowId);
@@ -68,30 +68,30 @@ public class ContainerCharger extends Container {
             final EquipmentSlotType slot = EQUIPMENT_SLOTS[i];
             addSlot(new Slot(playerInventory, 36 + (3 - i), 92 - baublesOffset, 8 + 6 + i * 18) {
                 @Override
-                public int getSlotStackLimit() {
+                public int getMaxStackSize() {
                     return 1;
                 }
 
                 @Override
-                public boolean isItemValid(ItemStack stack) {
+                public boolean mayPlace(ItemStack stack) {
                     return stack.canEquip(slot, player);
                 }
 
-                public boolean canTakeStack(PlayerEntity player) {
-                    ItemStack itemstack = this.getStack();
-                    return (itemstack.isEmpty() || player.isCreative() || !EnchantmentHelper.hasBindingCurse(itemstack)) && super.canTakeStack(player);
+                public boolean mayPickup(PlayerEntity player) {
+                    ItemStack itemstack = this.getItem();
+                    return (itemstack.isEmpty() || player.isCreative() || !EnchantmentHelper.hasBindingCurse(itemstack)) && super.mayPickup(player);
                 }
 
                 @OnlyIn(Dist.CLIENT)
-                public Pair<ResourceLocation, ResourceLocation> getBackground() {
-                    return Pair.of(PlayerContainer.LOCATION_BLOCKS_TEXTURE, ARMOR_SLOT_TEXTURES[slot.getIndex()]);
+                public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+                    return Pair.of(PlayerContainer.BLOCK_ATLAS, ARMOR_SLOT_TEXTURES[slot.getIndex()]);
                 }
             });
         }
         addSlot(new Slot(playerInventory, 40, 112 + baublesOffset, 62 + 6) {
             @OnlyIn(Dist.CLIENT)
-            public Pair<ResourceLocation, ResourceLocation> getBackground() {
-                return Pair.of(PlayerContainer.LOCATION_BLOCKS_TEXTURE, PlayerContainer.EMPTY_ARMOR_SLOT_SHIELD);
+            public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
+                return Pair.of(PlayerContainer.BLOCK_ATLAS, PlayerContainer.EMPTY_ARMOR_SLOT_SHIELD);
             }
         });
 
@@ -100,32 +100,32 @@ public class ContainerCharger extends Container {
                 addSlot(Curios.getSlot(player, curios, i, 103 + (i / 4) * 18, 8 + (i % 4) * 18));
             }
         }
-        for(i = 0; i < energyData.size(); ++i) {
-            customTracked.add(IntReferenceHolder.create(energyData, i));
+        for(i = 0; i < energyData.getCount(); ++i) {
+            customTracked.add(IntReferenceHolder.forContainer(energyData, i));
         }
     }
 
     @Override
-    public void detectAndSendChanges() {
+    public void broadcastChanges() {
         for(int j = 0; j < customTracked.size(); ++j) {
             IntReferenceHolder intreferenceholder = customTracked.get(j);
-            if (intreferenceholder.isDirty()) {
-                PacketHandler.sendToListeningPlayers(listeners, PacketHandler.INSTANCE.toVanillaPacket(new WindowPropPacket(this.windowId, j, intreferenceholder.get()), NetworkDirection.PLAY_TO_CLIENT));
+            if (intreferenceholder.checkAndClearUpdateFlag()) {
+                PacketHandler.sendToListeningPlayers(containerListeners, PacketHandler.INSTANCE.toVanillaPacket(new WindowPropPacket(this.containerId, j, intreferenceholder.get()), NetworkDirection.PLAY_TO_CLIENT));
             }
         }
 
-        super.detectAndSendChanges();
+        super.broadcastChanges();
     }
 
     @Override
-    public void updateProgressBar(int id, int data) {
+    public void setData(int id, int data) {
         customTracked.get(id).set(data);
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity player, int index) {
+    public ItemStack quickMoveStack(PlayerEntity player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = inventorySlots.get(index);
+        Slot slot = slots.get(index);
 
         int inventoryStart = 2;
         int inventoryEnd = inventoryStart + 26;
@@ -137,32 +137,32 @@ public class ContainerCharger extends Container {
         int curiosStart = offhand + 1;
         int curiosEnd = curiosStart + 6;
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack stack = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack stack = slot.getItem();
             itemstack = stack.copy();
 
             if (index == 1 || index == 0) {
                 /*if (Curios.isLoaded() && (!mergeItemStack(stack, curiosStart, curiosEnd, false) && !mergeItemStack(stack, inventoryStart, armorEnd + 1, true)))
                     return ItemStack.EMPTY;
                 else */
-                if (/*!Curios.isLoaded() && */!mergeItemStack(stack, inventoryStart, armorEnd + 1, true))
+                if (/*!Curios.isLoaded() && */!moveItemStackTo(stack, inventoryStart, armorEnd + 1, true))
                     return ItemStack.EMPTY;
-                slot.onSlotChange(stack, itemstack);
+                slot.onQuickCraft(stack, itemstack);
             } else {
                 if (!itemHandler.isItemValid(0, stack)) {
                     if (index <= inventoryEnd) {
-                        if (!mergeItemStack(stack, hotbarStart, hotbarEnd + 1, false))
+                        if (!moveItemStackTo(stack, hotbarStart, hotbarEnd + 1, false))
                             return ItemStack.EMPTY;
-                    } else if (index < hotbarEnd + 1 && !mergeItemStack(stack, inventoryStart, inventoryEnd + 1, false))
+                    } else if (index < hotbarEnd + 1 && !moveItemStackTo(stack, inventoryStart, inventoryEnd + 1, false))
                         return ItemStack.EMPTY;
-                } else if (!mergeItemStack(stack, 0, 1, false))
+                } else if (!moveItemStackTo(stack, 0, 1, false))
                     return ItemStack.EMPTY;
             }
 
             if (stack.getCount() == 0)
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             else
-                slot.onSlotChanged();
+                slot.setChanged();
 
             if (stack.getCount() == itemstack.getCount())
                 return ItemStack.EMPTY;
@@ -173,8 +173,8 @@ public class ContainerCharger extends Container {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity player) {
-        return isWithinUsableDistance(pos, player, BlockRegistry.CHARGER_BLOCK_T1.get()) || isWithinUsableDistance(pos, player, BlockRegistry.CHARGER_BLOCK_T2.get()) || isWithinUsableDistance(pos, player, BlockRegistry.CHARGER_BLOCK_T3.get());
+    public boolean stillValid(PlayerEntity player) {
+        return stillValid(pos, player, BlockRegistry.CHARGER_BLOCK_T1.get()) || stillValid(pos, player, BlockRegistry.CHARGER_BLOCK_T2.get()) || stillValid(pos, player, BlockRegistry.CHARGER_BLOCK_T3.get());
     }
 
     private static final int
