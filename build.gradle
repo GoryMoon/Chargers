@@ -20,7 +20,8 @@ version = mod_version
 group = "se.gory_moon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Chargers-$mc_version"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8
+// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 if (System.getenv().GITHUB_RUN_NUMBER  != null) {//adds the build number to the end of the version string if on a build server
     version += ".${System.getenv().GITHUB_RUN_NUMBER}"
@@ -112,7 +113,10 @@ repositories {
     maven { // curios
         url "https://maven.theillusivec4.top/"
     }
-    maven { // Registrate / TOP
+    maven { // TOP
+        url "https://maven.k-4u.nl"
+    }
+    maven { // Registrate
         url "https://maven.tterrag.com/"
     }
     maven { // Immersive Engineering
@@ -133,12 +137,12 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
-    def registrate = "com.tterrag.registrate:Registrate:MC1.16.5-${registrate_version}"
+    def registrate = "com.tterrag.registrate:Registrate:MC1.18-${registrate_version}"
     implementation fg.deobf(registrate)
     shade registrate
 
-    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
-    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.7-143")
+    //runtimeOnly fg.deobf("mcjty.theoneprobe:theoneprobe:1.18-5.0.1-5")
+    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.0.1-144")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
