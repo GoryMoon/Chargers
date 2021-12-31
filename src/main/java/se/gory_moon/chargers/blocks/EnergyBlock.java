@@ -16,7 +16,7 @@ import se.gory_moon.chargers.items.ChargerBlockItem;
 import se.gory_moon.chargers.items.WirelessChargerBlockItem;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 import se.gory_moon.chargers.power.CustomItemEnergyStorage;
-import se.gory_moon.chargers.tile.EnergyHolderTileEntity;
+import se.gory_moon.chargers.tile.EnergyHolderBlockEntity;
 
 import javax.annotation.Nullable;
 
@@ -31,8 +31,8 @@ public abstract class EnergyBlock extends Block {
         if (!world.isClientSide && !world.restoringBlockSnapshots) {
             ItemStack drop = new ItemStack(this, 1);
 
-            if (te instanceof EnergyHolderTileEntity) {
-                EnergyHolderTileEntity energyBlock = (EnergyHolderTileEntity) te;
+            if (te instanceof EnergyHolderBlockEntity) {
+                EnergyHolderBlockEntity energyBlock = (EnergyHolderBlockEntity) te;
                 CustomItemEnergyStorage.getOrCreateTag(drop).putInt("Energy", energyBlock.getStorage().getEnergyStored());
             }
 
@@ -46,10 +46,10 @@ public abstract class EnergyBlock extends Block {
             TileEntity tileentity = world.getBlockEntity(pos);
             LazyOptional<IEnergyStorage> capability = stack.getCapability(CapabilityEnergy.ENERGY);
 
-            if (tileentity instanceof EnergyHolderTileEntity) {
+            if (tileentity instanceof EnergyHolderBlockEntity) {
                 capability.ifPresent(energyStorage -> {
                     if (energyStorage instanceof CustomEnergyStorage) {
-                        ((EnergyHolderTileEntity) tileentity).getStorage().readFromNBT(((CustomEnergyStorage) energyStorage).writeToNBT(new CompoundNBT()));
+                        ((EnergyHolderBlockEntity) tileentity).getStorage().readFromNBT(((CustomEnergyStorage) energyStorage).writeToNBT(new CompoundNBT()));
                     }
                 });
             }

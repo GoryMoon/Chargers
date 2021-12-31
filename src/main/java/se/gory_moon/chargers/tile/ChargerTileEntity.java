@@ -1,17 +1,16 @@
 package se.gory_moon.chargers.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.INameable;
-import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.Nameable;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -19,20 +18,20 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import se.gory_moon.chargers.LangKeys;
 import se.gory_moon.chargers.blocks.ChargerBlock;
-import se.gory_moon.chargers.inventory.ContainerCharger;
+import se.gory_moon.chargers.inventory.ChargerMenu;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ChargerTileEntity extends EnergyHolderTileEntity implements INameable, INamedContainerProvider {
+public class ChargerTileEntity extends EnergyHolderBlockEntity implements Nameable, MenuProvider {
 
     public CustomItemStackHandler inventoryHandler;
     private final LazyOptional<CustomItemStackHandler> lazyInventory = LazyOptional.of(() -> inventoryHandler);
     private ChargerBlock.Tier tier;
-    private ITextComponent customName;
+    private Component customName;
 
-    public ChargerTileEntity(TileEntityType<ChargerTileEntity> tileEntityType) {
+    public ChargerTileEntity(BlockEntityType<ChargerTileEntity> tileEntityType) {
         super(tileEntityType);
         inventoryHandler = new CustomItemStackHandler(2);
     }
@@ -65,22 +64,22 @@ public class ChargerTileEntity extends EnergyHolderTileEntity implements INameab
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT compound) {
+    public void load(CompoundTag compound) {
         inventoryHandler.deserializeNBT(compound.getCompound("Inventory"));
         setTier(ChargerBlock.Tier.byID(compound.getInt("Tier")));
         if (compound.contains("CustomName", 8)) {
-            this.customName = ITextComponent.Serializer.fromJson(compound.getString("CustomName"));
+            this.customName = Component.Serializer.fromJson(compound.getString("CustomName"));
         }
-        super.load(state, compound);
+        super.load(compound);
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundTag save(CompoundTag compound) {
         compound = super.save(compound);
         compound.put("Inventory", inventoryHandler.serializeNBT());
         compound.putInt("Tier", tier.getId());
         if (this.customName != null) {
-            compound.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
+            compound.putString("CustomName", Component.Serializer.toJson(this.customName));
         }
         return compound;
     }
@@ -93,25 +92,19 @@ public class ChargerTileEntity extends EnergyHolderTileEntity implements INameab
         return super.getCapability(cap);
     }
 
-    public void setCustomName(ITextComponent name) {
+    public void setCustomName(Component name) {
         this.customName = name;
     }
 
     @Override
-    public ITextComponent getName() {
-        ITextComponent name = getCustomName();
+    public Component getName() {
+        Component name = getCustomName();
         if (name == null) {
-            switch (tier) {
-                case I:
-                    name = new TranslationTextComponent(LangKeys.CONTAINER_CHARGER_T1.key());
-                    break;
-                case II:
-                    name = new TranslationTextComponent(LangKeys.CONTAINER_CHARGER_T2.key());
-                    break;
-                case III:
-                    name = new TranslationTextComponent(LangKeys.CONTAINER_CHARGER_T3.key());
-                    break;
-            }
+            name = switch (tier) {
+                case I -> new TranslatableComponent(LangKeys.CONTAINER_CHARGER_T1.key());
+                case II -> new TranslatableComponent(LangKeys.CONTAINER_CHARGER_T2.key());
+                case III -> new TranslatableComponent(LangKeys.CONTAINER_CHARGER_T3.key());
+            };
         }
         return name;
     }
@@ -122,19 +115,19 @@ public class ChargerTileEntity extends EnergyHolderTileEntity implements INameab
     }
 
     @Override
-    public ITextComponent getDisplayName() {
+    public Component getDisplayName() {
         return hasCustomName() ? getCustomName(): getName();
     }
 
     @Nullable
     @Override
-    public ITextComponent getCustomName() {
+    public Component getCustomName() {
         return customName;
     }
 
     @Nullable
     @Override
-    public Container createMenu(int windowId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new ContainerCharger(TileRegistry.CHARGER_CONTAINER.get(), windowId, playerInventory, inventoryHandler, energyData, IWorldPosCallable.create(getLevel(), getBlockPos()));
+    public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player playerEntity) {
+        return new ChargerMenu(TileRegistry.CHARGER_CONTAINER.get(), windowId, playerInventory, inventoryHandler, energyData, ContainerLevelAccess.create(getLevel(), getBlockPos()));
     }
 }

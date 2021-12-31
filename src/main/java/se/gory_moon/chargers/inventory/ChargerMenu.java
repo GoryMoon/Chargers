@@ -2,54 +2,57 @@ package se.gory_moon.chargers.inventory;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIntArray;
-import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.IntArray;
-import net.minecraft.util.IntReferenceHolder;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.network.PacketDistributor;
 import se.gory_moon.chargers.blocks.BlockRegistry;
 import se.gory_moon.chargers.compat.Curios;
 import se.gory_moon.chargers.network.PacketHandler;
 import se.gory_moon.chargers.network.WindowPropPacket;
 import se.gory_moon.chargers.tile.CustomItemStackHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static net.minecraft.inventory.container.PlayerContainer.*;
+import static net.minecraft.world.inventory.InventoryMenu.*;
 
-public class ContainerCharger extends Container {
+
+public class ChargerMenu extends AbstractContainerMenu {
 
     private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{ EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET};
-    private static final EquipmentSlotType[] EQUIPMENT_SLOTS = new EquipmentSlotType[]{ EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
+    private static final EquipmentSlot[] EQUIPMENT_SLOTS = new EquipmentSlot[]{ EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     public final IItemHandler curios;
     private final IItemHandler itemHandler;
-    private final IIntArray energyData;
-    private final IWorldPosCallable pos;
-    private final List<IntReferenceHolder> customTracked = Lists.newArrayList();
+    private final ContainerData energyData;
+    private final ContainerLevelAccess access;
+    private final List<DataSlot> customTracked = Lists.newArrayList();
+    private final List<ServerPlayer> usingPlayers = new ArrayList<>();
 
-    public ContainerCharger(ContainerType<ContainerCharger> containerType, int windowId, PlayerInventory inventory) {
-        this(containerType, windowId, inventory, new CustomItemStackHandler(2), new IntArray(6), IWorldPosCallable.NULL);
+    public ChargerMenu(MenuType<ChargerMenu> containerType, int windowId, Inventory inventory) {
+        this(containerType, windowId, inventory, new CustomItemStackHandler(2), new SimpleContainerData(6), ContainerLevelAccess.NULL);
     }
-    public ContainerCharger(ContainerType<ContainerCharger> container, int windowId, PlayerInventory playerInventory, CustomItemStackHandler itemHandler, IIntArray energyData, IWorldPosCallable pos) {
+    public ChargerMenu(MenuType<ChargerMenu> container, int windowId, Inventory playerInventory, CustomItemStackHandler itemHandler, ContainerData energyData, ContainerLevelAccess pos) {
         super(container, windowId);
         this.itemHandler = itemHandler;
 
         this.energyData = energyData;
-        this.pos = pos;
-        PlayerEntity player = playerInventory.player;
+        this.access = pos;
+        Player player = playerInventory.player;
         curios = Curios.getCurios(player);
 
         int baublesOffset = curios != null ? 9: 0;
@@ -65,7 +68,7 @@ public class ContainerCharger extends Container {
             addSlot(new Slot(playerInventory, i, 8 + i * 18, 142 + 6));
 
         for(i = 0; i < 4; ++i) {
-            final EquipmentSlotType slot = EQUIPMENT_SLOTS[i];
+            final EquipmentSlot slot = EQUIPMENT_SLOTS[i];
             addSlot(new Slot(playerInventory, 36 + (3 - i), 92 - baublesOffset, 8 + 6 + i * 18) {
                 @Override
                 public int getMaxStackSize() {
@@ -77,7 +80,7 @@ public class ContainerCharger extends Container {
                     return stack.canEquip(slot, player);
                 }
 
-                public boolean mayPickup(PlayerEntity player) {
+                public boolean mayPickup(Player player) {
                     ItemStack itemstack = this.getItem();
                     return (itemstack.isEmpty() || player.isCreative() || !EnchantmentHelper.hasBindingCurse(itemstack)) && super.mayPickup(player);
                 }
@@ -101,16 +104,17 @@ public class ContainerCharger extends Container {
             }
         }
         for(i = 0; i < energyData.getCount(); ++i) {
-            customTracked.add(IntReferenceHolder.forContainer(energyData, i));
+            customTracked.add(DataSlot.forContainer(energyData, i));
         }
     }
 
     @Override
     public void broadcastChanges() {
         for(int j = 0; j < customTracked.size(); ++j) {
-            IntReferenceHolder intreferenceholder = customTracked.get(j);
-            if (intreferenceholder.checkAndClearUpdateFlag()) {
-                PacketHandler.sendToListeningPlayers(containerListeners, PacketHandler.INSTANCE.toVanillaPacket(new WindowPropPacket(this.containerId, j, intreferenceholder.get()), NetworkDirection.PLAY_TO_CLIENT));
+            DataSlot dataSlot = customTracked.get(j);
+            if (dataSlot.checkAndClearUpdateFlag()) {
+                PacketDistributor.PacketTarget target = PacketDistributor.NMLIST.with(() -> usingPlayers.stream().map(serverPlayer -> serverPlayer.connection.connection).toList());
+                PacketHandler.INSTANCE.send(target, new WindowPropPacket(this.containerId, j, dataSlot.get()));
             }
         }
 
@@ -123,7 +127,7 @@ public class ContainerCharger extends Container {
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity player, int index) {
+    public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = slots.get(index);
 
@@ -173,8 +177,8 @@ public class ContainerCharger extends Container {
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
-        return stillValid(pos, player, BlockRegistry.CHARGER_BLOCK_T1.get()) || stillValid(pos, player, BlockRegistry.CHARGER_BLOCK_T2.get()) || stillValid(pos, player, BlockRegistry.CHARGER_BLOCK_T3.get());
+    public boolean stillValid(Player player) {
+        return stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T1.get()) || stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T2.get()) || stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T3.get());
     }
 
     private static final int

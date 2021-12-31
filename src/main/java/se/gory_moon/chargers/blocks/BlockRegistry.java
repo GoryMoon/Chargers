@@ -14,7 +14,7 @@ import se.gory_moon.chargers.ChargersMod;
 import se.gory_moon.chargers.items.ChargerBlockItem;
 import se.gory_moon.chargers.items.ItemRegistry;
 import se.gory_moon.chargers.items.WirelessChargerBlockItem;
-import se.gory_moon.chargers.tile.WirelessChargerTileEntity;
+import se.gory_moon.chargers.tile.WirelessChargerBlockEntity;
 
 import static se.gory_moon.chargers.Constants.*;
 
@@ -114,7 +114,7 @@ public class BlockRegistry {
     public static final BlockEntry<WirelessChargerBlock> WIRELESS_CHARGER = REGISTRATE.object(WIRELESS_CHARGER_BLOCK)
             .block(WirelessChargerBlock::new)
             .initialProperties(Material.METAL, MaterialColor.COLOR_GRAY)
-            .simpleTileEntity(WirelessChargerTileEntity::new)
+            .simpleTileEntity(WirelessChargerBlockEntity::new)
             .lang(WIRELESS_CHARGER_NAME)
             .properties(properties -> properties.strength(5, 10).harvestTool(ToolType.PICKAXE).harvestLevel(0))
             .blockstate((ctx, provider) -> provider.getVariantBuilder(ctx.get())

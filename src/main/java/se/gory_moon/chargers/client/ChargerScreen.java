@@ -1,34 +1,32 @@
 package se.gory_moon.chargers.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import se.gory_moon.chargers.Constants;
 import se.gory_moon.chargers.LangKeys;
 import se.gory_moon.chargers.Utils;
-import se.gory_moon.chargers.inventory.ContainerCharger;
+import se.gory_moon.chargers.inventory.ChargerMenu;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChargerScreen extends ContainerScreen<ContainerCharger> {
+public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
 
     private static final ResourceLocation CHARGER_GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID + ":textures/gui/charger.png");
     //private static final ResourceLocation CHARGER_BAUBLES_GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID + ":textures/gui/charger_baubles.png");
     //public static final ResourceLocation CURIOS = new ResourceLocation("curios","textures/gui/inventory.png");
 
-    public ChargerScreen(ContainerCharger container, PlayerInventory playerInventory, ITextComponent title) {
+    public ChargerScreen(ChargerMenu container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
         imageHeight = 172;
     }
 
     @Override
-    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
         this.renderBackground(matrixStack);
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);

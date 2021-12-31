@@ -1,6 +1,6 @@
 package se.gory_moon.chargers;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public class Constants {
     public static final String MOD_ID = "chargers";

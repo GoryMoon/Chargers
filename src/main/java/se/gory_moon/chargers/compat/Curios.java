@@ -1,14 +1,14 @@
 package se.gory_moon.chargers.compat;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import se.gory_moon.chargers.Configs;
-import se.gory_moon.chargers.tile.WirelessChargerTileEntity;
+import se.gory_moon.chargers.tile.WirelessChargerBlockEntity;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
@@ -30,14 +30,14 @@ public class Curios {
     }
 
     // TODO Curios inventory for gui
-    public static IItemHandler getCurios(PlayerEntity player) {
+    public static IItemHandler getCurios(Player player) {
         /*if (isLoaded()) {
             return CuriosAPI.getCuriosHandler(player);
         }*/
         return null;
     }
 
-    public static SlotItemHandler getSlot(PlayerEntity player, IItemHandler itemHandler, int slot, int x, int y) {
+    public static SlotItemHandler getSlot(Player player, IItemHandler itemHandler, int slot, int x, int y) {
         /*if (isLoaded()) {
             return new SlotBauble(player, (IBaublesItemHandler) itemHandler, slot, x, y);
         }*/
@@ -49,7 +49,7 @@ public class Curios {
         };
     }
 
-    public boolean chargeItems(PlayerEntity player, WirelessChargerTileEntity charger) {
+    public boolean chargeItems(Player player, WirelessChargerBlockEntity charger) {
         AtomicBoolean result = new AtomicBoolean(false);
         if (isLoaded()) {
             LazyOptional<ICuriosItemHandler> lazyOptional = CuriosApi.getCuriosHelper().getCuriosHandler(player);

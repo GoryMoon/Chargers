@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 import se.gory_moon.chargers.LangKeys;
 import se.gory_moon.chargers.Utils;
 import se.gory_moon.chargers.tile.TileRegistry;
-import se.gory_moon.chargers.tile.WirelessChargerTileEntity;
+import se.gory_moon.chargers.tile.WirelessChargerBlockEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -41,11 +41,11 @@ public class WirelessChargerBlock extends EnergyBlock {
             return ActionResultType.SUCCESS;
 
         TileEntity tileEntity = world.getBlockEntity(pos);
-        if (tileEntity instanceof WirelessChargerTileEntity) {
+        if (tileEntity instanceof WirelessChargerBlockEntity) {
             if (player.isShiftKeyDown())
                 return ActionResultType.FAIL;
-            WirelessChargerTileEntity tile = (WirelessChargerTileEntity) tileEntity;
-            boolean powered = ((WirelessChargerTileEntity) tileEntity).isPowered();
+            WirelessChargerBlockEntity tile = (WirelessChargerBlockEntity) tileEntity;
+            boolean powered = ((WirelessChargerBlockEntity) tileEntity).isPowered();
             ITextComponent status = new TranslationTextComponent((powered ? LangKeys.CHAT_DISABLED.key(): LangKeys.CHAT_ENABLED.key())).setStyle(Style.EMPTY.withColor(powered ? TextFormatting.RED: TextFormatting.GREEN));
             player.displayClientMessage(new TranslationTextComponent(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.formatAndClean(tile.getStorage().getEnergyStored()), Utils.formatAndClean(tile.getStorage().getMaxEnergyStored())), true);
         }

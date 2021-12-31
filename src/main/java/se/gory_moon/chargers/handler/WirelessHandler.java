@@ -10,13 +10,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.Constants;
 import se.gory_moon.chargers.compat.Curios;
-import se.gory_moon.chargers.tile.WirelessChargerTileEntity;
+import se.gory_moon.chargers.tile.WirelessChargerBlockEntity;
 
 import java.util.Iterator;
 
@@ -26,12 +27,12 @@ public class WirelessHandler {
     public static WirelessHandler INSTANCE = new WirelessHandler();
     private final Object2ObjectMap<ResourceLocation, ObjectSet<BlockPos>> dimensionChargers = new Object2ObjectOpenHashMap<>();
 
-    public void register(WirelessChargerTileEntity charger) {
+    public void register(WirelessChargerBlockEntity charger) {
         ObjectSet<BlockPos> chargers = getDimensionChargers(charger.getLevel());
         chargers.add(charger.getBlockPos().immutable());
     }
 
-    public void unRegister(WirelessChargerTileEntity charger) {
+    public void unRegister(WirelessChargerBlockEntity charger) {
         ObjectSet<BlockPos> chargers = getDimensionChargers(charger.getLevel());
         chargers.remove(charger.getBlockPos().immutable());
     }
@@ -51,7 +52,7 @@ public class WirelessHandler {
         BlockPos playerPos = player.blockPosition();
         for (Iterator<BlockPos> iterator = chargers.iterator(); iterator.hasNext();) {
             BlockPos pos = iterator.next();
-            WirelessChargerTileEntity charger = getCharger(player.level, pos);
+            WirelessChargerBlockEntity charger = getCharger(player.level, pos);
             if (charger != null) {
                 if (charger.canCharge() && inRange(charger.getBlockPos(), playerPos)) {
                     if (chargeItems(player, charger))
@@ -63,20 +64,20 @@ public class WirelessHandler {
         }
     }
 
-    private WirelessChargerTileEntity getCharger(IWorld world, BlockPos pos) {
+    private WirelessChargerBlockEntity getCharger(IWorld world, BlockPos pos) {
         if (world.hasChunkAt(pos)) {
             TileEntity te = world.getBlockEntity(pos);
-            if (te instanceof WirelessChargerTileEntity)
-                return (WirelessChargerTileEntity) te;
+            if (te instanceof WirelessChargerBlockEntity)
+                return (WirelessChargerBlockEntity) te;
         }
         return null;
     }
 
-    private boolean chargeItems(PlayerEntity player, WirelessChargerTileEntity charger) {
+    private boolean chargeItems(Player player, WirelessChargerBlockEntity charger) {
         charger.updateAvailable();
-        boolean result = charger.chargeItems(player.inventory.armor);
-        result |= charger.chargeItems(player.inventory.items);
-        result |= charger.chargeItems(player.inventory.offhand);
+        boolean result = charger.chargeItems(player.getInventory().armor);
+        result |= charger.chargeItems(player.getInventory().items);
+        result |= charger.chargeItems(player.getInventory().offhand);
         result |= Curios.INSTANCE.chargeItems(player, charger);
         if (result)
             player.inventoryMenu.broadcastChanges();

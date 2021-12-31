@@ -1,14 +1,11 @@
 package se.gory_moon.chargers.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -17,11 +14,11 @@ import se.gory_moon.chargers.power.CustomEnergyStorage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class EnergyHolderTileEntity extends TileEntity implements ITickableTileEntity {
+public abstract class EnergyHolderBlockEntity extends BlockEntity {
 
     private CustomEnergyStorage storage = null;
     private LazyOptional<CustomEnergyStorage> lazyStorage = LazyOptional.of(() -> storage);
-    protected final IIntArray energyData = new IIntArray() {
+    protected final ContainerData energyData = new ContainerData() {
         public int get(int index) {
             switch(index) {
                 case 0:
@@ -48,8 +45,8 @@ public abstract class EnergyHolderTileEntity extends TileEntity implements ITick
         }
     };
 
-    public EnergyHolderTileEntity(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public EnergyHolderBlockEntity(BlockEntityType<?> blockEntityType) {
+        super(blockEntityType);
     }
 
     public void setStorage(CustomEnergyStorage storage) {
@@ -68,33 +65,27 @@ public abstract class EnergyHolderTileEntity extends TileEntity implements ITick
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT compound) {
-        super.load(state, compound);
+    public void load(CompoundTag compound) {
+        super.load(compound);
         storage.readFromNBT(compound.getCompound("Storage"));
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
-        super.save(compound).put("Storage", storage.writeToNBT(new CompoundNBT()));
+    public CompoundTag save(CompoundTag compound) {
+        super.save(compound).put("Storage", storage.writeToNBT(new CompoundTag()));
         return compound;
     }
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.worldPosition, -1, getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        handleUpdateTag(getBlockState(), pkt.getTag());
+    public CompoundTag getUpdateTag() {
+        return save(super.getUpdateTag());
     }
-
-    @Override
-    public CompoundNBT getUpdateTag() {
-        return save(new CompoundNBT());
-    }
-
 
     @Nonnull
     @Override

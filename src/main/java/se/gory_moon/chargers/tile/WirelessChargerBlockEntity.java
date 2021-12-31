@@ -1,12 +1,12 @@
 package se.gory_moon.chargers.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.NonNullList;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.blocks.WirelessChargerBlock;
 import se.gory_moon.chargers.handler.WirelessHandler;
@@ -14,13 +14,13 @@ import se.gory_moon.chargers.power.CustomEnergyStorage;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class WirelessChargerTileEntity extends EnergyHolderTileEntity {
+public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
 
     private boolean registered = false;
     private int lastPowered = -1;
     private int availableEnergy;
 
-    public WirelessChargerTileEntity(TileEntityType<WirelessChargerTileEntity> tileEntityType) {
+    public WirelessChargerBlockEntity(BlockEntityType<WirelessChargerBlockEntity> tileEntityType) {
         super(tileEntityType);
         setStorage(new CustomEnergyStorage(
                 Configs.SERVER.wireless.storage.get(),
@@ -44,15 +44,15 @@ public class WirelessChargerTileEntity extends EnergyHolderTileEntity {
 
     @Override
     public void tick() {
-        World world = getLevel();
-        if (world == null)
+        Level level = getLevel();
+        if (level == null)
             return;
 
-        if (!world.isClientSide && !registered) {
+        if (!level.isClientSide && !registered) {
             WirelessHandler.INSTANCE.register(this);
             registered = true;
         }
-        if (!world.isClientSide) {
+        if (!level.isClientSide) {
             Boolean powered = getBlockState().getValue(WirelessChargerBlock.POWERED);
             if (canCharge() != powered) {
                 getLevel().setBlockAndUpdate(getBlockPos(), getBlockState().setValue(WirelessChargerBlock.POWERED, canCharge()));
@@ -61,7 +61,7 @@ public class WirelessChargerTileEntity extends EnergyHolderTileEntity {
 
         super.tick();
         if (lastPowered == -1 || (lastPowered == 0 && getStorage().getEnergyStored() > 0) || (lastPowered > 0 && getStorage().getEnergyStored() == 0)) {
-           if (!world.isClientSide) {
+           if (!level.isClientSide) {
                PacketDistributor.TRACKING_CHUNK.with(() -> getLevel().getChunkAt(getBlockPos())).send(getUpdatePacket());
            }
             lastPowered = getStorage().getEnergyStored();

@@ -2,13 +2,13 @@ package se.gory_moon.chargers;
 
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.providers.ProviderType;
-import net.minecraft.util.LazyValue;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.gory_moon.chargers.blocks.BlockRegistry;
@@ -19,7 +19,7 @@ import se.gory_moon.chargers.tile.TileRegistry;
 @Mod(Constants.MOD_ID)
 public class ChargersMod {
 
-    public static final LazyValue<Registrate> REGISTRATE = new LazyValue<>(() -> Registrate.create(Constants.MOD_ID));
+    public static final Lazy<Registrate> REGISTRATE = Lazy.of(() -> Registrate.create(Constants.MOD_ID));
     public static final Logger LOGGER = LogManager.getLogger();
 
     public ChargersMod() {
