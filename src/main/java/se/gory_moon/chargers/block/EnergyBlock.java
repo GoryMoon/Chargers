@@ -8,7 +8,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -39,7 +38,7 @@ public abstract class EnergyBlock extends BaseEntityBlock {
         if (!level.isClientSide && !level.restoringBlockSnapshots) {
             ItemStack drop = new ItemStack(this, 1);
 
-            if (entity instanceof EnergyHolderBlockEntity energyBlock) {
+            if (entity instanceof EnergyHolderBlockEntity energyBlock && energyBlock.getStorage() != null) {
                 drop.getOrCreateTag().putInt("Energy", energyBlock.getStorage().getEnergyStored());
             }
 
@@ -53,10 +52,10 @@ public abstract class EnergyBlock extends BaseEntityBlock {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             LazyOptional<IEnergyStorage> capability = stack.getCapability(CapabilityEnergy.ENERGY);
 
-            if (blockEntity instanceof EnergyHolderBlockEntity) {
+            if (blockEntity instanceof EnergyHolderBlockEntity energyHolderBlock) {
                 capability.ifPresent(energyStorage -> {
-                    if (energyStorage instanceof CustomEnergyStorage) {
-                        ((EnergyHolderBlockEntity) blockEntity).getStorage().readFromNBT(((CustomEnergyStorage) energyStorage).writeToNBT(new CompoundTag()));
+                    if (energyStorage instanceof CustomEnergyStorage && energyHolderBlock.getStorage() != null) {
+                        energyHolderBlock.getStorage().readFromNBT(((CustomEnergyStorage) energyStorage).writeToNBT(new CompoundTag()));
                     }
                 });
             }

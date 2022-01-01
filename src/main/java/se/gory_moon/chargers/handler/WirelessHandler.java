@@ -14,8 +14,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.Constants;
-import se.gory_moon.chargers.compat.Curios;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
+import se.gory_moon.chargers.compat.Curios;
 
 import javax.annotation.Nullable;
 import java.util.Iterator;

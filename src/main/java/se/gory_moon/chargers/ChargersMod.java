@@ -12,9 +12,9 @@ import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import se.gory_moon.chargers.block.BlockRegistry;
+import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.item.ItemRegistry;
 import se.gory_moon.chargers.network.PacketHandler;
-import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 
 @Mod(Constants.MOD_ID)
 public class ChargersMod {

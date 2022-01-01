@@ -42,13 +42,13 @@ public class WirelessChargerBlock extends EnergyBlock {
         if (level.isClientSide)
             return InteractionResult.SUCCESS;
 
-        BlockEntity tileEntity = level.getBlockEntity(pos);
-        if (tileEntity instanceof WirelessChargerBlockEntity blockEntity) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof WirelessChargerBlockEntity changerEntity && changerEntity.getStorage() != null) {
             if (player.isShiftKeyDown())
                 return InteractionResult.FAIL;
-            boolean powered = blockEntity.isPowered();
+            boolean powered = changerEntity.isPowered();
             Component status = new TranslatableComponent((powered ? LangKeys.CHAT_DISABLED.key(): LangKeys.CHAT_ENABLED.key())).setStyle(Style.EMPTY.withColor(powered ? ChatFormatting.RED: ChatFormatting.GREEN));
-            player.displayClientMessage(new TranslatableComponent(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.formatAndClean(blockEntity.getStorage().getEnergyStored()), Utils.formatAndClean(blockEntity.getStorage().getMaxEnergyStored())), true);
+            player.displayClientMessage(new TranslatableComponent(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.formatAndClean(changerEntity.getStorage().getEnergyStored()), Utils.formatAndClean(changerEntity.getStorage().getMaxEnergyStored())), true);
         }
 
         return InteractionResult.SUCCESS;
@@ -67,12 +67,12 @@ public class WirelessChargerBlock extends EnergyBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return BlockEntityRegistry.WIRELESS_CHARGER_TE.create(pos, state);
+        return BlockEntityRegistry.WIRELESS_CHARGER_BE.create(pos, state);
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createEnergyTicker(level, type, BlockEntityRegistry.WIRELESS_CHARGER_TE.get());
+        return createEnergyTicker(level, type, BlockEntityRegistry.WIRELESS_CHARGER_BE.get());
     }
 }

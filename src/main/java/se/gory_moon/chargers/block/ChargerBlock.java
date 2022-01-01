@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import se.gory_moon.chargers.Configs;
-import se.gory_moon.chargers.block.entity.ChargerBlockEntity;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
+import se.gory_moon.chargers.block.entity.ChargerBlockEntity;
 
 import javax.annotation.Nullable;
 
@@ -58,7 +58,7 @@ public class ChargerBlock extends EnergyBlock {
     }
 
     @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (stack.hasCustomHoverName()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ChargerBlockEntity) {
@@ -72,7 +72,7 @@ public class ChargerBlock extends EnergyBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        ChargerBlockEntity charger = BlockEntityRegistry.CHARGER_TE.create(pos, state);
+        ChargerBlockEntity charger = BlockEntityRegistry.CHARGER_BE.create(pos, state);
         charger.setTier(this == BlockRegistry.CHARGER_BLOCK_T1.get() ? Tier.I: this == BlockRegistry.CHARGER_BLOCK_T2.get() ? Tier.II: Tier.III);
         return charger;
     }
@@ -80,7 +80,7 @@ public class ChargerBlock extends EnergyBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createEnergyTicker(level, type, BlockEntityRegistry.CHARGER_TE.get());
+        return createEnergyTicker(level, type, BlockEntityRegistry.CHARGER_BE.get());
     }
 
     public enum Tier {

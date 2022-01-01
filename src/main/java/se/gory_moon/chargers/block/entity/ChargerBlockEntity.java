@@ -34,8 +34,8 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
     @Nullable
     private Component customName;
 
-    public ChargerBlockEntity(BlockEntityType<ChargerBlockEntity> tileEntityType, BlockPos pos, BlockState state) {
-        super(tileEntityType, pos, state);
+    public ChargerBlockEntity(BlockEntityType<ChargerBlockEntity> blockEntityType, BlockPos pos, BlockState state) {
+        super(blockEntityType, pos, state);
         inventoryHandler = new CustomItemStackHandler(2);
     }
 
@@ -49,7 +49,7 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
         if (getLevel() != null && !getLevel().isClientSide) {
             ItemStack input = inventoryHandler.getStackInSlot(0);
             ItemStack output = inventoryHandler.getStackInSlot(1);
-            if (!input.isEmpty() && input.getCount() == 1 && output.isEmpty() && getStorage().getEnergyStored() > 0) {
+            if (!input.isEmpty() && input.getCount() == 1 && output.isEmpty() && getStorage() != null && getStorage().getEnergyStored() > 0) {
                 LazyOptional<IEnergyStorage> capability = input.getCapability(CapabilityEnergy.ENERGY);
                 capability.ifPresent(energyStorage -> {
                     int transferred = energyStorage.receiveEnergy(getStorage().extractEnergy(getStorage().getEnergyStored(), true), false);

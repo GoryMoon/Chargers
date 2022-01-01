@@ -26,10 +26,10 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.PacketDistributor;
 import se.gory_moon.chargers.Constants;
 import se.gory_moon.chargers.block.BlockRegistry;
+import se.gory_moon.chargers.block.entity.CustomItemStackHandler;
 import se.gory_moon.chargers.compat.Curios;
 import se.gory_moon.chargers.network.PacketHandler;
 import se.gory_moon.chargers.network.WindowPropPacket;
-import se.gory_moon.chargers.block.entity.CustomItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -63,8 +63,8 @@ public class ChargerMenu extends AbstractContainerMenu {
         curios = Curios.getCurios(player);
 
         int baublesOffset = curios != null ? 9: 0;
-        addSlot(new SlotInput(itemHandler, 0, 70 - baublesOffset, 29 + 6));
-        addSlot(new SlotOutput(itemHandler, 1, 70 - baublesOffset, 62 + 6));
+        addSlot(new InputSlot(itemHandler, 0, 70 - baublesOffset, 29 + 6));
+        addSlot(new OutputSlot(itemHandler, 1, 70 - baublesOffset, 62 + 6));
 
         int i;
         for (i = 0; i < 3; ++i)

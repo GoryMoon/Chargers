@@ -8,11 +8,11 @@ import se.gory_moon.chargers.block.entity.CustomItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class SlotInput extends SlotItemHandler {
+public class InputSlot extends SlotItemHandler {
 
     private final int index;
 
-    public SlotInput(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+    public InputSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
         this.index = index;
     }

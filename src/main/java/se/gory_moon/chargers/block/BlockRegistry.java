@@ -11,10 +11,10 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.Tags;
 import se.gory_moon.chargers.ChargersMod;
+import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
 import se.gory_moon.chargers.item.ChargerBlockItem;
 import se.gory_moon.chargers.item.ItemRegistry;
 import se.gory_moon.chargers.item.WirelessChargerBlockItem;
-import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
 
 import static se.gory_moon.chargers.Constants.*;
 

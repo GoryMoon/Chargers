@@ -21,8 +21,8 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
     private int lastPowered = -1;
     private int availableEnergy;
 
-    public WirelessChargerBlockEntity(BlockEntityType<WirelessChargerBlockEntity> tileEntityType, BlockPos pos, BlockState state) {
-        super(tileEntityType, pos, state);
+    public WirelessChargerBlockEntity(BlockEntityType<WirelessChargerBlockEntity> blockEntityType, BlockPos pos, BlockState state) {
+        super(blockEntityType, pos, state);
         setStorage(new CustomEnergyStorage(
                 Configs.SERVER.wireless.storage.get(),
                 Configs.SERVER.wireless.maxInput.get(),
@@ -65,7 +65,7 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
         }
 
         super.tickServer();
-        if (lastPowered == -1 || (lastPowered == 0 && getStorage().getEnergyStored() > 0) || (lastPowered > 0 && getStorage().getEnergyStored() == 0)) {
+        if (getStorage() != null && (lastPowered == -1 || (lastPowered == 0 && getStorage().getEnergyStored() > 0) || (lastPowered > 0 && getStorage().getEnergyStored() == 0))) {
            if (!level.isClientSide) {
                PacketDistributor.TRACKING_CHUNK.with(() -> getLevel().getChunkAt(getBlockPos())).send(getUpdatePacket());
            }
@@ -75,31 +75,34 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
     }
 
     public void updateAvailable() {
-        availableEnergy = Math.min(getStorage().getMaxOutput(), getStorage().getEnergyStored());
+        if (getStorage() != null)
+            availableEnergy = Math.min(getStorage().getMaxOutput(), getStorage().getEnergyStored());
     }
 
     public boolean chargeItems(NonNullList<ItemStack> items) {
         AtomicBoolean charged = new AtomicBoolean(false);
-        for (int i = 0; i < items.size() && availableEnergy > 0; i++) {
-            ItemStack stack = items.get(i);
-            if (!stack.isEmpty()) {
-                stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(energyStorage -> {
-                    if (stack.getCount() == 1) {
-                        int transferred = energyStorage.receiveEnergy(availableEnergy, false);
-                        if (transferred > 0) {
-                            getStorage().extractEnergy(transferred, false);
-                            availableEnergy -= transferred;
-                            charged.set(true);
+        if (getStorage() != null) {
+            for (int i = 0; i < items.size() && availableEnergy > 0; i++) {
+                ItemStack stack = items.get(i);
+                if (!stack.isEmpty()) {
+                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(energyStorage -> {
+                        if (stack.getCount() == 1) {
+                            int transferred = energyStorage.receiveEnergy(availableEnergy, false);
+                            if (transferred > 0) {
+                                getStorage().extractEnergy(transferred, false);
+                                availableEnergy -= transferred;
+                                charged.set(true);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         }
         return charged.get();
     }
 
     public boolean canCharge() {
-        return getStorage().getEnergyStored() > 0 && !isPowered();
+        return getStorage() != null && getStorage().getEnergyStored() > 0 && !isPowered();
     }
 
     public boolean isPowered() {
