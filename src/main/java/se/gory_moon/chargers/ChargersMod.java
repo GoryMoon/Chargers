@@ -11,10 +11,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import se.gory_moon.chargers.blocks.BlockRegistry;
-import se.gory_moon.chargers.items.ItemRegistry;
+import se.gory_moon.chargers.block.BlockRegistry;
+import se.gory_moon.chargers.item.ItemRegistry;
 import se.gory_moon.chargers.network.PacketHandler;
-import se.gory_moon.chargers.tile.TileRegistry;
+import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 
 @Mod(Constants.MOD_ID)
 public class ChargersMod {
@@ -26,7 +26,7 @@ public class ChargersMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::gatherData);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         BlockRegistry.init();
-        TileRegistry.init();
+        BlockEntityRegistry.init();
         ItemRegistry.init();
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Configs.serverSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Configs.commonSpec);

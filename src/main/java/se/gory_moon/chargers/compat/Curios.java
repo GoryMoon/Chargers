@@ -8,12 +8,13 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import se.gory_moon.chargers.Configs;
-import se.gory_moon.chargers.tile.WirelessChargerBlockEntity;
+import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Curios {
@@ -30,6 +31,7 @@ public class Curios {
     }
 
     // TODO Curios inventory for gui
+    @Nullable
     public static IItemHandler getCurios(Player player) {
         /*if (isLoaded()) {
             return CuriosAPI.getCuriosHandler(player);

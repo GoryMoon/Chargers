@@ -1,10 +1,10 @@
 package se.gory_moon.chargers.inventory;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import se.gory_moon.chargers.tile.CustomItemStackHandler;
+import se.gory_moon.chargers.block.entity.CustomItemStackHandler;
 
 import javax.annotation.Nonnull;
 
@@ -18,7 +18,7 @@ public class SlotInput extends SlotItemHandler {
     }
 
     @Override
-    public boolean mayPickup(PlayerEntity playerIn) {
+    public boolean mayPickup(Player playerIn) {
         return !((CustomItemStackHandler)getItemHandler()).extractItemInternal(index, 1, true).isEmpty();
     }
 

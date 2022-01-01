@@ -1,4 +1,4 @@
-package se.gory_moon.chargers.tile;
+package se.gory_moon.chargers.block.entity;
 
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
@@ -12,23 +12,23 @@ import se.gory_moon.chargers.inventory.ChargerMenu;
 
 import static se.gory_moon.chargers.Constants.CHARGER_TILE;
 import static se.gory_moon.chargers.Constants.WIRELESS_CHARGER_TILE;
-import static se.gory_moon.chargers.blocks.BlockRegistry.*;
+import static se.gory_moon.chargers.block.BlockRegistry.*;
 
-public class TileRegistry {
+public class BlockEntityRegistry {
     private static final Registrate REGISTRATE = ChargersMod.getRegistrate();
 
-    public static final BlockEntityType<ChargerTileEntity> CHARGER_TE = REGISTRATE.object(CHARGER_TILE)
-            .blockEntity(ChargerTileEntity::new)
+    public static final BlockEntityEntry<ChargerBlockEntity> CHARGER_TE = REGISTRATE.object(CHARGER_TILE)
+            .blockEntity(ChargerBlockEntity::new)
             .validBlocks(() -> CHARGER_BLOCK_T1.get(), () -> CHARGER_BLOCK_T2.get(), () -> CHARGER_BLOCK_T3.get())
             .register();
 
-    public static final BlockEntityType<WirelessChargerBlockEntity> WIRELESS_CHARGER_TE = BlockEntityEntry.cast(REGISTRATE.get(WIRELESS_CHARGER_TILE, BlockEntityType.class));
+    public static final BlockEntityEntry<WirelessChargerBlockEntity> WIRELESS_CHARGER_TE = BlockEntityEntry.cast(REGISTRATE.get(WIRELESS_CHARGER_TILE, BlockEntityType.class));
 
 
     public static final RegistryEntry<MenuType<ChargerMenu>> CHARGER_CONTAINER = REGISTRATE.object(Constants.CHARGER_CONTAINER)
             .menu(ChargerMenu::new, () -> ChargerScreen::new)
             .register();
 
-    private TileRegistry() {}
+    private BlockEntityRegistry() {}
     public static void init() {}
 }

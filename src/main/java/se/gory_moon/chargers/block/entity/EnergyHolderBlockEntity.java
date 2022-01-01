@@ -1,11 +1,14 @@
-package se.gory_moon.chargers.tile;
+package se.gory_moon.chargers.block.entity;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -16,26 +19,20 @@ import javax.annotation.Nullable;
 
 public abstract class EnergyHolderBlockEntity extends BlockEntity {
 
+    @Nullable
     private CustomEnergyStorage storage = null;
     private LazyOptional<CustomEnergyStorage> lazyStorage = LazyOptional.of(() -> storage);
     protected final ContainerData energyData = new ContainerData() {
         public int get(int index) {
-            switch(index) {
-                case 0:
-                    return storage.getEnergyStored();
-                case 1:
-                    return storage.getMaxEnergyStored();
-                case 2:
-                    return storage.getMaxInput();
-                case 3:
-                    return storage.getMaxOutput();
-                case 4:
-                    return Math.round(storage.getAverageIn());
-                case 5:
-                    return Math.round(storage.getAverageOut());
-                default:
-                    return 0;
-            }
+            return switch (index) {
+                case 0 -> storage.getEnergyStored();
+                case 1 -> storage.getMaxEnergyStored();
+                case 2 -> storage.getMaxInput();
+                case 3 -> storage.getMaxOutput();
+                case 4 -> Math.round(storage.getAverageIn());
+                case 5 -> Math.round(storage.getAverageOut());
+                default -> 0;
+            };
         }
 
         public void set(int index, int value) {}
@@ -45,8 +42,8 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
         }
     };
 
-    public EnergyHolderBlockEntity(BlockEntityType<?> blockEntityType) {
-        super(blockEntityType);
+    public EnergyHolderBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
+        super(blockEntityType, pos, state);
     }
 
     public void setStorage(CustomEnergyStorage storage) {
@@ -55,25 +52,27 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
         lazyStorage = LazyOptional.of(() -> storage);
     }
 
+    @Nullable
     public CustomEnergyStorage getStorage() {
         return storage;
     }
 
-    @Override
-    public void tick() {
-        storage.tick();
+    public void tickServer() {
+        if (storage != null)
+            storage.tick();
     }
 
     @Override
     public void load(CompoundTag compound) {
         super.load(compound);
-        storage.readFromNBT(compound.getCompound("Storage"));
+        if (storage != null)
+            storage.readFromNBT(compound.getCompound("Storage"));
     }
 
     @Override
-    public CompoundTag save(CompoundTag compound) {
-        super.save(compound).put("Storage", storage.writeToNBT(new CompoundTag()));
-        return compound;
+    protected void saveAdditional(CompoundTag tag) {
+        if (storage != null)
+            tag.put("Storage", storage.writeToNBT(new CompoundTag()));
     }
 
     @Nullable
@@ -84,7 +83,7 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
 
     @Override
     public CompoundTag getUpdateTag() {
-        return save(super.getUpdateTag());
+        return saveWithoutMetadata();
     }
 
     @Nonnull
@@ -93,5 +92,9 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
         if (cap == CapabilityEnergy.ENERGY)
             return lazyStorage.cast();
         return super.getCapability(cap, side);
+    }
+
+    public static void tickServer(Level level, BlockPos pos, BlockState state, EnergyHolderBlockEntity blockEntity) {
+        blockEntity.tickServer();
     }
 }

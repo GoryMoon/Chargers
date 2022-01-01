@@ -11,6 +11,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
@@ -18,24 +19,30 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.network.PacketDistributor;
-import se.gory_moon.chargers.blocks.BlockRegistry;
+import se.gory_moon.chargers.Constants;
+import se.gory_moon.chargers.block.BlockRegistry;
 import se.gory_moon.chargers.compat.Curios;
 import se.gory_moon.chargers.network.PacketHandler;
 import se.gory_moon.chargers.network.WindowPropPacket;
-import se.gory_moon.chargers.tile.CustomItemStackHandler;
+import se.gory_moon.chargers.block.entity.CustomItemStackHandler;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.world.inventory.InventoryMenu.*;
 
-
+@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ChargerMenu extends AbstractContainerMenu {
 
     private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{ EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET};
     private static final EquipmentSlot[] EQUIPMENT_SLOTS = new EquipmentSlot[]{ EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+    @Nullable
     public final IItemHandler curios;
     private final IItemHandler itemHandler;
     private final ContainerData energyData;
@@ -43,11 +50,11 @@ public class ChargerMenu extends AbstractContainerMenu {
     private final List<DataSlot> customTracked = Lists.newArrayList();
     private final List<ServerPlayer> usingPlayers = new ArrayList<>();
 
-    public ChargerMenu(MenuType<ChargerMenu> containerType, int windowId, Inventory inventory) {
-        this(containerType, windowId, inventory, new CustomItemStackHandler(2), new SimpleContainerData(6), ContainerLevelAccess.NULL);
+    public ChargerMenu(MenuType<ChargerMenu> containerType, int containerId, Inventory inventory) {
+        this(containerType, containerId, inventory, new CustomItemStackHandler(2), new SimpleContainerData(6), ContainerLevelAccess.NULL);
     }
-    public ChargerMenu(MenuType<ChargerMenu> container, int windowId, Inventory playerInventory, CustomItemStackHandler itemHandler, ContainerData energyData, ContainerLevelAccess pos) {
-        super(container, windowId);
+    public ChargerMenu(MenuType<ChargerMenu> container, int containerId, Inventory playerInventory, CustomItemStackHandler itemHandler, ContainerData energyData, ContainerLevelAccess pos) {
+        super(container, containerId);
         this.itemHandler = itemHandler;
 
         this.energyData = energyData;
@@ -87,14 +94,14 @@ public class ChargerMenu extends AbstractContainerMenu {
 
                 @OnlyIn(Dist.CLIENT)
                 public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-                    return Pair.of(PlayerContainer.BLOCK_ATLAS, ARMOR_SLOT_TEXTURES[slot.getIndex()]);
+                    return Pair.of(InventoryMenu.BLOCK_ATLAS, ARMOR_SLOT_TEXTURES[slot.getIndex()]);
                 }
             });
         }
         addSlot(new Slot(playerInventory, 40, 112 + baublesOffset, 62 + 6) {
             @OnlyIn(Dist.CLIENT)
             public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-                return Pair.of(PlayerContainer.BLOCK_ATLAS, PlayerContainer.EMPTY_ARMOR_SLOT_SHIELD);
+                return Pair.of(InventoryMenu.BLOCK_ATLAS, InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD);
             }
         });
 
@@ -141,7 +148,7 @@ public class ChargerMenu extends AbstractContainerMenu {
         int curiosStart = offhand + 1;
         int curiosEnd = curiosStart + 6;
 
-        if (slot != null && slot.hasItem()) {
+        if (slot.hasItem()) {
             ItemStack stack = slot.getItem();
             itemstack = stack.copy();
 
@@ -223,5 +230,19 @@ public class ChargerMenu extends AbstractContainerMenu {
 
     public int getEnergyScaled(int length) {
         return (int) ((double)getEnergy() / (double) getEnergyMax() * length);
+    }
+
+    @SubscribeEvent
+    public static void onContainerOpened(PlayerContainerEvent.Open event)
+    {
+        if(event.getContainer() instanceof ChargerMenu menu && event.getPlayer() instanceof ServerPlayer serverPlayer)
+            menu.usingPlayers.add(serverPlayer);
+    }
+
+    @SubscribeEvent
+    public static void onContainerClosed(PlayerContainerEvent.Close event)
+    {
+        if(event.getContainer() instanceof ChargerMenu menu && event.getPlayer() instanceof ServerPlayer serverPlayer)
+            menu.usingPlayers.remove(serverPlayer);
     }
 }
