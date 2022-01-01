@@ -84,6 +84,10 @@ minecraft {
 
             args '--mod', 'chargers', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
+            // Make mixins work on dependencies
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
             mods {
                 chargers {
                     source sourceSets.main
