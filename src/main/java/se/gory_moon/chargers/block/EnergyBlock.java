@@ -55,7 +55,7 @@ public abstract class EnergyBlock extends BaseEntityBlock {
             if (blockEntity instanceof EnergyHolderBlockEntity energyHolderBlock) {
                 capability.ifPresent(energyStorage -> {
                     if (energyStorage instanceof CustomEnergyStorage && energyHolderBlock.getStorage() != null) {
-                        energyHolderBlock.getStorage().readFromNBT(((CustomEnergyStorage) energyStorage).writeToNBT(new CompoundTag()));
+                        energyHolderBlock.getStorage().deserializeNBT(((CustomEnergyStorage) energyStorage).serializeNBT());
                     }
                 });
             }

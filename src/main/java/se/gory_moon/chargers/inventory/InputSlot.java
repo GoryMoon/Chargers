@@ -10,21 +10,18 @@ import javax.annotation.Nonnull;
 
 public class InputSlot extends SlotItemHandler {
 
-    private final int index;
-
     public InputSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
-        this.index = index;
     }
 
     @Override
     public boolean mayPickup(Player playerIn) {
-        return !((CustomItemStackHandler)getItemHandler()).extractItemInternal(index, 1, true).isEmpty();
+        return !((CustomItemStackHandler)getItemHandler()).extractItemInternal(getSlotIndex(), 1, true).isEmpty();
     }
 
     @Nonnull
     @Override
     public ItemStack remove(int amount) {
-        return ((CustomItemStackHandler)getItemHandler()).extractItemInternal(index, amount, false);
+        return ((CustomItemStackHandler)getItemHandler()).extractItemInternal(getSlotIndex(), amount, false);
     }
 }

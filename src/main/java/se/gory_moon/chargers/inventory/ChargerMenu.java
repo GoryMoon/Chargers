@@ -49,22 +49,23 @@ public class ChargerMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final List<DataSlot> customTracked = Lists.newArrayList();
     private final List<ServerPlayer> usingPlayers = new ArrayList<>();
+    private Slot inputSlot;
+    private Slot outputSlot;
 
     public ChargerMenu(MenuType<ChargerMenu> containerType, int containerId, Inventory inventory) {
         this(containerType, containerId, inventory, new CustomItemStackHandler(2), new SimpleContainerData(6), ContainerLevelAccess.NULL);
     }
-    public ChargerMenu(MenuType<ChargerMenu> container, int containerId, Inventory playerInventory, CustomItemStackHandler itemHandler, ContainerData energyData, ContainerLevelAccess pos) {
+    public ChargerMenu(MenuType<ChargerMenu> container, int containerId, Inventory playerInventory, CustomItemStackHandler itemHandler, ContainerData energyData, ContainerLevelAccess access) {
         super(container, containerId);
         this.itemHandler = itemHandler;
 
         this.energyData = energyData;
-        this.access = pos;
-        Player player = playerInventory.player;
-        curios = Curios.getCurios(player);
+        this.access = access;
+        this.curios = Curios.getCurios(playerInventory.player);
 
-        int baublesOffset = curios != null ? 9: 0;
-        addSlot(new InputSlot(itemHandler, 0, 70 - baublesOffset, 29 + 6));
-        addSlot(new OutputSlot(itemHandler, 1, 70 - baublesOffset, 62 + 6));
+        int curiosOffset = curios != null ? 9: 0;
+        inputSlot = addSlot(new InputSlot(itemHandler, 0, 70 - curiosOffset, 29 + 6));
+        outputSlot = addSlot(new OutputSlot(itemHandler, 1, 70 - curiosOffset, 62 + 6));
 
         int i;
         for (i = 0; i < 3; ++i)
@@ -76,7 +77,7 @@ public class ChargerMenu extends AbstractContainerMenu {
 
         for(i = 0; i < 4; ++i) {
             final EquipmentSlot slot = EQUIPMENT_SLOTS[i];
-            addSlot(new Slot(playerInventory, 36 + (3 - i), 92 - baublesOffset, 8 + 6 + i * 18) {
+            addSlot(new Slot(playerInventory, 36 + (3 - i), 92 - curiosOffset, 8 + 6 + i * 18) {
                 @Override
                 public int getMaxStackSize() {
                     return 1;
@@ -84,7 +85,7 @@ public class ChargerMenu extends AbstractContainerMenu {
 
                 @Override
                 public boolean mayPlace(ItemStack stack) {
-                    return stack.canEquip(slot, player);
+                    return stack.canEquip(slot, playerInventory.player);
                 }
 
                 public boolean mayPickup(Player player) {
@@ -98,7 +99,7 @@ public class ChargerMenu extends AbstractContainerMenu {
                 }
             });
         }
-        addSlot(new Slot(playerInventory, 40, 112 + baublesOffset, 62 + 6) {
+        addSlot(new Slot(playerInventory, 40, 112 + curiosOffset, 62 + 6) {
             @OnlyIn(Dist.CLIENT)
             public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
                 return Pair.of(InventoryMenu.BLOCK_ATLAS, InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD);
@@ -107,7 +108,7 @@ public class ChargerMenu extends AbstractContainerMenu {
 
         if (curios != null) {
             for (i = 0; i < 7; i++) {
-                addSlot(Curios.getSlot(player, curios, i, 103 + (i / 4) * 18, 8 + (i % 4) * 18));
+                addSlot(Curios.getSlot(playerInventory.player, curios, i, 103 + (i / 4) * 18, 8 + (i % 4) * 18));
             }
         }
         for(i = 0; i < energyData.getCount(); ++i) {
@@ -138,7 +139,7 @@ public class ChargerMenu extends AbstractContainerMenu {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = slots.get(index);
 
-        int inventoryStart = 2;
+        int inventoryStart = this.outputSlot.index + 1;
         int inventoryEnd = inventoryStart + 26;
         int hotbarStart = inventoryEnd + 1;
         int hotbarEnd = hotbarStart + 8;
@@ -152,11 +153,11 @@ public class ChargerMenu extends AbstractContainerMenu {
             ItemStack stack = slot.getItem();
             itemstack = stack.copy();
 
-            if (index == 1 || index == 0) {
+            if (index == this.inputSlot.index || index == this.outputSlot.index) {
                 /*if (Curios.isLoaded() && (!mergeItemStack(stack, curiosStart, curiosEnd, false) && !mergeItemStack(stack, inventoryStart, armorEnd + 1, true)))
                     return ItemStack.EMPTY;
-                else */
-                if (/*!Curios.isLoaded() && */!moveItemStackTo(stack, inventoryStart, armorEnd + 1, true))
+                else if(!Curios.isLoaded() && ) */
+                if (!moveItemStackTo(stack, inventoryStart, offhand, true))
                     return ItemStack.EMPTY;
                 slot.onQuickCraft(stack, itemstack);
             } else {
@@ -166,11 +167,11 @@ public class ChargerMenu extends AbstractContainerMenu {
                             return ItemStack.EMPTY;
                     } else if (index < hotbarEnd + 1 && !moveItemStackTo(stack, inventoryStart, inventoryEnd + 1, false))
                         return ItemStack.EMPTY;
-                } else if (!moveItemStackTo(stack, 0, 1, false))
+                } else if (!moveItemStackTo(stack, this.inputSlot.index, this.inputSlot.index + 1, false))
                     return ItemStack.EMPTY;
             }
 
-            if (stack.getCount() == 0)
+            if (stack.isEmpty())
                 slot.set(ItemStack.EMPTY);
             else
                 slot.setChanged();

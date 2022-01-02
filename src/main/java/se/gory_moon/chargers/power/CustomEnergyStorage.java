@@ -1,6 +1,7 @@
 package se.gory_moon.chargers.power;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.energy.EnergyStorage;
 
 public class CustomEnergyStorage extends EnergyStorage {
@@ -67,13 +68,18 @@ public class CustomEnergyStorage extends EnergyStorage {
         return energyExtracted;
     }
 
-    public void readFromNBT(CompoundTag compound){
-        energy = compound.getInt("Energy");
-        this.averageIn = compound.getFloat("In");
-        this.averageOut = compound.getFloat("Out");
+    @Override
+    public void deserializeNBT(Tag nbt) {
+        if (nbt instanceof CompoundTag compound) {
+            energy = compound.getInt("Energy");
+            averageIn = compound.getFloat("In");
+            averageOut = compound.getFloat("Out");
+        }
     }
 
-    public CompoundTag writeToNBT(CompoundTag compound){
+    @Override
+    public Tag serializeNBT() {
+        CompoundTag compound = new CompoundTag();
         compound.putInt("Energy", this.getEnergyStored());
         compound.putFloat("In", in.getAverage());
         compound.putFloat("Out", out.getAverage());

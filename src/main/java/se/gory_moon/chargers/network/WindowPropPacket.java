@@ -7,24 +7,24 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class WindowPropPacket {
-    private final int windowId;
+    private final int containerId;
     private final int id;
     private final int value;
 
-    public WindowPropPacket(int windowId, int property, int value) {
-        this.windowId = windowId;
+    public WindowPropPacket(int containerId, int property, int value) {
+        this.containerId = containerId;
         this.id = property;
         this.value = value;
     }
 
     public WindowPropPacket(FriendlyByteBuf buff) {
-        windowId = buff.readUnsignedByte();
+        containerId = buff.readUnsignedByte();
         id = buff.readShort();
         value = buff.readInt();
     }
 
     public void encode(FriendlyByteBuf buff) {
-        buff.writeByte(windowId);
+        buff.writeByte(containerId);
         buff.writeShort(id);
         buff.writeInt(value);
     }
@@ -32,7 +32,7 @@ public class WindowPropPacket {
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.player != null && mc.player.containerMenu.containerId == windowId) {
+            if (mc.player != null && mc.player.containerMenu.containerId == containerId) {
                 mc.player.containerMenu.setData(id, value);
             }
         });

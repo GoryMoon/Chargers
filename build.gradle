@@ -146,7 +146,7 @@ dependencies {
     shade registrate
 
     //runtimeOnly fg.deobf("mcjty.theoneprobe:theoneprobe:1.18-5.0.1-5")
-    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.0.1-144")
+    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.1.0-145")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

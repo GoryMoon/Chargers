@@ -2,7 +2,6 @@ package se.gory_moon.chargers.item;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -12,7 +11,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
-import se.gory_moon.chargers.LangKeys;
 import se.gory_moon.chargers.Utils;
 import se.gory_moon.chargers.block.ChargerBlock.Tier;
 import se.gory_moon.chargers.power.CustomItemEnergyStorage;
@@ -43,14 +41,7 @@ public class ChargerBlockItem extends BlockItem {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flagIn) {
-        addEnergyTooltip(stack, tooltip);
+        Utils.addEnergyTooltip(stack, tooltip);
         super.appendHoverText(stack, level, tooltip, flagIn);
     }
-
-    public static void addEnergyTooltip(ItemStack stack, List<Component> tooltip) {
-        stack.getCapability(CapabilityEnergy.ENERGY, null).ifPresent(energyStorage -> {
-            tooltip.add(new TranslatableComponent(LangKeys.CHAT_STORED_INFO.key(), Utils.formatAndClean(energyStorage.getEnergyStored()), Utils.formatAndClean(energyStorage.getMaxEnergyStored())));
-        });
-    }
-
 }

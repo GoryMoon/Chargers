@@ -66,13 +66,13 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
     public void load(CompoundTag compound) {
         super.load(compound);
         if (storage != null)
-            storage.readFromNBT(compound.getCompound("Storage"));
+            storage.deserializeNBT(compound.getCompound("Storage"));
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag) {
         if (storage != null)
-            tag.put("Storage", storage.writeToNBT(new CompoundTag()));
+            tag.put("Storage", storage.serializeNBT());
     }
 
     @Nullable
