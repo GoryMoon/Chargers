@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "chargers:charger_t2"
+            "items": [
+              "chargers:charger_t2"
+            ]
           }
         ]
       }

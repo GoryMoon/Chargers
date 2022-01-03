@@ -1,10 +1,12 @@
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
     }
 }
 
@@ -13,6 +15,7 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
@@ -20,7 +23,8 @@ version = mod_version
 group = "se.gory_moon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Chargers-$mc_version"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8
+// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 if (System.getenv().GITHUB_RUN_NUMBER  != null) {//adds the build number to the end of the version string if on a build server
     version += ".${System.getenv().GITHUB_RUN_NUMBER}"
@@ -28,9 +32,9 @@ if (System.getenv().GITHUB_RUN_NUMBER  != null) {//adds the build number to the 
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: mcp_channel, version: mcp_mappings
+    mappings channel: mappings_channel, version: mappings_version
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
             workingDirectory project.file('run')
@@ -83,6 +87,10 @@ minecraft {
 
             args '--mod', 'chargers', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
+            // Make mixins work on dependencies
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
             mods {
                 chargers {
                     source sourceSets.main
@@ -112,7 +120,10 @@ repositories {
     maven { // curios
         url "https://maven.theillusivec4.top/"
     }
-    maven { // Registrate / TOP
+    maven { // TOP
+        url "https://maven.k-4u.nl"
+    }
+    maven { // Registrate
         url "https://maven.tterrag.com/"
     }
     maven { // Immersive Engineering
@@ -133,12 +144,11 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
-    def registrate = "com.tterrag.registrate:Registrate:MC1.16.5-${registrate_version}"
+    def registrate = "com.tterrag.registrate:Registrate:${registrate_version}"
     implementation fg.deobf(registrate)
     shade registrate
 
-    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:1.16-3.1.4-22")
-    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.16.5-5.0.7-143")
+    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.1.0-145")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

@@ -1,8 +1,8 @@
-package se.gory_moon.chargers.items;
+package se.gory_moon.chargers.item;
 
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.entry.ItemEntry;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import se.gory_moon.chargers.ChargersMod;
 import se.gory_moon.chargers.Constants;
 

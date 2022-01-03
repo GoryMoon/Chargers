@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "chargers:charger_t1",
+    "chargers:charger_t2",
+    "chargers:charger_t3",
+    "chargers:wireless_charger"
+  ]
+}
