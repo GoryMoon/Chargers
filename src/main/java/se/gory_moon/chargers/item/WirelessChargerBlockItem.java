@@ -2,6 +2,7 @@ package se.gory_moon.chargers.item;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -41,6 +42,6 @@ public class WirelessChargerBlockItem extends BlockItem {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
         Utils.addEnergyTooltip(stack, tooltip);
-        super.appendHoverText(stack, level, tooltip, flag);
+        tooltip.add(new TranslatableComponent(getDescriptionId() + ".desc"));
     }
 }

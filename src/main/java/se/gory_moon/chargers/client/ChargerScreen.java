@@ -32,6 +32,7 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
     protected void init() {
         super.init();
         this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
+        this.titleLabelY = 4;
     }
 
     @Override
@@ -89,7 +90,6 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
 
     @Override
     protected void renderLabels(PoseStack stack, int mouseX, int mouseY) {
-        super.renderLabels(stack, mouseX, mouseY);
-        //this.font.draw(stack, title.getVisualOrderText(), imageWidth / 2f - this.font.width(title) / 2f, 4.0F, 4210752);
+        this.font.draw(stack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
     }
 }

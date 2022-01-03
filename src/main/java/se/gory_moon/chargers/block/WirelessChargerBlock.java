@@ -59,11 +59,6 @@ public class WirelessChargerBlock extends EnergyBlock {
         builder.add(POWERED);
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip, TooltipFlag flagIn) {
-        tooltip.add(new TranslatableComponent(LangKeys.TOOLTIP_WIRELESS_CHARGER_INFO.key()));
-    }
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

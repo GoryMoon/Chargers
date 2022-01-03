@@ -27,12 +27,16 @@ public class WirelessHandler {
     private final Object2ObjectMap<ResourceLocation, ObjectSet<BlockPos>> dimensionChargers = new Object2ObjectOpenHashMap<>();
 
     public void register(WirelessChargerBlockEntity charger, Level level) {
-        getDimensionChargers(level).add(charger.getBlockPos().immutable());
+        synchronized (dimensionChargers) {
+            getDimensionChargers(level).add(new BlockPos(charger.getBlockPos()));
+        }
     }
 
     public void unregister(WirelessChargerBlockEntity charger, @Nullable Level level) {
         if (level == null) return;
-        getDimensionChargers(level).remove(charger.getBlockPos().immutable());
+        synchronized (dimensionChargers) {
+            getDimensionChargers(level).remove(charger.getBlockPos());
+        }
     }
 
     @SubscribeEvent
@@ -44,20 +48,23 @@ public class WirelessHandler {
     }
 
     public void chargeItems(Player player) {
-        ObjectSet<BlockPos> chargers = getDimensionChargers(player.level);
-        if (chargers.isEmpty()) return;
+        synchronized (dimensionChargers) {
+            ObjectSet<BlockPos> chargers = getDimensionChargers(player.level);
+            if (chargers.isEmpty())
+                return;
 
-        BlockPos playerPos = player.blockPosition();
-        for (Iterator<BlockPos> iterator = chargers.iterator(); iterator.hasNext();) {
-            BlockPos pos = iterator.next();
-            WirelessChargerBlockEntity charger = getCharger(player.level, pos);
-            if (charger != null) {
-                if (charger.canCharge() && inRange(charger.getBlockPos(), playerPos)) {
-                    if (chargeItems(player, charger))
-                        return;
+            BlockPos playerPos = player.blockPosition();
+            for (Iterator<BlockPos> iterator = chargers.iterator(); iterator.hasNext(); ) {
+                BlockPos pos = iterator.next();
+                WirelessChargerBlockEntity charger = getCharger(player.level, pos);
+                if (charger != null) {
+                    if (charger.canCharge() && inRange(charger.getBlockPos(), playerPos)) {
+                        if (chargeItems(player, charger))
+                            return;
+                    }
+                } else {
+                    iterator.remove();
                 }
-            } else {
-                iterator.remove();
             }
         }
     }

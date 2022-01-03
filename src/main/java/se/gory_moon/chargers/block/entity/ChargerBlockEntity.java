@@ -102,11 +102,7 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
     public Component getName() {
         Component name = getCustomName();
         if (name == null) {
-            name = switch (tier) {
-                case I -> new TranslatableComponent(LangKeys.CONTAINER_CHARGER_T1.key());
-                case II -> new TranslatableComponent(LangKeys.CONTAINER_CHARGER_T2.key());
-                case III -> new TranslatableComponent(LangKeys.CONTAINER_CHARGER_T3.key());
-            };
+            name = getBlockState().getBlock().getName();
         }
         return name;
     }

@@ -5,12 +5,12 @@ import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.Tags;
 import se.gory_moon.chargers.ChargersMod;
+import se.gory_moon.chargers.ChargersTab;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
 import se.gory_moon.chargers.item.ChargerBlockItem;
 import se.gory_moon.chargers.item.ItemRegistry;
@@ -21,7 +21,7 @@ import static se.gory_moon.chargers.Constants.*;
 public class BlockRegistry {
     private static final Registrate REGISTRATE = ChargersMod.getRegistrate();
 
-    public static BlockEntry<ChargerBlock> CHARGER_BLOCK_T1 = REGISTRATE.object(CHARGER_T1_BLOCK)
+    public static final BlockEntry<ChargerBlock> CHARGER_BLOCK_T1 = REGISTRATE.object(CHARGER_T1_BLOCK)
             .block(ChargerBlock::new)
             .initialProperties(Material.METAL, MaterialColor.COLOR_GRAY)
             .lang(CHARGER_T1_NAME)
@@ -33,7 +33,7 @@ public class BlockRegistry {
                             provider.modLoc("block/charger_tier_1"),
                             provider.modLoc("block/charger_tier_1_top"))))
             .item(ChargerBlockItem::new)
-                .properties(p -> p.rarity(Rarity.COMMON).tab(CreativeModeTab.TAB_REDSTONE))
+                .properties(p -> p.rarity(Rarity.COMMON).tab(ChargersTab.TAB))
                 .recipe((context, provider) -> {
                     DataIngredient iron = DataIngredient.tag(Tags.Items.INGOTS_IRON);
                     DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
@@ -52,7 +52,7 @@ public class BlockRegistry {
                 .build()
             .register();
 
-    public static BlockEntry<ChargerBlock> CHARGER_BLOCK_T2 = REGISTRATE.object(CHARGER_T2_BLOCK)
+    public static final BlockEntry<ChargerBlock> CHARGER_BLOCK_T2 = REGISTRATE.object(CHARGER_T2_BLOCK)
             .block(ChargerBlock::new)
             .initialProperties(Material.METAL, MaterialColor.GOLD)
             .lang(CHARGER_T2_NAME)
@@ -64,7 +64,7 @@ public class BlockRegistry {
                             provider.modLoc("block/charger_tier_2"),
                             provider.modLoc("block/charger_tier_2_top"))))
             .item(ChargerBlockItem::new)
-                .properties(p -> p.rarity(Rarity.UNCOMMON).tab(CreativeModeTab.TAB_REDSTONE))
+                .properties(p -> p.rarity(Rarity.UNCOMMON).tab(ChargersTab.TAB))
                 .recipe((context, provider) -> {
                     DataIngredient gold = DataIngredient.tag(Tags.Items.INGOTS_GOLD);
                     DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
@@ -83,7 +83,7 @@ public class BlockRegistry {
                 .build()
             .register();
 
-    public static BlockEntry<ChargerBlock> CHARGER_BLOCK_T3 = REGISTRATE.object(CHARGER_T3_BLOCK)
+    public static final BlockEntry<ChargerBlock> CHARGER_BLOCK_T3 = REGISTRATE.object(CHARGER_T3_BLOCK)
             .block(ChargerBlock::new)
             .initialProperties(Material.METAL, MaterialColor.COLOR_CYAN)
             .lang(CHARGER_T3_NAME)
@@ -95,7 +95,7 @@ public class BlockRegistry {
                             provider.modLoc("block/charger_tier_3"),
                             provider.modLoc("block/charger_tier_3_top"))))
             .item(ChargerBlockItem::new)
-                .properties(p -> p.rarity(Rarity.RARE).tab(CreativeModeTab.TAB_REDSTONE))
+                .properties(p -> p.rarity(Rarity.RARE).tab(ChargersTab.TAB))
                 .recipe((context, provider) -> {
                     DataIngredient diamond = DataIngredient.tag(Tags.Items.GEMS_DIAMOND);
                     DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
@@ -128,7 +128,7 @@ public class BlockRegistry {
                         .modelForState().modelFile(provider.models().cubeAll("wireless_charger_enabled", provider.modLoc("block/wireless_charger_enabled"))).addModel()
             )
             .item(WirelessChargerBlockItem::new)
-                .properties(properties -> properties.tab(CreativeModeTab.TAB_REDSTONE))
+                .properties(properties -> properties.tab(ChargersTab.TAB))
                 .model((context, provider) -> provider.blockItem(() -> context.get().getBlock(), "_disabled"))
                 .recipe((context, provider) -> {
                     DataIngredient iron = DataIngredient.tag(Tags.Items.INGOTS_IRON);

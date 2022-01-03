@@ -30,6 +30,7 @@ import se.gory_moon.chargers.block.entity.CustomItemStackHandler;
 import se.gory_moon.chargers.compat.Curios;
 import se.gory_moon.chargers.network.PacketHandler;
 import se.gory_moon.chargers.network.WindowPropPacket;
+import se.gory_moon.chargers.network.WindowPropPacket.SyncPair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -40,8 +41,8 @@ import static net.minecraft.world.inventory.InventoryMenu.*;
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ChargerMenu extends AbstractContainerMenu {
 
-    private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{ EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET};
-    private static final EquipmentSlot[] EQUIPMENT_SLOTS = new EquipmentSlot[]{ EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+    private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[] { EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET };
+    private static final EquipmentSlot[] EQUIPMENT_SLOTS = new EquipmentSlot[] { EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
     @Nullable
     public final IItemHandler curios;
     private final IItemHandler itemHandler;
@@ -49,12 +50,13 @@ public class ChargerMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final List<DataSlot> customTracked = Lists.newArrayList();
     private final List<ServerPlayer> usingPlayers = new ArrayList<>();
-    private Slot inputSlot;
-    private Slot outputSlot;
+    private final Slot inputSlot;
+    private final Slot outputSlot;
 
     public ChargerMenu(MenuType<ChargerMenu> containerType, int containerId, Inventory inventory) {
         this(containerType, containerId, inventory, new CustomItemStackHandler(2), new SimpleContainerData(6), ContainerLevelAccess.NULL);
     }
+
     public ChargerMenu(MenuType<ChargerMenu> container, int containerId, Inventory playerInventory, CustomItemStackHandler itemHandler, ContainerData energyData, ContainerLevelAccess access) {
         super(container, containerId);
         this.itemHandler = itemHandler;
@@ -75,7 +77,7 @@ public class ChargerMenu extends AbstractContainerMenu {
         for (i = 0; i < 9; ++i)
             addSlot(new Slot(playerInventory, i, 8 + i * 18, 142 + 6));
 
-        for(i = 0; i < 4; ++i) {
+        for (i = 0; i < 4; ++i) {
             final EquipmentSlot slot = EQUIPMENT_SLOTS[i];
             addSlot(new Slot(playerInventory, 36 + (3 - i), 92 - curiosOffset, 8 + 6 + i * 18) {
                 @Override
@@ -111,19 +113,23 @@ public class ChargerMenu extends AbstractContainerMenu {
                 addSlot(Curios.getSlot(playerInventory.player, curios, i, 103 + (i / 4) * 18, 8 + (i % 4) * 18));
             }
         }
-        for(i = 0; i < energyData.getCount(); ++i) {
+        for (i = 0; i < energyData.getCount(); ++i) {
             customTracked.add(DataSlot.forContainer(energyData, i));
         }
     }
 
     @Override
     public void broadcastChanges() {
-        for(int j = 0; j < customTracked.size(); ++j) {
-            DataSlot dataSlot = customTracked.get(j);
-            if (dataSlot.checkAndClearUpdateFlag()) {
-                PacketDistributor.PacketTarget target = PacketDistributor.NMLIST.with(() -> usingPlayers.stream().map(serverPlayer -> serverPlayer.connection.connection).toList());
-                PacketHandler.INSTANCE.send(target, new WindowPropPacket(this.containerId, j, dataSlot.get()));
-            }
+        List<SyncPair> toSync = new ArrayList<>();
+        for (int i = 0; i < customTracked.size(); ++i) {
+            DataSlot dataSlot = customTracked.get(i);
+            if (dataSlot.checkAndClearUpdateFlag())
+                toSync.add(new SyncPair(i, dataSlot.get()));
+        }
+
+        if (!toSync.isEmpty()) {
+            PacketDistributor.PacketTarget target = PacketDistributor.NMLIST.with(usingPlayers.stream().map(serverPlayer -> serverPlayer.connection.connection)::toList);
+            PacketHandler.INSTANCE.send(target, new WindowPropPacket(this.containerId, toSync));
         }
 
         super.broadcastChanges();
@@ -190,12 +196,12 @@ public class ChargerMenu extends AbstractContainerMenu {
     }
 
     private static final int
-        ENERGY = 0,
-        ENERGY_MAX = 1,
-        MAX_IN = 2,
-        MAX_OUT = 3,
-        AVERAGE_IN = 4,
-        AVERAGE_OUT = 5;
+            ENERGY = 0,
+            ENERGY_MAX = 1,
+            MAX_IN = 2,
+            MAX_OUT = 3,
+            AVERAGE_IN = 4,
+            AVERAGE_OUT = 5;
 
     public boolean hasEnergy() {
         return getEnergy() > 0;
@@ -230,20 +236,25 @@ public class ChargerMenu extends AbstractContainerMenu {
     }
 
     public int getEnergyScaled(int length) {
-        return (int) ((double)getEnergy() / (double) getEnergyMax() * length);
+        return (int) ((double) getEnergy() / (double) getEnergyMax() * length);
     }
 
     @SubscribeEvent
-    public static void onContainerOpened(PlayerContainerEvent.Open event)
-    {
-        if(event.getContainer() instanceof ChargerMenu menu && event.getPlayer() instanceof ServerPlayer serverPlayer)
+    public static void onContainerOpened(PlayerContainerEvent.Open event) {
+        if (event.getContainer() instanceof ChargerMenu menu && event.getPlayer() instanceof ServerPlayer serverPlayer) {
             menu.usingPlayers.add(serverPlayer);
+
+            List<SyncPair> toSync = new ArrayList<>();
+            for (int i = 0; i < menu.customTracked.size(); ++i)
+                toSync.add(new SyncPair(i, menu.customTracked.get(i).get()));
+
+            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new WindowPropPacket(menu.containerId, toSync));
+        }
     }
 
     @SubscribeEvent
-    public static void onContainerClosed(PlayerContainerEvent.Close event)
-    {
-        if(event.getContainer() instanceof ChargerMenu menu && event.getPlayer() instanceof ServerPlayer serverPlayer)
+    public static void onContainerClosed(PlayerContainerEvent.Close event) {
+        if (event.getContainer() instanceof ChargerMenu menu && event.getPlayer() instanceof ServerPlayer serverPlayer)
             menu.usingPlayers.remove(serverPlayer);
     }
 }
