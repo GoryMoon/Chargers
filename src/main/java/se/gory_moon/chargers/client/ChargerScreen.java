@@ -20,12 +20,10 @@ import java.util.List;
 public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
 
     private static final ResourceLocation CHARGER_GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/charger.png");
-    //private static final ResourceLocation CHARGER_BAUBLES_GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID + ":textures/gui/charger_baubles.png");
-    //public static final ResourceLocation CURIOS = new ResourceLocation("curios","textures/gui/inventory.png");
 
     public ChargerScreen(ChargerMenu container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
-        imageHeight = 172;
+        imageHeight = 199;
     }
 
     @Override
@@ -33,16 +31,15 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
         super.init();
         this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
         this.titleLabelY = 4;
+        this.inventoryLabelY = 107;
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(stack);
-        super.render(stack, mouseX, mouseY, partialTicks);
-        //renderTooltip(stack, mouseX, mouseY);
-        //boolean curios = Curios.isLoaded();
+    public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
+        this.renderBackground(pPoseStack);
+        super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
 
-        if (mouseX >= leftPos + 48/* - (curios ? 9: 0)*/ && mouseX <= leftPos + 48 + 16/* - (curios ? 9: 0) */&& mouseY >= topPos + 8 && mouseY <= topPos + 78) {
+        if (pMouseX >= leftPos + 48 && pMouseX <= leftPos + 48 + 16 && pMouseY >= topPos + 14 && pMouseY <= topPos + 84) {
             List<Component> list = new ArrayList<>();
             list.add(new TranslatableComponent(LangKeys.GUI_ENERGY.key(), Utils.formatAndClean(menu.getEnergy()), Utils.formatAndClean(menu.getEnergyMax()) + ChatFormatting.GRAY));
             list.add(new TranslatableComponent(LangKeys.GUI_MAX_IN.key(), Utils.formatAndClean(menu.getMaxIn()) + ChatFormatting.GRAY));
@@ -50,46 +47,30 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
             if (menu.getEnergyDiff() != 0) {
                 list.add(new TranslatableComponent(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? ChatFormatting.GREEN + "+": ChatFormatting.RED.toString()) + Utils.formatAndClean(menu.getEnergyDiff()) + ChatFormatting.GRAY));
             }
-            renderComponentTooltip(stack, list, mouseX, mouseY);
+            renderComponentTooltip(pPoseStack, list, pMouseX, pMouseY);
         }
-        renderTooltip(stack, mouseX, mouseY);
+        renderTooltip(pPoseStack, pMouseX, pMouseY);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(PoseStack pPoseStack, float pPartialTick, int pMouseX, int pMouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        //boolean curios = Curios.isLoaded();
-        /*if (curios) {
-            minecraft.getTextureManager().bindTexture(CHARGER_BAUBLES_GUI_TEXTURE);
-        } else {*/
-            RenderSystem.setShaderTexture(0, CHARGER_GUI_TEXTURE);
-        //}
-        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        RenderSystem.setShaderTexture(0, CHARGER_GUI_TEXTURE);
+
+        blit(pPoseStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
         if (menu.hasEnergy()) {
             int progress = menu.getEnergyScaled(70);
-            blit(matrixStack, leftPos + 48/* - (curios ? 9: 0)*/, topPos + 78 + 6 - progress, 0, 236 + 6 - progress, 16, progress);
+            blit(pPoseStack, leftPos + 44, topPos + 78 + 6 - progress, 176, 70 - progress, 16, progress);
         }
-
-        /*if (curios) {
-            minecraft.getTextureManager().bindTexture(CURIOS);
-            IItemHandler handler = container.curios;
-            if (handler != null) {
-                for (int i = 0; i < 7; i++) {
-                    if (handler.getStackInSlot(i).isEmpty()) {
-                        int texX = 77 + (i / 4) * 19;
-                        int texY = 8 + (i % 4) * 18;
-                        blit(guiLeft + 103 + (i / 4) * 18, guiTop + 14 + (i % 4) * 18, texX, texY, 16, 16);
-                    }
-                }
-            }
-        }*/
     }
 
     @Override
-    protected void renderLabels(PoseStack stack, int mouseX, int mouseY) {
-        this.font.draw(stack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
+    protected void renderLabels(PoseStack pPoseStack, int pMouseX, int pMouseY) {
+        super.renderLabels(pPoseStack, pMouseX, pMouseY);
+        //this.font.draw(stack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
+
     }
 }

@@ -4,7 +4,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import se.gory_moon.chargers.block.entity.CustomItemStackHandler;
+import se.gory_moon.chargers.block.entity.ChargerItemStackHandler;
 
 import javax.annotation.Nonnull;
 
@@ -16,12 +16,12 @@ public class InputSlot extends SlotItemHandler {
 
     @Override
     public boolean mayPickup(Player playerIn) {
-        return !((CustomItemStackHandler)getItemHandler()).extractItemInternal(getSlotIndex(), 1, true).isEmpty();
+        return !((ChargerItemStackHandler)getItemHandler()).extractItemInternal(getSlotIndex(), 1, true).isEmpty();
     }
 
     @Nonnull
     @Override
     public ItemStack remove(int amount) {
-        return ((CustomItemStackHandler)getItemHandler()).extractItemInternal(getSlotIndex(), amount, false);
+        return ((ChargerItemStackHandler)getItemHandler()).extractItemInternal(getSlotIndex(), amount, false);
     }
 }

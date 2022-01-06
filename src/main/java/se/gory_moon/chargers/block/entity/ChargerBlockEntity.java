@@ -3,7 +3,6 @@ package se.gory_moon.chargers.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,7 +17,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
-import se.gory_moon.chargers.LangKeys;
 import se.gory_moon.chargers.block.ChargerBlock;
 import se.gory_moon.chargers.inventory.ChargerMenu;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
@@ -28,15 +26,15 @@ import javax.annotation.Nullable;
 
 public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Nameable, MenuProvider {
 
-    public CustomItemStackHandler inventoryHandler;
-    private final LazyOptional<CustomItemStackHandler> lazyInventory = LazyOptional.of(() -> inventoryHandler);
+    public ChargerItemStackHandler inventoryHandler;
+    private final LazyOptional<ChargerItemStackHandler> lazyInventory = LazyOptional.of(() -> inventoryHandler);
     private ChargerBlock.Tier tier = ChargerBlock.Tier.I;
     @Nullable
     private Component customName;
 
     public ChargerBlockEntity(BlockEntityType<ChargerBlockEntity> blockEntityType, BlockPos pos, BlockState state) {
         super(blockEntityType, pos, state);
-        inventoryHandler = new CustomItemStackHandler(2);
+        inventoryHandler = new ChargerItemStackHandler();
     }
 
     public void setTier(ChargerBlock.Tier tier) {
@@ -47,20 +45,35 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
     @Override
     public void tickServer() {
         if (getLevel() != null && !getLevel().isClientSide) {
-            ItemStack input = inventoryHandler.getStackInSlot(0);
-            ItemStack output = inventoryHandler.getStackInSlot(1);
-            if (!input.isEmpty() && input.getCount() == 1 && output.isEmpty() && getStorage() != null && getStorage().getEnergyStored() > 0) {
-                LazyOptional<IEnergyStorage> capability = input.getCapability(CapabilityEnergy.ENERGY);
-                capability.ifPresent(energyStorage -> {
-                    int transferred = energyStorage.receiveEnergy(getStorage().extractEnergy(getStorage().getEnergyStored(), true), false);
-                    if (transferred > 0) {
-                        getStorage().extractEnergy(transferred, false);
-                    }
-                    if (energyStorage.getEnergyStored() >= energyStorage.getMaxEnergyStored()) {
-                        inventoryHandler.setStackInSlot(1, input);
-                        inventoryHandler.setStackInSlot(0, ItemStack.EMPTY);
-                    }
-                });
+            CustomEnergyStorage storage = getStorage();
+            if (storage != null) {
+                ItemStack charge = inventoryHandler.getStackInSlot(2);
+                if (!charge.isEmpty()) {
+                    LazyOptional<IEnergyStorage> capability = charge.getCapability(CapabilityEnergy.ENERGY);
+                    capability.ifPresent(energyStorage -> {
+                        int extractAmount = Math.min(storage.getMaxEnergyStored() - storage.getEnergyStored(), storage.getMaxInput());
+                        int transferred = energyStorage.extractEnergy(extractAmount, false);
+                        if (transferred > 0) {
+                            storage.receiveEnergy(transferred, false);
+                        }
+                    });
+                }
+
+                ItemStack input = inventoryHandler.getStackInSlot(0);
+                ItemStack output = inventoryHandler.getStackInSlot(1);
+                if (!input.isEmpty() && input.getCount() == 1 && output.isEmpty() && storage.getEnergyStored() > 0) {
+                    LazyOptional<IEnergyStorage> capability = input.getCapability(CapabilityEnergy.ENERGY);
+                    capability.ifPresent(energyStorage -> {
+                        int transferred = energyStorage.receiveEnergy(storage.extractEnergy(storage.getEnergyStored(), true), false);
+                        if (transferred > 0) {
+                            storage.extractEnergy(transferred, false);
+                        }
+                        if (energyStorage.getEnergyStored() >= energyStorage.getMaxEnergyStored()) {
+                            inventoryHandler.setStackInSlot(1, input);
+                            inventoryHandler.setStackInSlot(0, ItemStack.EMPTY);
+                        }
+                    });
+                }
             }
             super.tickServer();
         }

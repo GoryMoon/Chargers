@@ -9,24 +9,27 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 
-public class CustomItemStackHandler extends ItemStackHandler {
+public class ChargerItemStackHandler extends ItemStackHandler {
 
-    private final int size;
-    public CustomItemStackHandler(int size) {
-        super(NonNullList.withSize(size, ItemStack.EMPTY));
-        this.size = size;
+    private final static int SIZE = 3;
+    public ChargerItemStackHandler() {
+        super(NonNullList.withSize(SIZE, ItemStack.EMPTY));
     }
 
     @Override
     public void setSize(int size) {
-        stacks = NonNullList.withSize(this.size, ItemStack.EMPTY);
+        stacks = NonNullList.withSize(SIZE, ItemStack.EMPTY);
     }
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
         if (!stack.isEmpty()) {
             LazyOptional<IEnergyStorage> capability = stack.getCapability(CapabilityEnergy.ENERGY);
-            return capability.map(energyStorage -> energyStorage.receiveEnergy(1, true)).orElse(0) > 0;
+            if (slot == 0) {
+                return capability.map(energyStorage -> energyStorage.receiveEnergy(1, true)).orElse(0) > 0;
+            } else if (slot == 2) {
+                return capability.map(energyStorage -> energyStorage.extractEnergy(1, true)).orElse(0) > 0;
+            }
         }
         return false;
     }
@@ -34,7 +37,7 @@ public class CustomItemStackHandler extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (slot == 0 && isItemValid(slot, stack))
+        if ((slot == 0 || slot == 2) && isItemValid(slot, stack))
             return super.insertItem(slot, stack, simulate);
         else
             return stack;
@@ -43,7 +46,7 @@ public class CustomItemStackHandler extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (slot == 0)
+        if (slot == 0 || slot == 2)
             return ItemStack.EMPTY;
         return super.extractItem(slot, amount, simulate);
     }
