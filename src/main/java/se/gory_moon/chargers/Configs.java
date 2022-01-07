@@ -24,63 +24,54 @@ public class Configs {
     }
 
     public static class Server {
-        public Tier tier1 = new Tier(25000, 15000, 15000);
-        public Tier tier2 = new Tier(500000, 400000, 400000);
-        public Tier tier3 = new Tier(1000000, 900000, 900000);
-        public Wireless wireless = new Wireless();
+        public Tier tier1;
+        public Tier tier2;
+        public Tier tier3;
+        public Wireless wireless;
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Chargers configs")
                     .push("chargers");
 
             builder.push("tier_1");
-                tier1.build(builder);
+                tier1 = new Tier(builder, 25000, 500, 500);
             builder.pop();
 
             builder.push("tier_2");
-                tier2.build(builder);
+                tier2 = new Tier(builder, 500000, 10000, 10000);
             builder.pop();
 
             builder.push("tier_3");
-                tier3.build(builder);
+                tier3 = new Tier(builder, 1000000, 50000, 50000);
             builder.pop();
 
             builder.push("wireless");
-                wireless.build(builder);
+                wireless = new Wireless(builder, 200000, 4000, 4000, 24);
             builder.pop(2);
         }
 
         public static class Tier {
-            private final int defaultStorage;
             public ForgeConfigSpec.IntValue storage;
 
-            private final int defaultMaxInput;
             public ForgeConfigSpec.IntValue maxInput;
 
-            private final int defaultMaxOutput;
             public ForgeConfigSpec.IntValue maxOutput;
 
-            private Tier(int defaultStorage, int in, int out) {
-                this.defaultStorage = defaultStorage;
-                this.defaultMaxInput = in;
-                this.defaultMaxOutput = out;
-            }
-
-            protected void build(ForgeConfigSpec.Builder builder) {
-                storage = builder
+            private Tier(ForgeConfigSpec.Builder builder, int storage, int in, int out) {
+                this.storage = builder
                         .comment("The amount of energy the charger can hold")
                         .worldRestart()
-                        .defineInRange("storage", defaultStorage, 0, Integer.MAX_VALUE);
+                        .defineInRange("storage", storage, 0, Integer.MAX_VALUE);
 
-                maxInput = builder
+                this.maxInput = builder
                         .comment("The amount of energy/tick that can be inserted")
                         .worldRestart()
-                        .defineInRange("max_input", defaultMaxInput, 0, Integer.MAX_VALUE);
+                        .defineInRange("max_input", in, 0, Integer.MAX_VALUE);
 
-                maxOutput = builder
+                this.maxOutput = builder
                         .comment("The amount of energy/tick that can be extracted", "This is the max speed items would be charged at, actual speed could be slower depending on item")
                         .worldRestart()
-                        .defineInRange("max_output", defaultMaxOutput, 0, Integer.MAX_VALUE);
+                        .defineInRange("max_output", out, 0, Integer.MAX_VALUE);
             }
         }
 
@@ -91,25 +82,25 @@ public class Configs {
             public ForgeConfigSpec.IntValue maxOutput;
             public ForgeConfigSpec.IntValue range;
 
-            protected void build(ForgeConfigSpec.Builder builder) {
-                storage = builder
+            protected Wireless(ForgeConfigSpec.Builder builder, int storage, int in, int out, int range) {
+                this.storage = builder
                         .comment("The amount of energy the wireless charger can hold")
                         .worldRestart()
-                        .defineInRange("storage", 200000, 0, Integer.MAX_VALUE);
+                        .defineInRange("storage", storage, 0, Integer.MAX_VALUE);
 
-                maxInput = builder
+                this.maxInput = builder
                         .comment("The amount of energy/tick that can be inserted")
                         .worldRestart()
-                        .defineInRange("max_input", 25000, 0, Integer.MAX_VALUE);
+                        .defineInRange("max_input", in, 0, Integer.MAX_VALUE);
 
-                maxOutput = builder
+                this.maxOutput = builder
                         .comment("The amount of energy/tick that can be extracted", "This is the max speed items would be charged at, actual speed could be slower depending on item")
                         .worldRestart()
-                        .defineInRange("max_output", 25000, 0, Integer.MAX_VALUE);
+                        .defineInRange("max_output", out, 0, Integer.MAX_VALUE);
 
-                range = builder
+                this.range = builder
                         .comment("The range from the charger that item will be charged")
-                        .defineInRange("range", 24, 0, 128);
+                        .defineInRange("range", range, 0, 128);
             }
         }
     }
@@ -128,6 +119,7 @@ public class Configs {
                     .comment("If curios compat should be enabled")
                     .define("curios_compat", true);
 
+            builder.pop(2);
         }
     }
 }
