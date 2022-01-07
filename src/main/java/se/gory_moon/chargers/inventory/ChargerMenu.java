@@ -146,13 +146,13 @@ public class ChargerMenu extends AbstractContainerMenu {
                     return ItemStack.EMPTY;
                 slot.onQuickCraft(stack, itemstack);
             } else {
-                if (!itemHandler.isItemValid(0, stack)) {
+                if (!itemHandler.isItemValid(0, stack) && !itemHandler.isItemValid(2, stack)) {
                     if (index <= inventoryEnd) {
                         if (!moveItemStackTo(stack, hotbarStart, hotbarEnd + 1, false))
                             return ItemStack.EMPTY;
                     } else if (index < hotbarEnd + 1 && !moveItemStackTo(stack, inventoryStart, inventoryEnd + 1, false))
                         return ItemStack.EMPTY;
-                } else if (!moveItemStackTo(stack, this.inputSlot.index, this.inputSlot.index + 1, false))
+                } else if (!moveItemStackTo(stack, this.inputSlot.index, this.chargeSlot.index + 1, false))
                     return ItemStack.EMPTY;
             }
 

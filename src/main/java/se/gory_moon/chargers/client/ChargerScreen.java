@@ -39,7 +39,7 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
         this.renderBackground(pPoseStack);
         super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
 
-        if (pMouseX >= leftPos + 48 && pMouseX <= leftPos + 48 + 16 && pMouseY >= topPos + 14 && pMouseY <= topPos + 84) {
+        if (pMouseX >= leftPos + 44 && pMouseX <= leftPos + 44 + 16 && pMouseY >= topPos + 14 && pMouseY <= topPos + 84) {
             List<Component> list = new ArrayList<>();
             list.add(new TranslatableComponent(LangKeys.GUI_ENERGY.key(), Utils.formatAndClean(menu.getEnergy()), Utils.formatAndClean(menu.getEnergyMax()) + ChatFormatting.GRAY));
             list.add(new TranslatableComponent(LangKeys.GUI_MAX_IN.key(), Utils.formatAndClean(menu.getMaxIn()) + ChatFormatting.GRAY));
@@ -70,7 +70,5 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
     @Override
     protected void renderLabels(PoseStack pPoseStack, int pMouseX, int pMouseY) {
         super.renderLabels(pPoseStack, pMouseX, pMouseY);
-        //this.font.draw(stack, this.title, (float)this.titleLabelX, (float)this.titleLabelY, 4210752);
-
     }
 }
