@@ -6,6 +6,7 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.Tags;
@@ -25,7 +26,10 @@ public class BlockRegistry {
             .block(ChargerBlock::new)
             .initialProperties(Material.METAL, MaterialColor.COLOR_GRAY)
             .lang(CHARGER_T1_NAME)
-            .properties(properties -> properties.strength(5, 10))
+            .properties(properties -> properties
+                    .strength(5, 10)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops())
             .tag(BlockTags.MINEABLE_WITH_PICKAXE)
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
                     provider.models().cubeBottomTop("charger_tier_1",
@@ -56,8 +60,11 @@ public class BlockRegistry {
             .block(ChargerBlock::new)
             .initialProperties(Material.METAL, MaterialColor.GOLD)
             .lang(CHARGER_T2_NAME)
-            .properties(properties -> properties.strength(5, 10))
-            .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+            .properties(properties -> properties
+                    .strength(5, 10)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops())
+            .tag(BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.NEEDS_STONE_TOOL)
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
                     provider.models().cubeBottomTop("charger_tier_2",
                             provider.modLoc("block/charger_tier_2_side"),
@@ -87,8 +94,11 @@ public class BlockRegistry {
             .block(ChargerBlock::new)
             .initialProperties(Material.METAL, MaterialColor.COLOR_CYAN)
             .lang(CHARGER_T3_NAME)
-            .properties(properties -> properties.strength(5, 10))
-            .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+            .properties(properties -> properties
+                    .strength(10, 10)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops())
+            .tag(BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.NEEDS_IRON_TOOL)
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
                     provider.models().cubeBottomTop("charger_tier_3",
                             provider.modLoc("block/charger_tier_3_side"),
@@ -114,12 +124,49 @@ public class BlockRegistry {
                 .build()
             .register();
 
+    public static final BlockEntry<ChargerBlock> CHARGER_BLOCK_T4 = REGISTRATE.object(CHARGER_T4_BLOCK)
+            .block(ChargerBlock::new)
+            .initialProperties(Material.METAL, MaterialColor.COLOR_BLACK)
+            .lang(CHARGER_T4_NAME)
+            .properties(properties -> properties
+                    .strength(30, 1200)
+                    .sound(SoundType.NETHERITE_BLOCK)
+                    .requiresCorrectToolForDrops())
+            .tag(BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.NEEDS_DIAMOND_TOOL)
+            .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
+                    provider.models().cubeBottomTop("charger_tier_4",
+                            provider.modLoc("block/charger_tier_4_side"),
+                            provider.modLoc("block/charger_tier_4"),
+                            provider.modLoc("block/charger_tier_4_top"))))
+            .item(ChargerBlockItem::new)
+                .properties(p -> p.rarity(Rarity.EPIC).tab(ChargersTab.TAB))
+                .recipe((context, provider) -> {
+                    DataIngredient netherite = DataIngredient.tag(Tags.Items.INGOTS_NETHERITE);
+                    DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
+                    DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
+                    DataIngredient charger_t3 = DataIngredient.items(ItemRegistry.CHARGER_T3_ITEM.get());
+
+                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(context.get())
+                            .define('N', netherite)
+                            .define('R', redstone)
+                            .define('B', redstoneBlock)
+                            .define('C', charger_t3);
+                    builder.pattern("NRN").pattern("NBN").pattern("NCN");
+                    builder.unlockedBy("has_" + provider.safeName(charger_t3), charger_t3.getCritereon(provider));
+                    builder.save(provider, provider.safeId(context.get()));
+                })
+                .build()
+            .register();
+
     public static final BlockEntry<WirelessChargerBlock> WIRELESS_CHARGER = REGISTRATE.object(WIRELESS_CHARGER_BLOCK)
             .block(WirelessChargerBlock::new)
             .initialProperties(Material.METAL, MaterialColor.COLOR_GRAY)
             .simpleBlockEntity(WirelessChargerBlockEntity::new)
             .lang(WIRELESS_CHARGER_NAME)
-            .properties(properties -> properties.strength(5, 10))
+            .properties(properties -> properties
+                    .strength(5, 10)
+                    .sound(SoundType.METAL)
+                    .requiresCorrectToolForDrops())
             .tag(BlockTags.MINEABLE_WITH_PICKAXE)
             .blockstate((ctx, provider) -> provider.getVariantBuilder(ctx.get())
                     .partialState().with(WirelessChargerBlock.POWERED, false)

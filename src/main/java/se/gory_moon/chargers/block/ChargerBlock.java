@@ -6,6 +6,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.util.NonNullSupplier;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.block.entity.ChargerBlockEntity;
@@ -73,7 +75,7 @@ public class ChargerBlock extends EnergyBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         ChargerBlockEntity charger = BlockEntityRegistry.CHARGER_BE.create(pos, state);
-        charger.setTier(this == BlockRegistry.CHARGER_BLOCK_T1.get() ? Tier.I: this == BlockRegistry.CHARGER_BLOCK_T2.get() ? Tier.II: Tier.III);
+        charger.setTier(Tier.byBlock(this));
         return charger;
     }
 
@@ -84,15 +86,20 @@ public class ChargerBlock extends EnergyBlock {
     }
 
     public enum Tier {
-        I(0),
-        II(1),
-        III(2);
+        I(0, () -> Configs.SERVER.tier1),
+        II(1, () -> Configs.SERVER.tier2),
+        III(2, () -> Configs.SERVER.tier3),
+        IV(3, () -> Configs.SERVER.tier4);
 
         private final int id;
+        private final NonNullSupplier<Configs.Server.Tier> tierSupplier;
+        @Nullable
+        private Configs.Server.Tier tier = null;
         private static final ChargerBlock.Tier[] ID_LOOKUP = new ChargerBlock.Tier[values().length];
 
-        Tier(int id) {
+        Tier(int id, NonNullSupplier<Configs.Server.Tier> tierSupplier) {
             this.id = id;
+            this.tierSupplier = tierSupplier;
         }
 
         public int getId() {
@@ -100,30 +107,24 @@ public class ChargerBlock extends EnergyBlock {
         }
 
         public int getStorage() {
-            return this == ChargerBlock.Tier.I ?
-                    Configs.SERVER.tier1.storage.get():
-                    this == ChargerBlock.Tier.II ?
-                            Configs.SERVER.tier2.storage.get():
-                            Configs.SERVER.tier3.storage.get();
+            return getTier().storage.get();
         }
 
         public int getMaxIn() {
-            return this == ChargerBlock.Tier.I ?
-                    Configs.SERVER.tier1.maxInput.get():
-                    this == ChargerBlock.Tier.II ?
-                            Configs.SERVER.tier2.maxInput.get():
-                            Configs.SERVER.tier3.maxInput.get();
+            return getTier().maxInput.get();
         }
 
         public int getMaxOut() {
-            return this == ChargerBlock.Tier.I ?
-                    Configs.SERVER.tier1.maxOutput.get():
-                    this == ChargerBlock.Tier.II ?
-                            Configs.SERVER.tier2.maxOutput.get():
-                            Configs.SERVER.tier3.maxOutput.get();
+            return getTier().maxOutput.get();
         }
 
-        public static ChargerBlock.Tier byID(int id) {
+        private Configs.Server.Tier getTier() {
+            if (tier == null)
+                tier = tierSupplier.get();
+            return tier;
+        }
+
+        public static Tier byID(int id) {
             if (id < 0 || id >= ID_LOOKUP.length) {
                 id = 0;
             }
@@ -131,8 +132,22 @@ public class ChargerBlock extends EnergyBlock {
             return ID_LOOKUP[id];
         }
 
+        public static Tier byItem(BlockItem item) {
+            return byBlock(item.getBlock());
+        }
+
+        public static Tier byBlock(Block block) {
+            if (BlockRegistry.CHARGER_BLOCK_T2.is(block))
+                return Tier.II;
+            else if (BlockRegistry.CHARGER_BLOCK_T3.is(block))
+                return Tier.III;
+            else if (BlockRegistry.CHARGER_BLOCK_T4.is(block))
+                return Tier.IV;
+            return Tier.I;
+        }
+
         static {
-            for (ChargerBlock.Tier tier : values()) {
+            for (Tier tier : values()) {
                 ID_LOOKUP[tier.getId()] = tier;
             }
         }

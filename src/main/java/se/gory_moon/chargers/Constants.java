@@ -16,6 +16,9 @@ public class Constants {
     public static final String CHARGER_T3_BLOCK = "charger_t3";
     public static final String CHARGER_T3_NAME = "Charger Tier III";
 
+    public static final String CHARGER_T4_BLOCK = "charger_t4";
+    public static final String CHARGER_T4_NAME = "Charger Tier IV";
+
     public static final String CHARGER_BLOCK_ENTITY = "charger";
     public static final String CHARGER_CONTAINER = "charger";
 

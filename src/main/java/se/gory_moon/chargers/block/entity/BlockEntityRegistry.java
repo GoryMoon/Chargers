@@ -20,7 +20,7 @@ public class BlockEntityRegistry {
 
     public static final BlockEntityEntry<ChargerBlockEntity> CHARGER_BE = REGISTRATE.object(CHARGER_BLOCK_ENTITY)
             .blockEntity(ChargerBlockEntity::new)
-            .validBlocks(() -> CHARGER_BLOCK_T1.get(), () -> CHARGER_BLOCK_T2.get(), () -> CHARGER_BLOCK_T3.get())
+            .validBlocks(CHARGER_BLOCK_T1, CHARGER_BLOCK_T2, CHARGER_BLOCK_T3, CHARGER_BLOCK_T4)
             .register();
 
     public static final BlockEntityEntry<WirelessChargerBlockEntity> WIRELESS_CHARGER_BE = BlockEntityEntry.cast(REGISTRATE.get(WIRELESS_CHARGER_BLOCK_ENTITY, BlockEntityType.class));

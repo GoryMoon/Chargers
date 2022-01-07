@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "chargers:block/charger_tier_4"
+    }
+  }
+}

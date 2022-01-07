@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "chargers:charger_t4"
+    ]
+  },
+  "criteria": {
+    "has_charger_t3": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "chargers:charger_t3"
+            ]
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "chargers:charger_t4"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_charger_t3",
+      "has_the_recipe"
+    ]
+  ]
+}
