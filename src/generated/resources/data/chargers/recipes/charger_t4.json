@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NRN",
+    "NBN",
+    "NCN"
+  ],
+  "key": {
+    "N": {
+      "tag": "forge:ingots/netherite"
+    },
+    "R": {
+      "tag": "forge:dusts/redstone"
+    },
+    "B": {
+      "tag": "forge:storage_blocks/redstone"
+    },
+    "C": {
+      "item": "chargers:charger_t3"
+    }
+  },
+  "result": {
+    "item": "chargers:charger_t4"
+  }
+}

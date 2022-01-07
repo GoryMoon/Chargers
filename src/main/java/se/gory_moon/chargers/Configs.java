@@ -27,6 +27,7 @@ public class Configs {
         public Tier tier1;
         public Tier tier2;
         public Tier tier3;
+        public Tier tier4;
         public Wireless wireless;
 
         Server(ForgeConfigSpec.Builder builder) {
@@ -42,7 +43,11 @@ public class Configs {
             builder.pop();
 
             builder.push("tier_3");
-                tier3 = new Tier(builder, 1000000, 50000, 50000);
+                tier3 = new Tier(builder, 1000000, 25000, 25000);
+            builder.pop();
+
+            builder.push("tier_4");
+                tier4 = new Tier(builder, 25000000, 625000, 625000);
             builder.pop();
 
             builder.push("wireless");

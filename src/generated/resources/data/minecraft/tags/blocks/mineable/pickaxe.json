@@ -4,6 +4,7 @@
     "chargers:charger_t1",
     "chargers:charger_t2",
     "chargers:charger_t3",
+    "chargers:charger_t4",
     "chargers:wireless_charger"
   ]
 }

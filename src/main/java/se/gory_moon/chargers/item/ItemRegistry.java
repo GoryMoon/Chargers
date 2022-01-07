@@ -13,6 +13,7 @@ public class ItemRegistry {
     public static final ItemEntry<ChargerBlockItem> CHARGER_T1_ITEM = ItemEntry.cast(REGISTRATE.get(Constants.CHARGER_T1_BLOCK, Item.class));
     public static final ItemEntry<ChargerBlockItem> CHARGER_T2_ITEM = ItemEntry.cast(REGISTRATE.get(Constants.CHARGER_T2_BLOCK, Item.class));
     public static final ItemEntry<ChargerBlockItem> CHARGER_T3_ITEM = ItemEntry.cast(REGISTRATE.get(Constants.CHARGER_T3_BLOCK, Item.class));
+    public static final ItemEntry<ChargerBlockItem> CHARGER_T4_ITEM = ItemEntry.cast(REGISTRATE.get(Constants.CHARGER_T4_BLOCK, Item.class));
 
     public static void init() {}
 

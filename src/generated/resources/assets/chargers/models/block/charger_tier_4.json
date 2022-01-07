@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "side": "chargers:block/charger_tier_4_side",
+    "bottom": "chargers:block/charger_tier_4",
+    "top": "chargers:block/charger_tier_4_top"
+  }
+}

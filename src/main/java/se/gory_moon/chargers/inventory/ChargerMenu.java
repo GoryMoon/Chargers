@@ -171,7 +171,10 @@ public class ChargerMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T1.get()) || stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T2.get()) || stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T3.get());
+        return stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T1.get()) ||
+                stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T2.get()) ||
+                stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T3.get()) ||
+                stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T4.get());
     }
 
     private static final int ENERGY = 0, ENERGY_MAX = 1, MAX_IN = 2, MAX_OUT = 3, AVERAGE_IN = 4, AVERAGE_OUT = 5;

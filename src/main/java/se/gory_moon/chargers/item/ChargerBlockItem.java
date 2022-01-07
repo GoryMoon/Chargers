@@ -18,9 +18,6 @@ import se.gory_moon.chargers.power.CustomItemEnergyStorage;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static se.gory_moon.chargers.item.ItemRegistry.CHARGER_T1_ITEM;
-import static se.gory_moon.chargers.item.ItemRegistry.CHARGER_T2_ITEM;
-
 public class ChargerBlockItem extends BlockItem {
 
     public ChargerBlockItem(Block block, Item.Properties builder) {
@@ -30,7 +27,7 @@ public class ChargerBlockItem extends BlockItem {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        Tier tier = CHARGER_T1_ITEM.is(this) ? Tier.I: CHARGER_T2_ITEM.is(this) ? Tier.II: Tier.III;
+        Tier tier = Tier.byItem(this);
         return new ItemEnergyCapabilityProvider(new CustomItemEnergyStorage(stack, tier.getStorage(), tier.getMaxIn(), tier.getMaxOut()));
     }
 
