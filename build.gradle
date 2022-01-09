@@ -109,11 +109,11 @@ configurations {
 shadowJar {
     configurations = [project.configurations.shade]
     relocate 'com.tterrag.registrate', 'se.gory_moon.chargers.repack.registrate'
-    classifier = ''
+    archiveClassifier.set('')
 }
 
-jar.finalizedBy('signJar', 'shadowJar')
-shadowJar.finalizedBy('reobfJar')
+jar.finalizedBy('shadowJar')
+shadowJar.finalizedBy('signJar', 'reobfJar')
 
 repositories {
     mavenCentral()
@@ -154,7 +154,7 @@ dependencies {
 task sourcesJar(type: Jar, dependsOn: classes) {
     description = 'Creates a JAR containing the source code.'
     from sourceSets.main.allSource
-    classifier = 'sources'
+    archiveClassifier.set('sources')
 }
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -165,16 +165,15 @@ task deobfJar(type: ShadowJar) {
     configurations = [project.configurations.shade]
     relocate 'com.tterrag.registrate', 'se.gory_moon.chargers.repack.registrate'
 
-    classifier = 'deobf'
+    archiveClassifier.set('deobf')
 }
 
 task forgelibJar(type: Jar) {
     description = 'Creates a compiled JAR which also contains raw sources.'
     from sourceSets.main.output
     from sourceSets.main.allJava
-    classifier = 'forgelib'
+    archiveClassifier.set('forgelib')
 }
-
 
 artifacts {
     archives sourcesJar
@@ -198,24 +197,24 @@ jar {
 
 // Jar Signing
 import net.minecraftforge.gradle.common.tasks.SignJar
-task signJar(type: SignJar, dependsOn: shadowJar) {
-
+task signJar(type: SignJar, dependsOn: jar) {
+    dependsOn 'reobfJar'
     onlyIf {
         project.hasProperty('keyStore')
     }
 
     if (project.hasProperty('keyStore')) {
-        project.logger.info('Signing jar ' + jar.archivePath.getName());
+        project.logger.info("Signing jar ${jar.archiveFileName.get()}");
 
         keyStore = project.findProperty('keyStore')
         alias = project.findProperty('keyStoreAlias')
         storePass = project.findProperty('keyStorePass')
         keyPass = project.findProperty('keyStorePass')
-        inputFile = jar.archivePath
-        outputFile = jar.archivePath
+        inputFile = jar.archiveFile.get()
+        outputFile = jar.archiveFile.get()
     }
 
     else {
-        project.logger.warn('Could not sign ' + jar.archivePath.getName() + '. No keyStore property could be found')
+        project.logger.log(LogLevel.WARN, "Could not sign ${jar.archiveFileName.get()}. No keyStore property could be found")
     }
 }
