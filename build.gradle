@@ -26,11 +26,11 @@ archivesBaseName = "Chargers-$mc_version"
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-if (System.getenv().GITHUB_RUN_NUMBER  != null) {//adds the build number to the end of the version string if on a build server
+if (System.getenv().GITHUB_RUN_NUMBER  != null) { //adds the build number to the end of the version string if on a build server
     version += ".${System.getenv().GITHUB_RUN_NUMBER}"
 }
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
     mappings channel: mappings_channel, version: mappings_version
 
@@ -44,6 +44,9 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            property 'forge.enabledGameTestNamespaces', 'chargers'
 
             // Make mixins work on dependencies
             property 'mixin.env.remapRefMap', 'true'
@@ -65,6 +68,9 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            property 'forge.enabledGameTestNamespaces', 'chargers'
+
             // Make mixins work on dependencies
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
@@ -79,10 +85,8 @@ minecraft {
         data {
             workingDirectory project.file('run')
 
-            // Recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'CORE,LOADING,REGISTRIES'
+            properties 'forge.logging.markers': 'REGISTRIES'
 
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'chargers', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
@@ -193,6 +197,10 @@ jar {
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
 // Jar Signing
