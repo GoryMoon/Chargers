@@ -148,7 +148,7 @@ dependencies {
     implementation fg.deobf(registrate)
     shade registrate
 
-    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.1.0-145")
+//    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.1.0-145")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
