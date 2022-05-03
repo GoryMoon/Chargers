@@ -1,6 +1,7 @@
 package se.gory_moon.chargers.block.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
@@ -101,10 +102,10 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap) {
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
             return lazyInventory.cast();
-        return super.getCapability(cap);
+        return super.getCapability(cap, side);
     }
 
     public void setCustomName(Component name) {
