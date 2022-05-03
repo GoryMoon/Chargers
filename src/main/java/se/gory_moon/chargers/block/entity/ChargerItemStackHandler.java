@@ -22,6 +22,11 @@ public class ChargerItemStackHandler extends ItemStackHandler {
     }
 
     @Override
+    public int getSlotLimit(int slot) {
+        return 1;
+    }
+
+    @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
         if (!stack.isEmpty()) {
             LazyOptional<IEnergyStorage> capability = stack.getCapability(CapabilityEnergy.ENERGY);
@@ -46,8 +51,13 @@ public class ChargerItemStackHandler extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (slot == 0 || slot == 2)
+        if (slot == 0)
             return ItemStack.EMPTY;
+        if (slot == 2) {
+            LazyOptional<IEnergyStorage> capability = getStackInSlot(2).getCapability(CapabilityEnergy.ENERGY);
+            if (capability.map(energyStorage -> energyStorage.extractEnergy(1, true)).orElse(0) > 0)
+                return ItemStack.EMPTY;
+        }
         return super.extractItem(slot, amount, simulate);
     }
 
