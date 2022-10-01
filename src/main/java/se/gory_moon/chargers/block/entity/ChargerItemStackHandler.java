@@ -2,8 +2,8 @@ package se.gory_moon.chargers.block.entity;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -29,7 +29,7 @@ public class ChargerItemStackHandler extends ItemStackHandler {
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
         if (!stack.isEmpty()) {
-            LazyOptional<IEnergyStorage> capability = stack.getCapability(CapabilityEnergy.ENERGY);
+            LazyOptional<IEnergyStorage> capability = stack.getCapability(ForgeCapabilities.ENERGY);
             if (slot == 0) {
                 return capability.map(energyStorage -> energyStorage.receiveEnergy(1, true)).orElse(0) > 0;
             } else if (slot == 2) {
@@ -54,7 +54,7 @@ public class ChargerItemStackHandler extends ItemStackHandler {
         if (slot == 0)
             return ItemStack.EMPTY;
         if (slot == 2) {
-            LazyOptional<IEnergyStorage> capability = getStackInSlot(2).getCapability(CapabilityEnergy.ENERGY);
+            LazyOptional<IEnergyStorage> capability = getStackInSlot(2).getCapability(ForgeCapabilities.ENERGY);
             if (capability.map(energyStorage -> energyStorage.extractEnergy(1, true)).orElse(0) > 0)
                 return ItemStack.EMPTY;
         }

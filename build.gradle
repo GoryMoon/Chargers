@@ -1,23 +1,10 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven { url = 'https://maven.parchmentmc.org' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
-    }
-}
-
 plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
-
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
 version = mod_version
 group = "se.gory_moon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -82,11 +69,37 @@ minecraft {
             }
         }
 
+
+        gameTestServer {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'REGISTRIES'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            property 'forge.enabledGameTestNamespaces', 'chargers'
+
+            // Make mixins work on dependencies
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            mods {
+                chargers {
+                    source sourceSets.main
+                }
+            }
+        }
+
         data {
             workingDirectory project.file('run')
 
+            // Recommended logging data for a userdev environment
             properties 'forge.logging.markers': 'REGISTRIES'
 
+            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'chargers', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
@@ -152,7 +165,7 @@ dependencies {
     implementation fg.deobf(registrate)
     shade registrate
 
-    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.2-8.0.1-147")
+    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.19.2-9.0.0-153")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -188,7 +201,7 @@ artifacts {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "chargers",
+            "Specification-Title": "Chargers",
             "Specification-Vendor": "Gory_Moon",
             "Specification-Version": "1", // We are version 1 of ourselves
             "Implementation-Title": project.name,
@@ -225,4 +238,8 @@ task signJar(type: SignJar, dependsOn: jar) {
     else {
         project.logger.log(LogLevel.WARN, "Could not sign ${jar.archiveFileName.get()}. No keyStore property could be found")
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }

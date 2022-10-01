@@ -217,7 +217,7 @@ public class ChargerMenu extends AbstractContainerMenu {
 
     @SubscribeEvent
     public static void onContainerOpened(PlayerContainerEvent.Open event) {
-        if (event.getContainer() instanceof ChargerMenu menu && event.getPlayer() instanceof ServerPlayer serverPlayer) {
+        if (event.getContainer() instanceof ChargerMenu menu && event.getEntity() instanceof ServerPlayer serverPlayer) {
             menu.usingPlayers.add(serverPlayer);
 
             List<SyncPair> toSync = new ArrayList<>();
@@ -230,7 +230,7 @@ public class ChargerMenu extends AbstractContainerMenu {
 
     @SubscribeEvent
     public static void onContainerClosed(PlayerContainerEvent.Close event) {
-        if (event.getContainer() instanceof ChargerMenu menu && event.getPlayer() instanceof ServerPlayer serverPlayer)
+        if (event.getContainer() instanceof ChargerMenu menu && event.getEntity() instanceof ServerPlayer serverPlayer)
             menu.usingPlayers.remove(serverPlayer);
     }
 }

@@ -1,9 +1,8 @@
 package se.gory_moon.chargers;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -20,8 +19,8 @@ public class Utils {
     }
 
     public static void addEnergyTooltip(ItemStack stack, List<Component> tooltip) {
-        stack.getCapability(CapabilityEnergy.ENERGY, null).ifPresent(energyStorage -> {
-            tooltip.add(new TranslatableComponent(LangKeys.CHAT_STORED_INFO.key(), formatAndClean(energyStorage.getEnergyStored()), formatAndClean(energyStorage.getMaxEnergyStored())));
+        stack.getCapability(ForgeCapabilities.ENERGY, null).ifPresent(energyStorage -> {
+            tooltip.add(Component.translatable(LangKeys.CHAT_STORED_INFO.key(), formatAndClean(energyStorage.getEnergyStored()), formatAndClean(energyStorage.getMaxEnergyStored())));
         });
     }
 }

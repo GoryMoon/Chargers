@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.network.PacketDistributor;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.block.WirelessChargerBlock;
@@ -85,7 +85,7 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
             for (int i = 0; i < items.size() && availableEnergy > 0; i++) {
                 ItemStack stack = items.get(i);
                 if (!stack.isEmpty()) {
-                    stack.getCapability(CapabilityEnergy.ENERGY).ifPresent(energyStorage -> {
+                    stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(energyStorage -> {
                         if (stack.getCount() == 1) {
                             int transferred = energyStorage.receiveEnergy(availableEnergy, false);
                             if (transferred > 0) {

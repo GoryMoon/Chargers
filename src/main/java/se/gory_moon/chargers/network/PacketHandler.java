@@ -19,7 +19,7 @@ public class PacketHandler {
         INSTANCE.messageBuilder(WindowPropPacket.class, 0, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(WindowPropPacket::encode)
                 .decoder(WindowPropPacket::new)
-                .consumer(WindowPropPacket::handle)
+                .consumerMainThread(WindowPropPacket::handle)
                 .add();
     }
 }

@@ -12,8 +12,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import se.gory_moon.chargers.block.entity.EnergyHolderBlockEntity;
 import se.gory_moon.chargers.item.ChargerBlockItem;
@@ -52,9 +52,9 @@ public abstract class EnergyBlock extends BaseEntityBlock {
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        if ((stack.getItem() instanceof WirelessChargerBlockItem || stack.getItem() instanceof ChargerBlockItem) && stack.getCapability(CapabilityEnergy.ENERGY).isPresent()) {
+        if ((stack.getItem() instanceof WirelessChargerBlockItem || stack.getItem() instanceof ChargerBlockItem) && stack.getCapability(ForgeCapabilities.ENERGY).isPresent()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
-            LazyOptional<IEnergyStorage> capability = stack.getCapability(CapabilityEnergy.ENERGY);
+            LazyOptional<IEnergyStorage> capability = stack.getCapability(ForgeCapabilities.ENERGY);
 
             if (blockEntity instanceof EnergyHolderBlockEntity energyHolderBlock) {
                 capability.ifPresent(energyStorage -> {
