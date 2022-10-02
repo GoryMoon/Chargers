@@ -2,9 +2,9 @@ package se.gory_moon.chargers.item;
 
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import se.gory_moon.chargers.power.CustomItemEnergyStorage;
 
 import javax.annotation.Nonnull;
@@ -22,7 +22,7 @@ public class ItemEnergyCapabilityProvider implements ICapabilityProvider {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityEnergy.ENERGY) {
+        if (cap == ForgeCapabilities.ENERGY) {
             return lazyStorage.cast();
         }
         return LazyOptional.empty();

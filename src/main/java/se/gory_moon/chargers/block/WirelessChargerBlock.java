@@ -4,13 +4,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -47,8 +43,8 @@ public class WirelessChargerBlock extends EnergyBlock {
             if (player.isShiftKeyDown())
                 return InteractionResult.FAIL;
             boolean powered = changerEntity.isPowered();
-            Component status = new TranslatableComponent((powered ? LangKeys.CHAT_DISABLED.key(): LangKeys.CHAT_ENABLED.key())).setStyle(Style.EMPTY.withColor(powered ? ChatFormatting.RED: ChatFormatting.GREEN));
-            player.displayClientMessage(new TranslatableComponent(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.formatAndClean(changerEntity.getStorage().getEnergyStored()), Utils.formatAndClean(changerEntity.getStorage().getMaxEnergyStored())), true);
+            Component status = Component.translatable((powered ? LangKeys.CHAT_DISABLED.key(): LangKeys.CHAT_ENABLED.key())).setStyle(Style.EMPTY.withColor(powered ? ChatFormatting.RED: ChatFormatting.GREEN));
+            player.displayClientMessage(Component.translatable(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.formatAndClean(changerEntity.getStorage().getEnergyStored()), Utils.formatAndClean(changerEntity.getStorage().getMaxEnergyStored())), true);
         }
 
         return InteractionResult.SUCCESS;

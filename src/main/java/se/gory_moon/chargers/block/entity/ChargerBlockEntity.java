@@ -14,10 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.CapabilityItemHandler;
 import se.gory_moon.chargers.block.ChargerBlock;
 import se.gory_moon.chargers.inventory.ChargerMenu;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
@@ -50,7 +49,7 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
             if (storage != null) {
                 ItemStack charge = inventoryHandler.getStackInSlot(2);
                 if (!charge.isEmpty()) {
-                    LazyOptional<IEnergyStorage> capability = charge.getCapability(CapabilityEnergy.ENERGY);
+                    LazyOptional<IEnergyStorage> capability = charge.getCapability(ForgeCapabilities.ENERGY);
                     capability.ifPresent(energyStorage -> {
                         int extractAmount = Math.min(storage.getMaxEnergyStored() - storage.getEnergyStored(), storage.getMaxInput());
                         int transferred = energyStorage.extractEnergy(extractAmount, false);
@@ -63,7 +62,7 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
                 ItemStack input = inventoryHandler.getStackInSlot(0);
                 ItemStack output = inventoryHandler.getStackInSlot(1);
                 if (!input.isEmpty() && input.getCount() == 1 && output.isEmpty() && storage.getEnergyStored() > 0) {
-                    LazyOptional<IEnergyStorage> capability = input.getCapability(CapabilityEnergy.ENERGY);
+                    LazyOptional<IEnergyStorage> capability = input.getCapability(ForgeCapabilities.ENERGY);
                     capability.ifPresent(energyStorage -> {
                         int transferred = energyStorage.receiveEnergy(storage.extractEnergy(storage.getEnergyStored(), true), false);
                         if (transferred > 0) {
@@ -103,7 +102,7 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+        if (cap == ForgeCapabilities.ITEM_HANDLER)
             return lazyInventory.cast();
         return super.getCapability(cap, side);
     }

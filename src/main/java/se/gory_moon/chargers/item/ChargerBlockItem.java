@@ -9,8 +9,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.energy.CapabilityEnergy;
 import se.gory_moon.chargers.Utils;
 import se.gory_moon.chargers.block.ChargerBlock.Tier;
 import se.gory_moon.chargers.power.CustomItemEnergyStorage;
@@ -33,7 +33,7 @@ public class ChargerBlockItem extends BlockItem {
 
     @Override
     public void onCraftedBy(ItemStack stack, Level level, Player player) {
-        stack.getCapability(CapabilityEnergy.ENERGY, null).ifPresent(energyStorage -> energyStorage.receiveEnergy(0, false));
+        stack.getCapability(ForgeCapabilities.ENERGY, null).ifPresent(energyStorage -> energyStorage.receiveEnergy(0, false));
     }
 
     @Override
