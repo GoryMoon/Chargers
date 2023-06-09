@@ -1,12 +1,13 @@
 # Chargers
 A mod that adds configurable items chargers
 
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/GoryMoon/Chargers/ci.yml)
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/GoryMoon/Chargers/Mod%20CI)
+[![CurseForge Downloads](http://cf.way2muchnoise.eu/full_chargers_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/chargers)
+[![CurseForge Versions](http://cf.way2muchnoise.eu/versions/chargers_all.svg)](https://www.curseforge.com/minecraft/mc-mods/chargers)
 
-<a href="https://www.curseforge.com/minecraft/mc-mods/chargers"><img src="http://cf.way2muchnoise.eu/full_chargers_downloads.svg" /></a>
-<a href="https://www.curseforge.com/minecraft/mc-mods/chargers"><img src="http://cf.way2muchnoise.eu/versions/chargers_all.svg" /></a>
-
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/chargers?color=1bd96a&label=Downlods&logo=Modrinth)](https://modrinth.com/mod/chargers)
+[![Modrinth Versions](https://img.shields.io/modrinth/game-versions/chargers?color=1bd96a&label=Available%20for&logo=Modrinth)](https://modrinth.com/mod/chargers)
 
 License
 ----
