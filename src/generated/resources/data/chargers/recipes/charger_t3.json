@@ -1,5 +1,6 @@
 {
   "type": "chargers:upgrade_charger",
+  "category": "redstone",
   "key": {
     "B": {
       "tag": "forge:storage_blocks/redstone"

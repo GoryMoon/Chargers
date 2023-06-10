@@ -12,13 +12,13 @@ public class UpgradeChargerRecipeSerializer implements RecipeSerializer<UpgradeC
     @Override
     public @NotNull UpgradeChargerRecipe fromJson(@NotNull ResourceLocation recipeId, @NotNull JsonObject json) {
         ShapedRecipe basic = RecipeSerializer.SHAPED_RECIPE.fromJson(recipeId, json);
-        return new UpgradeChargerRecipe(basic.getId(), basic.getGroup(), basic.getWidth(), basic.getHeight(), basic.getIngredients(), basic.getResultItem());
+        return new UpgradeChargerRecipe(basic.getId(), basic.getGroup(), basic.category(), basic.getWidth(), basic.getHeight(), basic.getIngredients(), basic.getResultItem());
     }
 
     @Override
     public @Nullable UpgradeChargerRecipe fromNetwork(@NotNull ResourceLocation recipeId, @NotNull FriendlyByteBuf buffer) {
         ShapedRecipe basic = RecipeSerializer.SHAPED_RECIPE.fromNetwork(recipeId, buffer);
-        return basic != null ? new UpgradeChargerRecipe(basic.getId(), basic.getGroup(), basic.getWidth(), basic.getHeight(), basic.getIngredients(), basic.getResultItem()) : null;
+        return basic != null ? new UpgradeChargerRecipe(basic.getId(), basic.getGroup(), basic.category(), basic.getWidth(), basic.getHeight(), basic.getIngredients(), basic.getResultItem()) : null;
     }
 
     @Override

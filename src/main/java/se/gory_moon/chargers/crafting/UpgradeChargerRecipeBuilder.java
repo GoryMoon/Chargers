@@ -2,6 +2,7 @@ package se.gory_moon.chargers.crafting;
 
 import com.google.gson.JsonObject;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -12,16 +13,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public class UpgradeChargerRecipeBuilder extends ShapedRecipeBuilder {
-    public UpgradeChargerRecipeBuilder(ItemLike pResult, int pCount) {
-        super(pResult, pCount);
+    public UpgradeChargerRecipeBuilder(RecipeCategory pCategory, ItemLike pResult, int pCount) {
+        super(pCategory, pResult, pCount);
     }
 
-    public static UpgradeChargerRecipeBuilder builder(ItemLike result) {
-        return builder(result, 1);
+    public static UpgradeChargerRecipeBuilder builder(RecipeCategory category, ItemLike result) {
+        return builder(category, result, 1);
     }
 
-    public static UpgradeChargerRecipeBuilder builder(ItemLike result, int count) {
-        return new UpgradeChargerRecipeBuilder(result, count);
+    public static UpgradeChargerRecipeBuilder builder(RecipeCategory category, ItemLike result, int count) {
+        return new UpgradeChargerRecipeBuilder(category, result, count);
     }
 
     @Override

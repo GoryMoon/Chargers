@@ -3,6 +3,7 @@ package se.gory_moon.chargers.block;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Rarity;
@@ -11,7 +12,6 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.common.Tags;
 import se.gory_moon.chargers.ChargersMod;
-import se.gory_moon.chargers.ChargersTab;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
 import se.gory_moon.chargers.crafting.UpgradeChargerRecipeBuilder;
 import se.gory_moon.chargers.item.ChargerBlockItem;
@@ -38,13 +38,13 @@ public class BlockRegistry {
                             provider.modLoc("block/charger_tier_1"),
                             provider.modLoc("block/charger_tier_1_top"))))
             .item(ChargerBlockItem::new)
-                .properties(p -> p.rarity(Rarity.COMMON).tab(ChargersTab.TAB))
+                .properties(p -> p.rarity(Rarity.COMMON))
                 .recipe((context, provider) -> {
                     DataIngredient iron = DataIngredient.tag(Tags.Items.INGOTS_IRON);
                     DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
                     DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
 
-                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(context.get())
+                    var builder = ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, context.get())
                             .define('I', iron)
                             .define('R', redstone)
                             .define('B', redstoneBlock);
@@ -72,14 +72,14 @@ public class BlockRegistry {
                             provider.modLoc("block/charger_tier_2"),
                             provider.modLoc("block/charger_tier_2_top"))))
             .item(ChargerBlockItem::new)
-                .properties(p -> p.rarity(Rarity.UNCOMMON).tab(ChargersTab.TAB))
+                .properties(p -> p.rarity(Rarity.UNCOMMON))
                 .recipe((context, provider) -> {
                     DataIngredient gold = DataIngredient.tag(Tags.Items.INGOTS_GOLD);
                     DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
                     DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
                     DataIngredient charger_t1 = DataIngredient.items(ItemRegistry.CHARGER_T1_ITEM.get());
 
-                    var builder = UpgradeChargerRecipeBuilder.builder(context.get())
+                    var builder = UpgradeChargerRecipeBuilder.builder(RecipeCategory.REDSTONE, context.get())
                             .define('G', gold)
                             .define('R', redstone)
                             .define('B', redstoneBlock)
@@ -106,14 +106,14 @@ public class BlockRegistry {
                             provider.modLoc("block/charger_tier_3"),
                             provider.modLoc("block/charger_tier_3_top"))))
             .item(ChargerBlockItem::new)
-                .properties(p -> p.rarity(Rarity.RARE).tab(ChargersTab.TAB))
+                .properties(p -> p.rarity(Rarity.RARE))
                 .recipe((context, provider) -> {
                     DataIngredient diamond = DataIngredient.tag(Tags.Items.GEMS_DIAMOND);
                     DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
                     DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
                     DataIngredient charger_t2 = DataIngredient.items(ItemRegistry.CHARGER_T2_ITEM.get());
 
-                    var builder = UpgradeChargerRecipeBuilder.builder(context.get())
+                    var builder = UpgradeChargerRecipeBuilder.builder(RecipeCategory.REDSTONE, context.get())
                             .define('D', diamond)
                             .define('R', redstone)
                             .define('B', redstoneBlock)
@@ -140,14 +140,14 @@ public class BlockRegistry {
                             provider.modLoc("block/charger_tier_4"),
                             provider.modLoc("block/charger_tier_4_top"))))
             .item(ChargerBlockItem::new)
-                .properties(p -> p.rarity(Rarity.EPIC).tab(ChargersTab.TAB))
+                .properties(p -> p.rarity(Rarity.EPIC))
                 .recipe((context, provider) -> {
                     DataIngredient netherite = DataIngredient.tag(Tags.Items.INGOTS_NETHERITE);
                     DataIngredient redstone = DataIngredient.tag(Tags.Items.DUSTS_REDSTONE);
                     DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
                     DataIngredient charger_t3 = DataIngredient.items(ItemRegistry.CHARGER_T3_ITEM.get());
 
-                    var builder = UpgradeChargerRecipeBuilder.builder(context.get())
+                    var builder = UpgradeChargerRecipeBuilder.builder(RecipeCategory.REDSTONE, context.get())
                             .define('N', netherite)
                             .define('R', redstone)
                             .define('B', redstoneBlock)
@@ -176,7 +176,6 @@ public class BlockRegistry {
                         .modelForState().modelFile(provider.models().cubeAll("wireless_charger_enabled", provider.modLoc("block/wireless_charger_enabled"))).addModel()
             )
             .item(WirelessChargerBlockItem::new)
-                .properties(properties -> properties.tab(ChargersTab.TAB))
                 .model((context, provider) -> provider.blockItem(() -> context.get().getBlock(), "_disabled"))
                 .recipe((context, provider) -> {
                     DataIngredient iron = DataIngredient.tag(Tags.Items.INGOTS_IRON);
@@ -184,7 +183,7 @@ public class BlockRegistry {
                     DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
                     DataIngredient enderPearls = DataIngredient.tag(Tags.Items.ENDER_PEARLS);
 
-                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(context.get())
+                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, context.get())
                             .define('I', iron)
                             .define('R', redstone)
                             .define('B', redstoneBlock)

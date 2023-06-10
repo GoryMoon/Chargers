@@ -18,7 +18,7 @@ import se.gory_moon.chargers.network.PacketHandler;
 @Mod(Constants.MOD_ID)
 public class ChargersMod {
 
-    private static final Lazy<Registrate> REGISTRATE = Lazy.of(() -> Registrate.create(Constants.MOD_ID).creativeModeTab(() -> ChargersTab.TAB));
+    private static final Lazy<Registrate> REGISTRATE = Lazy.of(() -> Registrate.create(Constants.MOD_ID).creativeModeTab(Constants.MOD_ID, b -> b.icon(() -> ItemRegistry.CHARGER_T1_ITEM.get().getDefaultInstance()), "Chargers"));
 
     public ChargersMod() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::gatherData);
@@ -42,7 +42,6 @@ public class ChargersMod {
     private void gatherData(GatherDataEvent event) {
         getRegistrate().addDataGenerator(ProviderType.LANG, prov -> {
             prov.addTooltip(BlockRegistry.WIRELESS_CHARGER, "Can be disabled with redstone power");
-            prov.add(ChargersTab.TAB, "Chargers");
             prov.add(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(), "Status: %s, Power: %s/%s FE");
             prov.add(LangKeys.CHAT_ENABLED.key(), "Enabled");
             prov.add(LangKeys.CHAT_DISABLED.key(), "Disabled");
