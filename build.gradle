@@ -220,15 +220,15 @@ tasks.register('signJar', SignJar) {
     }
 
     if (project.hasProperty('keyStore')) {
-        project.logger.info("Signing jar ${jar.archiveFileName.get()}");
+        project.logger.info("Signing jar ${tasks.jarJar.archiveFileName.get()}");
 
         keyStore = project.findProperty('keyStore')
         alias = project.findProperty('keyStoreAlias')
         storePass = project.findProperty('keyStorePass')
         keyPass = project.findProperty('keyStorePass')
-        inputFile = jar.archiveFile.get()
-        outputFile = jar.archiveFile.get()
+        inputFile = tasks.jarJar.archiveFile.get()
+        outputFile = tasks.jarJar.archiveFile.get()
     } else {
-        project.logger.log(LogLevel.WARN, "Could not sign ${jar.archiveFileName.get()}. No keyStore property could be found")
+        project.logger.log(LogLevel.WARN, "Could not sign ${tasks.jarJar.archiveFileName.get()}. No keyStore property could be found")
     }
 }
