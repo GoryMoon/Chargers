@@ -13,6 +13,7 @@ import net.minecraftforge.common.Tags;
 import se.gory_moon.chargers.ChargersMod;
 import se.gory_moon.chargers.ChargersTab;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
+import se.gory_moon.chargers.crafting.UpgradeChargerRecipeBuilder;
 import se.gory_moon.chargers.item.ChargerBlockItem;
 import se.gory_moon.chargers.item.ItemRegistry;
 import se.gory_moon.chargers.item.WirelessChargerBlockItem;
@@ -78,7 +79,7 @@ public class BlockRegistry {
                     DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
                     DataIngredient charger_t1 = DataIngredient.items(ItemRegistry.CHARGER_T1_ITEM.get());
 
-                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(context.get())
+                    var builder = UpgradeChargerRecipeBuilder.builder(context.get())
                             .define('G', gold)
                             .define('R', redstone)
                             .define('B', redstoneBlock)
@@ -112,7 +113,7 @@ public class BlockRegistry {
                     DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
                     DataIngredient charger_t2 = DataIngredient.items(ItemRegistry.CHARGER_T2_ITEM.get());
 
-                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(context.get())
+                    var builder = UpgradeChargerRecipeBuilder.builder(context.get())
                             .define('D', diamond)
                             .define('R', redstone)
                             .define('B', redstoneBlock)
@@ -146,7 +147,7 @@ public class BlockRegistry {
                     DataIngredient redstoneBlock = DataIngredient.tag(Tags.Items.STORAGE_BLOCKS_REDSTONE);
                     DataIngredient charger_t3 = DataIngredient.items(ItemRegistry.CHARGER_T3_ITEM.get());
 
-                    ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(context.get())
+                    var builder = UpgradeChargerRecipeBuilder.builder(context.get())
                             .define('N', netherite)
                             .define('R', redstone)
                             .define('B', redstoneBlock)

@@ -11,6 +11,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import se.gory_moon.chargers.block.BlockRegistry;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
+import se.gory_moon.chargers.crafting.RecipeSerializers;
 import se.gory_moon.chargers.item.ItemRegistry;
 import se.gory_moon.chargers.network.PacketHandler;
 
@@ -25,6 +26,7 @@ public class ChargersMod {
         BlockRegistry.init();
         BlockEntityRegistry.init();
         ItemRegistry.init();
+        RecipeSerializers.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Configs.serverSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Configs.commonSpec);
     }
