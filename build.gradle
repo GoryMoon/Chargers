@@ -3,7 +3,6 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 version = mod_version
@@ -119,18 +118,10 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-configurations {
-    shade
-}
 
-shadowJar {
-    configurations = [project.configurations.shade]
-    relocate 'com.tterrag.registrate', 'se.gory_moon.chargers.repack.registrate'
-    archiveClassifier.set('')
-}
-
-jar.finalizedBy('shadowJar')
-shadowJar.finalizedBy('signJar', 'reobfJar')
+jarJar.enable()
+tasks.jarJar.finalizedBy('reobfJarJar')
+reobfJarJar.finalizedBy('signJar')
 
 repositories {
     mavenCentral()
@@ -161,31 +152,26 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
-    def registrate = "com.tterrag.registrate:Registrate:${registrate_version}"
-    implementation fg.deobf(registrate)
-    shade registrate
+    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
+    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "[MC1.19.3,MC1.19.4)")
 
-    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.19.2-9.0.0-153")
+    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.19.3-9.3.0-163")
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
     description = 'Creates a JAR containing the source code.'
     from sourceSets.main.allSource
     archiveClassifier.set('sources')
 }
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-task deobfJar(type: ShadowJar) {
+tasks.register('deobfJar', Jar) {
     description = 'Creates a JAR containing the non-obfuscated compiled code.'
     from sourceSets.main.output
-
-    configurations = [project.configurations.shade]
-    relocate 'com.tterrag.registrate', 'se.gory_moon.chargers.repack.registrate'
-
     archiveClassifier.set('deobf')
 }
 
-task forgelibJar(type: Jar) {
+tasks.register('forgelibJar', Jar) {
     description = 'Creates a compiled JAR which also contains raw sources.'
     from sourceSets.main.output
     from sourceSets.main.allJava
@@ -218,8 +204,7 @@ tasks.withType(JavaCompile).configureEach {
 
 // Jar Signing
 import net.minecraftforge.gradle.common.tasks.SignJar
-task signJar(type: SignJar, dependsOn: jar) {
-    dependsOn 'reobfJar'
+tasks.register('signJar', SignJar) {
     onlyIf {
         project.hasProperty('keyStore')
     }
@@ -233,13 +218,7 @@ task signJar(type: SignJar, dependsOn: jar) {
         keyPass = project.findProperty('keyStorePass')
         inputFile = jar.archiveFile.get()
         outputFile = jar.archiveFile.get()
-    }
-
-    else {
+    } else {
         project.logger.log(LogLevel.WARN, "Could not sign ${jar.archiveFileName.get()}. No keyStore property could be found")
     }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
