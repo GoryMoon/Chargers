@@ -158,6 +158,15 @@ dependencies {
     runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.19.3-9.3.0-163")
 }
 
+reobf {
+    jarJar {}
+}
+
+tasks.jarJar.configure {
+    // remove '-all' from jarJar jar file
+    classifier ''
+}
+
 tasks.register('sourcesJar', Jar) {
     dependsOn classes
     description = 'Creates a JAR containing the source code.'
@@ -185,6 +194,7 @@ artifacts {
 }
 
 jar {
+    classifier 'slim'
     manifest {
         attributes([
             "Specification-Title": "Chargers",
