@@ -1,4 +1,4 @@
-// 1.19.3	2023-06-09T17:42:13.510444	Registrate Provider for chargers [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
+// 1.19.4	2023-06-11T17:09:46.554898	Registrate Provider for chargers [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Blockstates, Item models, Lang (en_us/en_ud)]
 3792e9381196c8ffa0a6965a2a05d389f60b5c95 assets/chargers/blockstates/charger_t1.json
 25bdc385d9e5cf3dbb17b546a5af3659ba985819 assets/chargers/blockstates/charger_t2.json
 d212b963fcdf9ae026f36c24bf90c47eb118a9f5 assets/chargers/blockstates/charger_t3.json
@@ -27,11 +27,11 @@ ba7eb40f73150996c0d5e249ebb54e731190264f data/chargers/advancements/recipes/reds
 ee7c503354f487c9778b3a8c565b692256ca12e2 data/chargers/loot_tables/blocks/charger_t3.json
 424db1e82db349deec7e65867a997d106da95928 data/chargers/loot_tables/blocks/charger_t4.json
 69ae7b8c26192afe1712c0d985abc21ae0977723 data/chargers/loot_tables/blocks/wireless_charger.json
-9c37329caf4b7b73cbc8b2a4964fc811917ecd87 data/chargers/recipes/charger_t1.json
-de48e5641df6cf6f424587396cd244e3b54b68ae data/chargers/recipes/charger_t2.json
-ec7b00ed448cd303598794269734eaca3f6ea962 data/chargers/recipes/charger_t3.json
-817f1456c8ebd3258deb0812a099838cf3fdab92 data/chargers/recipes/charger_t4.json
-5ccbbfc2d6712702ecf1f25e0a4c89adadcb3e41 data/chargers/recipes/wireless_charger.json
+099d104d6c3e2a0984f62e863e632562615455f2 data/chargers/recipes/charger_t1.json
+19c28cb03513db6835c9bb037dd9ffaf5f853c32 data/chargers/recipes/charger_t2.json
+d496b5cd2857e3454712e00350a955d5a3f7a2b4 data/chargers/recipes/charger_t3.json
+323b7848ed1635dbc4412048dc27a829c2f33ce2 data/chargers/recipes/charger_t4.json
+872e0ee42c60419233ccce24b8e907215c940520 data/chargers/recipes/wireless_charger.json
 997b4bab35a589848045d13a64c15f0b6fa5e989 data/minecraft/tags/blocks/mineable/pickaxe.json
 d785139912c3e3bbe12e1c40f4009c0ccf279a19 data/minecraft/tags/blocks/needs_diamond_tool.json
 2832bc540df3fe30f4f5fca04a116987d8f869e1 data/minecraft/tags/blocks/needs_iron_tool.json

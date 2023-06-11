@@ -22,5 +22,6 @@
   ],
   "result": {
     "item": "chargers:wireless_charger"
-  }
+  },
+  "show_notification": true
 }

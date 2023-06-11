@@ -128,9 +128,6 @@ repositories {
     maven { // curios
         url "https://maven.theillusivec4.top/"
     }
-    maven { // TOP
-        url "https://maven.k-4u.nl"
-    }
     maven { // Registrate
         url "https://maven.tterrag.com/"
     }
@@ -153,9 +150,9 @@ dependencies {
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
     implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
-    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "[MC1.19.3,MC1.19.4)")
+    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "[MC1.19.4,MC1.20)")
 
-    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.19.3-9.3.0-163")
+    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.19.4-9.4.0-166.4")
 }
 
 reobf {
