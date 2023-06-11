@@ -1,21 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "IRI",
-    "IBI",
-    "IRI"
-  ],
   "key": {
+    "B": {
+      "tag": "forge:storage_blocks/redstone"
+    },
     "I": {
       "tag": "forge:ingots/iron"
     },
     "R": {
       "tag": "forge:dusts/redstone"
-    },
-    "B": {
-      "tag": "forge:storage_blocks/redstone"
     }
   },
+  "pattern": [
+    "IRI",
+    "IBI",
+    "IRI"
+  ],
   "result": {
     "item": "chargers:charger_t1"
   }
