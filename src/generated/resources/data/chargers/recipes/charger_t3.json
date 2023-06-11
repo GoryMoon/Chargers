@@ -22,5 +22,6 @@
   ],
   "result": {
     "item": "chargers:charger_t3"
-  }
+  },
+  "show_notification": true
 }

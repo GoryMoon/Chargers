@@ -1,6 +1,7 @@
 package se.gory_moon.chargers.crafting;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -25,8 +26,8 @@ public class UpgradeChargerRecipe extends ShapedRecipe {
     }
 
     @Override
-    public @NotNull ItemStack assemble(@NotNull CraftingContainer inv) {
-        var out = getResultItem().copy();
+    public @NotNull ItemStack assemble(@NotNull CraftingContainer inv, @NotNull RegistryAccess access) {
+        var out = getResultItem(access).copy();
 
         if (out.getItem() instanceof ChargerBlockItem) {
             AtomicInteger energy = new AtomicInteger();
@@ -42,10 +43,10 @@ public class UpgradeChargerRecipe extends ShapedRecipe {
             });
             return out;
         }
-        return super.assemble(inv);
+        return super.assemble(inv, access);
     }
 
     public ShapedRecipe toVanilla() {
-        return new ShapedRecipe(getId(), getGroup(), category(), getWidth(), getHeight(), getIngredients(), getResultItem());
+        return new ShapedRecipe(getId(), getGroup(), category(), getWidth(), getHeight(), getIngredients(), getResultItem(null));
     }
 }

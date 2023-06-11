@@ -19,5 +19,6 @@
   ],
   "result": {
     "item": "chargers:charger_t1"
-  }
+  },
+  "show_notification": true
 }
