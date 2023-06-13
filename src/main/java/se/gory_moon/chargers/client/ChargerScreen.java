@@ -3,6 +3,7 @@ package se.gory_moon.chargers.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -34,9 +35,9 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
     }
 
     @Override
-    public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
-        this.renderBackground(pPoseStack);
-        super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
+    public void render(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        this.renderBackground(graphics);
+        super.render(graphics, pMouseX, pMouseY, pPartialTick);
 
         if (pMouseX >= leftPos + 44 && pMouseX <= leftPos + 44 + 16 && pMouseY >= topPos + 14 && pMouseY <= topPos + 84) {
             List<Component> list = new ArrayList<>();
@@ -46,28 +47,25 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
             if (menu.getEnergyDiff() != 0) {
                 list.add(Component.translatable(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? ChatFormatting.GREEN + "+": ChatFormatting.RED.toString()) + Utils.formatAndClean(menu.getEnergyDiff()) + ChatFormatting.GRAY));
             }
-            renderComponentTooltip(pPoseStack, list, pMouseX, pMouseY);
+            graphics.renderComponentTooltip(this.font, list, pMouseX, pMouseY);
         }
-        renderTooltip(pPoseStack, pMouseX, pMouseY);
+        renderTooltip(graphics, pMouseX, pMouseY);
     }
 
     @Override
-    protected void renderBg(PoseStack pPoseStack, float pPartialTick, int pMouseX, int pMouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    protected void renderBg(GuiGraphics graphics, float pPartialTick, int pMouseX, int pMouseY) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
-        RenderSystem.setShaderTexture(0, CHARGER_GUI_TEXTURE);
-
-        blit(pPoseStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        graphics.blit(CHARGER_GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
         if (menu.hasEnergy()) {
             int progress = menu.getEnergyScaled(70);
-            blit(pPoseStack, leftPos + 44, topPos + 78 + 6 - progress, 176, 70 - progress, 16, progress);
+            graphics.blit(CHARGER_GUI_TEXTURE, leftPos + 44, topPos + 78 + 6 - progress, 176, 70 - progress, 16, progress);
         }
     }
 
     @Override
-    protected void renderLabels(PoseStack pPoseStack, int pMouseX, int pMouseY) {
-        super.renderLabels(pPoseStack, pMouseX, pMouseY);
+    protected void renderLabels(GuiGraphics graphics, int pMouseX, int pMouseY) {
+        super.renderLabels(graphics, pMouseX, pMouseY);
     }
 }

@@ -1,7 +1,7 @@
 plugins {
     id 'eclipse'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
@@ -150,9 +150,9 @@ dependencies {
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
     implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
-    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "[MC1.19.4,MC1.20)")
+    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "[MC1.20,MC1.21)")
 
-    runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.19.4-9.4.0-166.4")
+    //runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.19.4-9.4.0-166.4")
 }
 
 reobf {
@@ -161,7 +161,7 @@ reobf {
 
 tasks.jarJar.configure {
     // remove '-all' from jarJar jar file
-    classifier ''
+    archiveClassifier.set('')
 }
 
 tasks.register('sourcesJar', Jar) {
@@ -191,7 +191,7 @@ artifacts {
 }
 
 jar {
-    classifier 'slim'
+    archiveClassifier.set('slim')
     manifest {
         attributes([
             "Specification-Title": "Chargers",
