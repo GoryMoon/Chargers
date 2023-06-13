@@ -50,5 +50,6 @@
     "recipes": [
       "chargers:charger_t1"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

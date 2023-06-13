@@ -30,5 +30,6 @@
     "recipes": [
       "chargers:charger_t3"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

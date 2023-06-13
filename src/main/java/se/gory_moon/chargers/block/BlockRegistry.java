@@ -8,8 +8,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.common.Tags;
 import se.gory_moon.chargers.ChargersMod;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
@@ -20,16 +19,16 @@ import se.gory_moon.chargers.item.WirelessChargerBlockItem;
 
 import static se.gory_moon.chargers.Constants.*;
 
-public class BlockRegistry {
+public final class BlockRegistry {
     private static final Registrate REGISTRATE = ChargersMod.getRegistrate();
 
     public static final BlockEntry<ChargerBlock> CHARGER_BLOCK_T1 = REGISTRATE.object(CHARGER_T1_BLOCK)
             .block(ChargerBlock::new)
-            .initialProperties(Material.METAL, MaterialColor.COLOR_GRAY)
             .lang(CHARGER_T1_NAME)
             .properties(properties -> properties
                     .strength(5, 10)
                     .sound(SoundType.METAL)
+                    .mapColor(MapColor.COLOR_GRAY)
                     .requiresCorrectToolForDrops())
             .tag(BlockTags.MINEABLE_WITH_PICKAXE)
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
@@ -59,11 +58,11 @@ public class BlockRegistry {
 
     public static final BlockEntry<ChargerBlock> CHARGER_BLOCK_T2 = REGISTRATE.object(CHARGER_T2_BLOCK)
             .block(ChargerBlock::new)
-            .initialProperties(Material.METAL, MaterialColor.GOLD)
             .lang(CHARGER_T2_NAME)
             .properties(properties -> properties
                     .strength(5, 10)
                     .sound(SoundType.METAL)
+                    .mapColor(MapColor.GOLD)
                     .requiresCorrectToolForDrops())
             .tag(BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.NEEDS_STONE_TOOL)
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
@@ -93,11 +92,11 @@ public class BlockRegistry {
 
     public static final BlockEntry<ChargerBlock> CHARGER_BLOCK_T3 = REGISTRATE.object(CHARGER_T3_BLOCK)
             .block(ChargerBlock::new)
-            .initialProperties(Material.METAL, MaterialColor.COLOR_CYAN)
             .lang(CHARGER_T3_NAME)
             .properties(properties -> properties
                     .strength(10, 10)
                     .sound(SoundType.METAL)
+                    .mapColor(MapColor.COLOR_CYAN)
                     .requiresCorrectToolForDrops())
             .tag(BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.NEEDS_IRON_TOOL)
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
@@ -127,11 +126,11 @@ public class BlockRegistry {
 
     public static final BlockEntry<ChargerBlock> CHARGER_BLOCK_T4 = REGISTRATE.object(CHARGER_T4_BLOCK)
             .block(ChargerBlock::new)
-            .initialProperties(Material.METAL, MaterialColor.COLOR_BLACK)
             .lang(CHARGER_T4_NAME)
             .properties(properties -> properties
                     .strength(30, 1200)
                     .sound(SoundType.NETHERITE_BLOCK)
+                    .mapColor(MapColor.COLOR_BLACK)
                     .requiresCorrectToolForDrops())
             .tag(BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.NEEDS_DIAMOND_TOOL)
             .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
@@ -161,12 +160,12 @@ public class BlockRegistry {
 
     public static final BlockEntry<WirelessChargerBlock> WIRELESS_CHARGER = REGISTRATE.object(WIRELESS_CHARGER_BLOCK)
             .block(WirelessChargerBlock::new)
-            .initialProperties(Material.METAL, MaterialColor.COLOR_GRAY)
             .simpleBlockEntity(WirelessChargerBlockEntity::new)
             .lang(WIRELESS_CHARGER_NAME)
             .properties(properties -> properties
                     .strength(5, 10)
                     .sound(SoundType.METAL)
+                    .mapColor(MapColor.COLOR_GRAY)
                     .requiresCorrectToolForDrops())
             .tag(BlockTags.MINEABLE_WITH_PICKAXE)
             .blockstate((ctx, provider) -> provider.getVariantBuilder(ctx.get())

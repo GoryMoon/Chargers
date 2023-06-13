@@ -2,6 +2,7 @@ package se.gory_moon.chargers;
 
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.providers.ProviderType;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -18,7 +19,7 @@ import se.gory_moon.chargers.network.PacketHandler;
 @Mod(Constants.MOD_ID)
 public class ChargersMod {
 
-    private static final Lazy<Registrate> REGISTRATE = Lazy.of(() -> Registrate.create(Constants.MOD_ID).creativeModeTab(Constants.MOD_ID, b -> b.icon(() -> ItemRegistry.CHARGER_T1_ITEM.get().getDefaultInstance()), "Chargers"));
+    private static final Lazy<Registrate> REGISTRATE = Lazy.of(() -> Registrate.create(Constants.MOD_ID));
 
     public ChargersMod() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::gatherData);

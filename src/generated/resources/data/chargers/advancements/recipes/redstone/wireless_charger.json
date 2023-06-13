@@ -61,5 +61,6 @@
     "recipes": [
       "chargers:wireless_charger"
     ]
-  }
+  },
+  "sends_telemetry_event": false
 }

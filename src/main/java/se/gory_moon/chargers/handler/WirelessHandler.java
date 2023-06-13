@@ -49,14 +49,14 @@ public class WirelessHandler {
 
     public void chargeItems(Player player) {
         synchronized (dimensionChargers) {
-            ObjectSet<BlockPos> chargers = getDimensionChargers(player.level);
+            ObjectSet<BlockPos> chargers = getDimensionChargers(player.level());
             if (chargers.isEmpty())
                 return;
 
             BlockPos playerPos = player.blockPosition();
             for (Iterator<BlockPos> iterator = chargers.iterator(); iterator.hasNext(); ) {
                 BlockPos pos = iterator.next();
-                WirelessChargerBlockEntity charger = getCharger(player.level, pos);
+                WirelessChargerBlockEntity charger = getCharger(player.level(), pos);
                 if (charger != null) {
                     if (charger.canCharge() && inRange(charger.getBlockPos(), playerPos)) {
                         if (chargeItems(player, charger))

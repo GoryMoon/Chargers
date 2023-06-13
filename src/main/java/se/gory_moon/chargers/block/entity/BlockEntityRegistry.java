@@ -16,7 +16,7 @@ import static se.gory_moon.chargers.Constants.CHARGER_BLOCK_ENTITY;
 import static se.gory_moon.chargers.Constants.WIRELESS_CHARGER_BLOCK_ENTITY;
 import static se.gory_moon.chargers.block.BlockRegistry.*;
 
-public class BlockEntityRegistry {
+public final class BlockEntityRegistry {
     private static final Registrate REGISTRATE = ChargersMod.getRegistrate();
 
     public static final BlockEntityEntry<ChargerBlockEntity> CHARGER_BE = REGISTRATE.object(CHARGER_BLOCK_ENTITY)
@@ -25,7 +25,6 @@ public class BlockEntityRegistry {
             .register();
 
     public static final BlockEntityEntry<WirelessChargerBlockEntity> WIRELESS_CHARGER_BE = BlockEntityEntry.cast(REGISTRATE.get(WIRELESS_CHARGER_BLOCK_ENTITY, ForgeRegistries.Keys.BLOCK_ENTITY_TYPES));
-
 
     public static final MenuEntry<ChargerMenu> CHARGER_CONTAINER = REGISTRATE.object(Constants.CHARGER_CONTAINER)
             .menu(ChargerMenu::new, () -> ChargerScreen::new)
