@@ -121,7 +121,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 jarJar.enable()
 tasks.jarJar.finalizedBy('reobfJarJar')
-reobfJarJar.finalizedBy('signJar')
 
 repositories {
     mavenCentral()
