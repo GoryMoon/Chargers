@@ -34,7 +34,12 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
 
     public ChargerBlockEntity(BlockEntityType<ChargerBlockEntity> blockEntityType, BlockPos pos, BlockState state) {
         super(blockEntityType, pos, state);
-        inventoryHandler = new ChargerItemStackHandler();
+        inventoryHandler = new ChargerItemStackHandler() {
+            @Override
+            protected void onContentsChanged(int slot) {
+                setChanged();
+            }
+        };
     }
 
     public void setTier(ChargerBlock.Tier tier) {
@@ -55,6 +60,7 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
                         int transferred = energyStorage.extractEnergy(extractAmount, false);
                         if (transferred > 0) {
                             storage.receiveEnergy(transferred, false);
+                            setChanged();
                         }
                     });
                 }
@@ -67,6 +73,7 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
                         int transferred = energyStorage.receiveEnergy(storage.extractEnergy(storage.getEnergyStored(), true), false);
                         if (transferred > 0) {
                             storage.extractEnergy(transferred, false);
+                            setChanged();
                         }
                         if (energyStorage.getEnergyStored() >= energyStorage.getMaxEnergyStored()) {
                             inventoryHandler.setStackInSlot(1, input);
