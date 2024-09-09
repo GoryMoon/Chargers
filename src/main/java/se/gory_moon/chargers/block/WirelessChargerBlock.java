@@ -22,7 +22,6 @@ import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class WirelessChargerBlock extends EnergyBlock {
 
@@ -44,7 +43,7 @@ public class WirelessChargerBlock extends EnergyBlock {
                 return InteractionResult.FAIL;
             boolean powered = changerEntity.isPowered();
             Component status = Component.translatable((powered ? LangKeys.CHAT_DISABLED.key(): LangKeys.CHAT_ENABLED.key())).setStyle(Style.EMPTY.withColor(powered ? ChatFormatting.RED: ChatFormatting.GREEN));
-            player.displayClientMessage(Component.translatable(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.formatAndClean(changerEntity.getStorage().getEnergyStored()), Utils.formatAndClean(changerEntity.getStorage().getMaxEnergyStored())), true);
+            player.displayClientMessage(Component.translatable(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.formatAndClean(changerEntity.getStorage().getLongEnergyStored()), Utils.formatAndClean(changerEntity.getStorage().getLongMaxEnergyStored())), true);
         }
 
         return InteractionResult.SUCCESS;

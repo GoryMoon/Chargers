@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.util.NonNullSupplier;
+import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.block.entity.ChargerBlockEntity;
@@ -29,7 +30,7 @@ public class ChargerBlock extends EnergyBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+    public InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult result) {
         if (level.isClientSide)
             return InteractionResult.SUCCESS;
 
@@ -45,7 +46,7 @@ public class ChargerBlock extends EnergyBlock {
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
         if (!level.isClientSide) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ChargerBlockEntity chargerEntity) {
@@ -60,7 +61,7 @@ public class ChargerBlock extends EnergyBlock {
     }
 
     @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (stack.hasCustomHoverName()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ChargerBlockEntity) {
@@ -73,7 +74,7 @@ public class ChargerBlock extends EnergyBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         ChargerBlockEntity charger = BlockEntityRegistry.CHARGER_BE.create(pos, state);
         charger.setTier(Tier.byBlock(this));
         return charger;
@@ -81,7 +82,7 @@ public class ChargerBlock extends EnergyBlock {
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         return createEnergyTicker(level, type, BlockEntityRegistry.CHARGER_BE.get());
     }
 
@@ -89,7 +90,8 @@ public class ChargerBlock extends EnergyBlock {
         I(0, () -> Configs.SERVER.tier1),
         II(1, () -> Configs.SERVER.tier2),
         III(2, () -> Configs.SERVER.tier3),
-        IV(3, () -> Configs.SERVER.tier4);
+        IV(3, () -> Configs.SERVER.tier4),
+        C(4, () -> Configs.SERVER.tier4);
 
         private final int id;
         private final NonNullSupplier<Configs.Server.Tier> tierSupplier;
@@ -106,15 +108,19 @@ public class ChargerBlock extends EnergyBlock {
             return id;
         }
 
-        public int getStorage() {
+        public boolean isCreative() {
+            return this == C;
+        }
+
+        public long getStorage() {
             return getTier().storage.get();
         }
 
-        public int getMaxIn() {
+        public long getMaxIn() {
             return getTier().maxInput.get();
         }
 
-        public int getMaxOut() {
+        public long getMaxOut() {
             return getTier().maxOutput.get();
         }
 
@@ -143,6 +149,9 @@ public class ChargerBlock extends EnergyBlock {
                 return Tier.III;
             else if (BlockRegistry.CHARGER_BLOCK_T4.is(block))
                 return Tier.IV;
+            else if (BlockRegistry.CHARGER_BLOCK_CREATIVE.is(block))
+                return Tier.C;
+
             return Tier.I;
         }
 

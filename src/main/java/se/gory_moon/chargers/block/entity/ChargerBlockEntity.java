@@ -3,6 +3,7 @@ package se.gory_moon.chargers.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
@@ -16,19 +17,26 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import se.gory_moon.chargers.block.ChargerBlock;
+import se.gory_moon.chargers.compat.ChargeCompat;
 import se.gory_moon.chargers.inventory.ChargerMenu;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Nameable, MenuProvider {
+
+    public static final String CUSTOM_NAME_TAG = "CustomName";
+    public static final String INVENTORY_TAG = "Inventory";
+    public static final String TIER_TAG = "Tier";
+    public static final int INPUT_SLOT = 0;
+    public static final int OUTPUT_SLOT = 1;
+    public static final int CHARGE_SLOT = 2;
 
     public ChargerItemStackHandler inventoryHandler;
     private final LazyOptional<ChargerItemStackHandler> lazyInventory = LazyOptional.of(() -> inventoryHandler);
     private ChargerBlock.Tier tier = ChargerBlock.Tier.I;
+
     @Nullable
     private Component customName;
 
@@ -44,7 +52,7 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
 
     public void setTier(ChargerBlock.Tier tier) {
         this.tier = tier;
-        setStorage(new CustomEnergyStorage(tier.getStorage(), tier.getMaxIn(), tier.getMaxOut()));
+        setStorage(new CustomEnergyStorage(tier.getStorage(), tier.getMaxIn(), tier.getMaxOut(), tier.isCreative()));
     }
 
     @Override
@@ -52,34 +60,24 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
         if (getLevel() != null && !getLevel().isClientSide) {
             CustomEnergyStorage storage = getStorage();
             if (storage != null) {
-                ItemStack charge = inventoryHandler.getStackInSlot(2);
-                if (!charge.isEmpty()) {
-                    LazyOptional<IEnergyStorage> capability = charge.getCapability(ForgeCapabilities.ENERGY);
-                    capability.ifPresent(energyStorage -> {
-                        int extractAmount = Math.min(storage.getMaxEnergyStored() - storage.getEnergyStored(), storage.getMaxInput());
-                        int transferred = energyStorage.extractEnergy(extractAmount, false);
-                        if (transferred > 0) {
-                            storage.receiveEnergy(transferred, false);
-                            setChanged();
-                        }
-                    });
-                }
+                // Try to charge the block with the provided item
+                ItemStack charge = inventoryHandler.getStackInSlot(CHARGE_SLOT);
+                if (!charge.isEmpty())
+                    ChargeCompat.INSTANCE.dischargeItem(charge, storage, this::setChanged);
 
-                ItemStack input = inventoryHandler.getStackInSlot(0);
-                ItemStack output = inventoryHandler.getStackInSlot(1);
-                if (!input.isEmpty() && input.getCount() == 1 && output.isEmpty() && storage.getEnergyStored() > 0) {
-                    LazyOptional<IEnergyStorage> capability = input.getCapability(ForgeCapabilities.ENERGY);
-                    capability.ifPresent(energyStorage -> {
-                        int transferred = energyStorage.receiveEnergy(storage.extractEnergy(storage.getEnergyStored(), true), false);
-                        if (transferred > 0) {
-                            storage.extractEnergy(transferred, false);
-                            setChanged();
-                        }
-                        if (energyStorage.getEnergyStored() >= energyStorage.getMaxEnergyStored()) {
-                            inventoryHandler.setStackInSlot(1, input);
-                            inventoryHandler.setStackInSlot(0, ItemStack.EMPTY);
-                        }
+                // Try to charge the item in the input slot
+                ItemStack input = inventoryHandler.getStackInSlot(INPUT_SLOT);
+                ItemStack output = inventoryHandler.getStackInSlot(OUTPUT_SLOT);
+                if (!input.isEmpty() && input.getCount() == 1 && storage.getLongEnergyStored() > 0) {
+                    boolean isFull = ChargeCompat.INSTANCE.chargeItem(input, storage, t -> {
+                        storage.extractLongEnergy(t, false);
+                        setChanged();
                     });
+
+                    if (isFull && output.isEmpty()) {
+                        inventoryHandler.setStackInSlot(OUTPUT_SLOT, input);
+                        inventoryHandler.setStackInSlot(INPUT_SLOT, ItemStack.EMPTY);
+                    }
                 }
             }
             super.tickServer();
@@ -87,39 +85,38 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
     }
 
     @Override
-    public void load(CompoundTag compound) {
-        inventoryHandler.deserializeNBT(compound.getCompound("Inventory"));
-        setTier(ChargerBlock.Tier.byID(compound.getInt("Tier")));
-        if (compound.contains("CustomName", 8)) {
-            this.customName = Component.Serializer.fromJson(compound.getString("CustomName"));
-        }
+    public void load(@NotNull CompoundTag compound) {
+        inventoryHandler.deserializeNBT(compound.getCompound(INVENTORY_TAG));
+        setTier(ChargerBlock.Tier.byID(compound.getInt(TIER_TAG)));
+        if (compound.contains(CUSTOM_NAME_TAG, Tag.TAG_STRING))
+            this.customName = Component.Serializer.fromJson(compound.getString(CUSTOM_NAME_TAG));
+
         super.load(compound);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.put("Inventory", inventoryHandler.serializeNBT());
-        tag.putInt("Tier", tier.getId());
-        if (this.customName != null) {
-            tag.putString("CustomName", Component.Serializer.toJson(this.customName));
-        }
+        tag.put(INVENTORY_TAG, inventoryHandler.serializeNBT());
+        tag.putInt(TIER_TAG, tier.getId());
+        if (this.customName != null)
+            tag.putString(CUSTOM_NAME_TAG, Component.Serializer.toJson(this.customName));
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER)
             return lazyInventory.cast();
         return super.getCapability(cap, side);
     }
 
-    public void setCustomName(Component name) {
+    public void setCustomName(@Nullable Component name) {
         this.customName = name;
     }
 
     @Override
-    public Component getName() {
+    public @NotNull Component getName() {
         Component name = getCustomName();
         if (name == null) {
             name = getBlockState().getBlock().getName();
@@ -133,9 +130,9 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
     }
 
     @Override
-    public Component getDisplayName() {
+    public @NotNull Component getDisplayName() {
         //noinspection ConstantConditions
-        return hasCustomName() ? getCustomName(): getName();
+        return hasCustomName() ? getCustomName() : getName();
     }
 
     @Nullable
@@ -146,7 +143,7 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player playerEntity) {
+    public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player playerEntity) {
         return new ChargerMenu(BlockEntityRegistry.CHARGER_CONTAINER.get(), containerId, playerInventory, inventoryHandler, energyData, ContainerLevelAccess.create(getLevel(), getBlockPos()));
     }
 }

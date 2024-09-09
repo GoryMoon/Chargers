@@ -1,14 +1,13 @@
 package se.gory_moon.chargers.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.Constants;
 import se.gory_moon.chargers.LangKeys;
 import se.gory_moon.chargers.Utils;
@@ -35,13 +34,17 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+    public void render(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         this.renderBackground(graphics);
         super.render(graphics, pMouseX, pMouseY, pPartialTick);
 
         if (pMouseX >= leftPos + 44 && pMouseX <= leftPos + 44 + 16 && pMouseY >= topPos + 14 && pMouseY <= topPos + 84) {
             List<Component> list = new ArrayList<>();
-            list.add(Component.translatable(LangKeys.GUI_ENERGY.key(), Utils.formatAndClean(menu.getEnergy()), Utils.formatAndClean(menu.getEnergyMax()) + ChatFormatting.GRAY));
+            if (menu.isCreative())
+                list.add(Component.translatable(LangKeys.GUI_ENERGY_INFINITE.key()));
+            else
+                list.add(Component.translatable(LangKeys.GUI_ENERGY.key(), Utils.formatAndClean(menu.getEnergy()), Utils.formatAndClean(menu.getEnergyMax()) + ChatFormatting.GRAY));
+
             list.add(Component.translatable(LangKeys.GUI_MAX_IN.key(), Utils.formatAndClean(menu.getMaxIn()) + ChatFormatting.GRAY));
             list.add(Component.translatable(LangKeys.GUI_MAX_OUT.key(), Utils.formatAndClean(menu.getMaxOut()) + ChatFormatting.GRAY));
             if (menu.getEnergyDiff() != 0) {

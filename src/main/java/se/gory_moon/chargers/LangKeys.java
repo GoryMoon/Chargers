@@ -5,8 +5,10 @@ public enum LangKeys {
     CHAT_ENABLED("chat.enabled"),
     CHAT_DISABLED("chat.disabled"),
     CHAT_STORED_INFO("chat.stored.info"),
+    CHAT_STORED_INFINITE_INFO("chat.stored.infinite.info"),
 
     GUI_ENERGY("gui.energy"),
+    GUI_ENERGY_INFINITE("gui.energy.infinite"),
     GUI_MAX_IN("gui.max_in"),
     GUI_MAX_OUT("gui.max_out"),
     GUI_IO("gui.io");

@@ -71,6 +71,7 @@ public class WirelessHandler {
 
     @Nullable
     private WirelessChargerBlockEntity getCharger(Level level, BlockPos pos) {
+        //noinspection deprecation
         if (level.isAreaLoaded(pos, 1)) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof WirelessChargerBlockEntity)
