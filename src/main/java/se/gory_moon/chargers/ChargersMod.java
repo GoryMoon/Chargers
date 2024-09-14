@@ -54,6 +54,9 @@ public class ChargersMod {
             prov.add(LangKeys.GUI_MAX_IN.key(), "Max In: %s FE/t");
             prov.add(LangKeys.GUI_MAX_OUT.key(), "Max Out: %s FE/t");
             prov.add(LangKeys.GUI_IO.key(), "I/O: %s FE/t");
+            prov.add(LangKeys.GUI_IO_MORE.key(), "Hold shift for more I/O details");
+            prov.add(LangKeys.GUI_DETAILS_IN.key(), "In: %s FE/t");
+            prov.add(LangKeys.GUI_DETAILS_OUT.key(), "Out: %s FE/t");
         });
     }
 }

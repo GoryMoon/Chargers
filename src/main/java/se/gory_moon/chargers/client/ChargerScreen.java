@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -47,8 +48,16 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
 
             list.add(Component.translatable(LangKeys.GUI_MAX_IN.key(), Utils.formatAndClean(menu.getMaxIn()) + ChatFormatting.GRAY));
             list.add(Component.translatable(LangKeys.GUI_MAX_OUT.key(), Utils.formatAndClean(menu.getMaxOut()) + ChatFormatting.GRAY));
-            if (menu.getEnergyDiff() != 0) {
-                list.add(Component.translatable(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? ChatFormatting.GREEN + "+": ChatFormatting.RED.toString()) + Utils.formatAndClean(menu.getEnergyDiff()) + ChatFormatting.GRAY));
+
+            if (menu.getAverageIn() > 0 || menu.getAverageOut() > 0) {
+                if (hasShiftDown()) {
+                    list.add(Component.translatable(LangKeys.GUI_DETAILS_IN.key(), ChatFormatting.GREEN + "+" + Utils.formatAndClean(menu.getAverageIn()) + ChatFormatting.GRAY));
+                    list.add(Component.translatable(LangKeys.GUI_DETAILS_OUT.key(), ChatFormatting.RED + "-" + Utils.formatAndClean(menu.getAverageOut()) + ChatFormatting.GRAY));
+                } else {
+                    if (menu.getEnergyDiff() != 0)
+                        list.add(Component.translatable(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? ChatFormatting.GREEN + "+" : ChatFormatting.RED.toString()) + Utils.formatAndClean(menu.getEnergyDiff()) + ChatFormatting.GRAY));
+                    list.add(Component.translatable(LangKeys.GUI_IO_MORE.key()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
+                }
             }
             graphics.renderComponentTooltip(this.font, list, pMouseX, pMouseY);
         }
@@ -68,7 +77,7 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int pMouseX, int pMouseY) {
+    protected void renderLabels(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY) {
         super.renderLabels(graphics, pMouseX, pMouseY);
     }
 }

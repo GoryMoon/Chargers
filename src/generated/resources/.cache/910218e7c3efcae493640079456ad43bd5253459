@@ -1,12 +1,12 @@
-// 1.20.1	2024-09-09T02:06:08.0632794	Registrate Provider for chargers [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
+// 1.20.1	2024-09-14T02:48:06.7045754	Registrate Provider for chargers [Recipes, Advancements, Loot Tables, Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider]
 8414d2f8dd66709fee6bb6384ed6003c3dee1e5a assets/chargers/blockstates/charger_creative.json
 3792e9381196c8ffa0a6965a2a05d389f60b5c95 assets/chargers/blockstates/charger_t1.json
 25bdc385d9e5cf3dbb17b546a5af3659ba985819 assets/chargers/blockstates/charger_t2.json
 d212b963fcdf9ae026f36c24bf90c47eb118a9f5 assets/chargers/blockstates/charger_t3.json
 baee84976ea206a8ec2d5b4a02e5c20b7adfa1b3 assets/chargers/blockstates/charger_t4.json
 38da81727571161309afa868262fea2aea5529d8 assets/chargers/blockstates/wireless_charger.json
-3e9520dc042e57f058fb93a74b642504dd9efe75 assets/chargers/lang/en_ud.json
-96df3b11acf85772d740b1ed7b2f77d480a9b0e6 assets/chargers/lang/en_us.json
+825536c186d8fe2adb678d47c128a0a9adb8b098 assets/chargers/lang/en_ud.json
+aab3656baf0e353c0ff89a24c9546473d043ced0 assets/chargers/lang/en_us.json
 359e60783bbc261e58cf72b368da076f82988a0e assets/chargers/models/block/charger_tier_1.json
 fbd6ce8fe00f240dd45f6e5e4266ea922d1b63c7 assets/chargers/models/block/charger_tier_2.json
 d7fe7d288133b9666add9ceadab3bf989acc94c2 assets/chargers/models/block/charger_tier_3.json

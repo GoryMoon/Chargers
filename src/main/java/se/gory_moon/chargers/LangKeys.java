@@ -11,7 +11,10 @@ public enum LangKeys {
     GUI_ENERGY_INFINITE("gui.energy.infinite"),
     GUI_MAX_IN("gui.max_in"),
     GUI_MAX_OUT("gui.max_out"),
-    GUI_IO("gui.io");
+    GUI_IO("gui.io"),
+    GUI_DETAILS_IN("gui.details.in"),
+    GUI_DETAILS_OUT("gui.details.out"),
+    GUI_IO_MORE("gui.io.more");
 
 
     private final String key;

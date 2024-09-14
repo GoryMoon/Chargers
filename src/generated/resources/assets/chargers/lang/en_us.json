@@ -11,9 +11,12 @@
   "chargers.chat.stored.infinite.info": "Power: ∞ FE",
   "chargers.chat.stored.info": "Power: %s/%s FE",
   "chargers.chat.wireless_charger.info": "Status: %s, Power: %s/%s FE",
+  "chargers.gui.details.in": "In: %s FE/t",
+  "chargers.gui.details.out": "Out: %s FE/t",
   "chargers.gui.energy": "%s/%s FE",
   "chargers.gui.energy.infinite": "∞ FE",
   "chargers.gui.io": "I/O: %s FE/t",
+  "chargers.gui.io.more": "Hold shift for more I/O details",
   "chargers.gui.max_in": "Max In: %s FE/t",
   "chargers.gui.max_out": "Max Out: %s FE/t",
   "itemGroup.chargers.chargers": "Chargers"

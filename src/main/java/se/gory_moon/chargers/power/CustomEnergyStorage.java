@@ -109,7 +109,7 @@ public class CustomEnergyStorage implements IEnergyStorage, INBTSerializable<Tag
     }
 
     public long getLongMaxEnergyStored() {
-        return capacity;
+        return creative ? Long.MAX_VALUE : capacity;
     }
 
     @Override
@@ -123,11 +123,11 @@ public class CustomEnergyStorage implements IEnergyStorage, INBTSerializable<Tag
     }
 
     public long getMaxInput() {
-        return creative ? Long.MAX_VALUE: maxReceive;
+        return creative ? Long.MAX_VALUE : maxReceive;
     }
 
     public long getMaxOutput() {
-        return creative ? Long.MAX_VALUE: maxExtract;
+        return creative ? Long.MAX_VALUE : maxExtract;
     }
 
     @Override
