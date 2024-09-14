@@ -36,24 +36,24 @@ import static net.minecraft.world.inventory.InventoryMenu.*;
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ChargerMenu extends AbstractContainerMenu {
 
-    private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[] { EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET };
-    private static final EquipmentSlot[] EQUIPMENT_SLOTS = new EquipmentSlot[] { EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
+    private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET};
+    private static final EquipmentSlot[] EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
     public static final ResourceLocation EMPTY_CHARGE_SLOT = new ResourceLocation(Constants.MOD_ID, "item/empty_charge_slot");
 
     private final IItemHandler itemHandler;
-    private final ContainerData energyData;
+    private final ChargerData energyData;
     private final ContainerLevelAccess access;
-    private final List<DataSlot> customTracked = Lists.newArrayList();
+    private final List<ChargerDataSlot> customTracked = Lists.newArrayList();
     private final List<ServerPlayer> usingPlayers = new ArrayList<>();
     private final Slot inputSlot;
     private final Slot outputSlot;
     private final Slot chargeSlot;
 
     public ChargerMenu(MenuType<ChargerMenu> containerType, int containerId, Inventory inventory) {
-        this(containerType, containerId, inventory, new ChargerItemStackHandler(), new SimpleContainerData(6), ContainerLevelAccess.NULL);
+        this(containerType, containerId, inventory, new ChargerItemStackHandler(), new SimpleChargerData(7), ContainerLevelAccess.NULL);
     }
 
-    public ChargerMenu(MenuType<ChargerMenu> container, int containerId, Inventory playerInventory, ChargerItemStackHandler itemHandler, ContainerData energyData, ContainerLevelAccess access) {
+    public ChargerMenu(MenuType<ChargerMenu> container, int containerId, Inventory playerInventory, ChargerItemStackHandler itemHandler, ChargerData energyData, ContainerLevelAccess access) {
         super(container, containerId);
         this.itemHandler = itemHandler;
 
@@ -94,14 +94,14 @@ public class ChargerMenu extends AbstractContainerMenu {
         addSlot(new Slot(playerInventory, 40, 116, 68).setBackground(InventoryMenu.BLOCK_ATLAS, InventoryMenu.EMPTY_ARMOR_SLOT_SHIELD));
 
         for (i = 0; i < energyData.getCount(); ++i)
-            customTracked.add(DataSlot.forContainer(energyData, i));
+            customTracked.add(ChargerDataSlot.forContainer(energyData, i));
     }
 
     @Override
     public void broadcastChanges() {
         List<SyncPair> toSync = new ArrayList<>();
         for (int i = 0; i < customTracked.size(); ++i) {
-            DataSlot dataSlot = customTracked.get(i);
+            ChargerDataSlot dataSlot = customTracked.get(i);
             if (dataSlot.checkAndClearUpdateFlag())
                 toSync.add(new SyncPair(i, dataSlot.get()));
         }
@@ -116,6 +116,10 @@ public class ChargerMenu extends AbstractContainerMenu {
 
     @Override
     public void setData(int id, int data) {
+        customTracked.get(id).set(data);
+    }
+
+    public void setData(int id, long data) {
         customTracked.get(id).set(data);
     }
 
@@ -174,45 +178,50 @@ public class ChargerMenu extends AbstractContainerMenu {
         return stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T1.get()) ||
                 stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T2.get()) ||
                 stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T3.get()) ||
-                stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T4.get());
+                stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T4.get()) ||
+                stillValid(access, player, BlockRegistry.CHARGER_BLOCK_CREATIVE.get());
     }
 
-    private static final int ENERGY = 0, ENERGY_MAX = 1, MAX_IN = 2, MAX_OUT = 3, AVERAGE_IN = 4, AVERAGE_OUT = 5;
+    private static final int ENERGY = 0, ENERGY_MAX = 1, MAX_IN = 2, MAX_OUT = 3, AVERAGE_IN = 4, AVERAGE_OUT = 5, CREATIVE = 6;
 
     public boolean hasEnergy() {
         return getEnergy() > 0;
     }
 
-    public int getEnergy() {
+    public long getEnergy() {
         return energyData.get(ENERGY);
     }
 
-    public int getEnergyMax() {
+    public long getEnergyMax() {
         return energyData.get(ENERGY_MAX);
     }
 
-    public int getMaxIn() {
+    public long getMaxIn() {
         return energyData.get(MAX_IN);
     }
 
-    public int getMaxOut() {
+    public long getMaxOut() {
         return energyData.get(MAX_OUT);
     }
 
-    public int getAverageIn() {
+    public long getAverageIn() {
         return energyData.get(AVERAGE_IN);
     }
 
-    public int getAverageOut() {
+    public long getAverageOut() {
         return energyData.get(AVERAGE_OUT);
     }
 
-    public int getEnergyDiff() {
+    public long getEnergyDiff() {
         return getAverageIn() - getAverageOut();
     }
 
     public int getEnergyScaled(int length) {
         return (int) ((double) getEnergy() / (double) getEnergyMax() * length);
+    }
+
+    public boolean isCreative() {
+        return energyData.get(CREATIVE) == 1;
     }
 
     @SubscribeEvent

@@ -20,6 +20,7 @@ public final class ItemRegistry {
     public static final ItemEntry<ChargerBlockItem> CHARGER_T2_ITEM = ItemEntry.cast(REGISTRATE.get(Constants.CHARGER_T2_BLOCK, ForgeRegistries.Keys.ITEMS));
     public static final ItemEntry<ChargerBlockItem> CHARGER_T3_ITEM = ItemEntry.cast(REGISTRATE.get(Constants.CHARGER_T3_BLOCK, ForgeRegistries.Keys.ITEMS));
     public static final ItemEntry<ChargerBlockItem> CHARGER_T4_ITEM = ItemEntry.cast(REGISTRATE.get(Constants.CHARGER_T4_BLOCK, ForgeRegistries.Keys.ITEMS));
+    public static final ItemEntry<ChargerBlockItem> CHARGER_CREATIVE_ITEM = ItemEntry.cast(REGISTRATE.get(Constants.CHARGER_CREATIVE_BLOCK, ForgeRegistries.Keys.ITEMS));
     public static final ItemEntry<ChargerBlockItem> CHARGER_WIRELESS_ITEM = ItemEntry.cast(REGISTRATE.get(Constants.WIRELESS_CHARGER_BLOCK, ForgeRegistries.Keys.ITEMS));
 
     public ItemRegistry() {}
@@ -31,6 +32,7 @@ public final class ItemRegistry {
             modifier.accept(CHARGER_T2_ITEM.get());
             modifier.accept(CHARGER_T3_ITEM.get());
             modifier.accept(CHARGER_T4_ITEM.get());
+            modifier.accept(CHARGER_CREATIVE_ITEM.get());
             modifier.accept(CHARGER_WIRELESS_ITEM.get());
         });
     }

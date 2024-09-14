@@ -3,9 +3,6 @@ package se.gory_moon.chargers.block.entity;
 import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.entry.MenuEntry;
-import com.tterrag.registrate.util.entry.RegistryEntry;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.ForgeRegistries;
 import se.gory_moon.chargers.ChargersMod;
 import se.gory_moon.chargers.Constants;
@@ -21,7 +18,7 @@ public final class BlockEntityRegistry {
 
     public static final BlockEntityEntry<ChargerBlockEntity> CHARGER_BE = REGISTRATE.object(CHARGER_BLOCK_ENTITY)
             .blockEntity(ChargerBlockEntity::new)
-            .validBlocks(CHARGER_BLOCK_T1, CHARGER_BLOCK_T2, CHARGER_BLOCK_T3, CHARGER_BLOCK_T4)
+            .validBlocks(CHARGER_BLOCK_T1, CHARGER_BLOCK_T2, CHARGER_BLOCK_T3, CHARGER_BLOCK_T4, CHARGER_BLOCK_CREATIVE)
             .register();
 
     public static final BlockEntityEntry<WirelessChargerBlockEntity> WIRELESS_CHARGER_BE = BlockEntityEntry.cast(REGISTRATE.get(WIRELESS_CHARGER_BLOCK_ENTITY, ForgeRegistries.Keys.BLOCK_ENTITY_TYPES));

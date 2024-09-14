@@ -47,11 +47,16 @@ public class ChargersMod {
             prov.add(LangKeys.CHAT_ENABLED.key(), "Enabled");
             prov.add(LangKeys.CHAT_DISABLED.key(), "Disabled");
             prov.add(LangKeys.CHAT_STORED_INFO.key(), "Power: %s/%s FE");
+            prov.add(LangKeys.CHAT_STORED_INFINITE_INFO.key(), "Power: ∞ FE");
 
             prov.add(LangKeys.GUI_ENERGY.key(), "%s/%s FE");
+            prov.add(LangKeys.GUI_ENERGY_INFINITE.key(), "∞ FE");
             prov.add(LangKeys.GUI_MAX_IN.key(), "Max In: %s FE/t");
             prov.add(LangKeys.GUI_MAX_OUT.key(), "Max Out: %s FE/t");
             prov.add(LangKeys.GUI_IO.key(), "I/O: %s FE/t");
+            prov.add(LangKeys.GUI_IO_MORE.key(), "Hold shift for more I/O details");
+            prov.add(LangKeys.GUI_DETAILS_IN.key(), "In: %s FE/t");
+            prov.add(LangKeys.GUI_DETAILS_OUT.key(), "Out: %s FE/t");
         });
     }
 }

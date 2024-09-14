@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
+import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.block.entity.EnergyHolderBlockEntity;
 import se.gory_moon.chargers.item.ChargerBlockItem;
 import se.gory_moon.chargers.item.WirelessChargerBlockItem;
@@ -33,17 +34,17 @@ public abstract class EnergyBlock extends BaseEntityBlock {
         return level.isClientSide ? null : createTickerHelper(blockEntityTypeIn, blockEntityType, EnergyHolderBlockEntity::tickServer);
     }
 
-    public RenderShape getRenderShape(BlockState state) {
+    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity entity, ItemStack stack) {
+    public void playerDestroy(Level level, @NotNull Player player, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable BlockEntity entity, @NotNull ItemStack stack) {
         if (!level.isClientSide && !level.restoringBlockSnapshots) {
             ItemStack drop = new ItemStack(this, 1);
 
             if (entity instanceof EnergyHolderBlockEntity energyBlock && energyBlock.getStorage() != null) {
-                drop.getOrCreateTag().putInt("Energy", energyBlock.getStorage().getEnergyStored());
+                drop.getOrCreateTag().putLong(CustomEnergyStorage.ENERGY_TAG, energyBlock.getStorage().getLongEnergyStored());
             }
 
             popResource(level, pos, drop);
@@ -51,7 +52,7 @@ public abstract class EnergyBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if ((stack.getItem() instanceof WirelessChargerBlockItem || stack.getItem() instanceof ChargerBlockItem) && stack.getCapability(ForgeCapabilities.ENERGY).isPresent()) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             LazyOptional<IEnergyStorage> capability = stack.getCapability(ForgeCapabilities.ENERGY);

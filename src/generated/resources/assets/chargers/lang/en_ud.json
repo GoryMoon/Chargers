@@ -1,4 +1,5 @@
 {
+  "block.chargers.charger_creative": "ɹǝbɹɐɥƆ ǝʌıʇɐǝɹƆ",
   "block.chargers.charger_t1": "I ɹǝı⟘ ɹǝbɹɐɥƆ",
   "block.chargers.charger_t2": "II ɹǝı⟘ ɹǝbɹɐɥƆ",
   "block.chargers.charger_t3": "III ɹǝı⟘ ɹǝbɹɐɥƆ",
@@ -7,10 +8,15 @@
   "block.chargers.wireless_charger.desc": "ɹǝʍod ǝuoʇspǝɹ ɥʇıʍ pǝןqɐsıp ǝq uɐƆ",
   "chargers.chat.disabled": "pǝןqɐsıᗡ",
   "chargers.chat.enabled": "pǝןqɐuƎ",
+  "chargers.chat.stored.infinite.info": "ƎℲ ∞ :ɹǝʍoԀ",
   "chargers.chat.stored.info": "ƎℲ %s/%s :ɹǝʍoԀ",
   "chargers.chat.wireless_charger.info": "ƎℲ %s/%s :ɹǝʍoԀ '%s :snʇɐʇS",
+  "chargers.gui.details.in": "ʇ/ƎℲ %s :uI",
+  "chargers.gui.details.out": "ʇ/ƎℲ %s :ʇnO",
   "chargers.gui.energy": "ƎℲ %s/%s",
+  "chargers.gui.energy.infinite": "ƎℲ ∞",
   "chargers.gui.io": "ʇ/ƎℲ %s :O/I",
+  "chargers.gui.io.more": "sןıɐʇǝp O/I ǝɹoɯ ɹoɟ ʇɟıɥs pןoH",
   "chargers.gui.max_in": "ʇ/ƎℲ %s :uI xɐW",
   "chargers.gui.max_out": "ʇ/ƎℲ %s :ʇnO xɐW",
   "itemGroup.chargers.chargers": "sɹǝbɹɐɥƆ"

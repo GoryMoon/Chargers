@@ -158,6 +158,25 @@ public final class BlockRegistry {
                 .build()
             .register();
 
+    public static final BlockEntry<ChargerBlock> CHARGER_BLOCK_CREATIVE = REGISTRATE.object(CHARGER_CREATIVE_BLOCK)
+            .block(ChargerBlock::new)
+            .lang(CHARGER_CREATIVE_NAME)
+            .properties(properties -> properties
+                    .strength(50, 1200)
+                    .sound(SoundType.NETHERITE_BLOCK)
+                    .mapColor(MapColor.COLOR_PURPLE)
+                    .requiresCorrectToolForDrops())
+            .blockstate((ctx, provider) -> provider.simpleBlock(ctx.get(),
+                    provider.models().cubeBottomTop("creative_charger",
+                            provider.modLoc("block/charger_creative_side"),
+                            provider.modLoc("block/charger_creative"),
+                            provider.modLoc("block/charger_creative_top"))))
+            .tag(BlockTags.MINEABLE_WITH_PICKAXE, BlockTags.NEEDS_DIAMOND_TOOL)
+            .item(ChargerBlockItem::new)
+                .properties(p -> p.rarity(Rarity.EPIC))
+            .build()
+            .register();
+
     public static final BlockEntry<WirelessChargerBlock> WIRELESS_CHARGER = REGISTRATE.object(WIRELESS_CHARGER_BLOCK)
             .block(WirelessChargerBlock::new)
             .simpleBlockEntity(WirelessChargerBlockEntity::new)

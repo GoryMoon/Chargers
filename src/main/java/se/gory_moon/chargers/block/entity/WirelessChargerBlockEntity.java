@@ -6,10 +6,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.network.PacketDistributor;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.block.WirelessChargerBlock;
+import se.gory_moon.chargers.compat.ChargeCompat;
 import se.gory_moon.chargers.handler.WirelessHandler;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
@@ -18,8 +18,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
 
     private boolean registered = false;
-    private int lastPowered = -1;
-    private int availableEnergy;
+    private long lastPowered = -1;
+    private long availableEnergy;
 
     public WirelessChargerBlockEntity(BlockEntityType<WirelessChargerBlockEntity> blockEntityType, BlockPos pos, BlockState state) {
         super(blockEntityType, pos, state);
@@ -65,18 +65,18 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
         }
 
         super.tickServer();
-        if (getStorage() != null && (lastPowered == -1 || (lastPowered == 0 && getStorage().getEnergyStored() > 0) || (lastPowered > 0 && getStorage().getEnergyStored() == 0))) {
+        if (getStorage() != null && (lastPowered == -1 || (lastPowered == 0 && getStorage().getLongEnergyStored() > 0) || (lastPowered > 0 && getStorage().getLongEnergyStored() == 0))) {
            if (!level.isClientSide) {
                PacketDistributor.TRACKING_CHUNK.with(() -> getLevel().getChunkAt(getBlockPos())).send(getUpdatePacket());
            }
-            lastPowered = getStorage().getEnergyStored();
+            lastPowered = getStorage().getLongEnergyStored();
             setChanged();
         }
     }
 
     public void updateAvailable() {
         if (getStorage() != null)
-            availableEnergy = Math.min(getStorage().getMaxOutput(), getStorage().getEnergyStored());
+            availableEnergy = Math.min(getStorage().getMaxOutput(), getStorage().getLongEnergyStored());
     }
 
     public boolean chargeItems(NonNullList<ItemStack> items) {
@@ -85,15 +85,9 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
             for (int i = 0; i < items.size() && availableEnergy > 0; i++) {
                 ItemStack stack = items.get(i);
                 if (!stack.isEmpty()) {
-                    stack.getCapability(ForgeCapabilities.ENERGY).ifPresent(energyStorage -> {
-                        if (stack.getCount() == 1) {
-                            int transferred = energyStorage.receiveEnergy(availableEnergy, false);
-                            if (transferred > 0) {
-                                getStorage().extractEnergy(transferred, false);
-                                availableEnergy -= transferred;
-                                charged.set(true);
-                            }
-                        }
+                    ChargeCompat.INSTANCE.chargeItem(stack, getStorage(), availableEnergy, (transferred) -> {
+                        availableEnergy -= transferred;
+                        charged.set(true);
                     });
                 }
             }
@@ -102,14 +96,15 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
     }
 
     public boolean canCharge() {
-        return getStorage() != null && getStorage().getEnergyStored() > 0 && !isPowered();
+        return getStorage() != null && getStorage().getLongMaxEnergyStored() > 0 && !isPowered();
     }
 
     public boolean isPowered() {
+        //noinspection deprecation
         return getLevel() != null && getLevel().isAreaLoaded(getBlockPos(), 1) && getLevel().getBestNeighborSignal(getBlockPos()) > 0;
     }
 
-    public int getAvailableEnergy() {
+    public long getAvailableEnergy() {
         return availableEnergy;
     }
 }

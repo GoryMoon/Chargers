@@ -56,52 +56,52 @@ public class Configs {
         }
 
         public static class Tier {
-            public ForgeConfigSpec.IntValue storage;
+            public ForgeConfigSpec.LongValue storage;
 
-            public ForgeConfigSpec.IntValue maxInput;
+            public ForgeConfigSpec.LongValue maxInput;
 
-            public ForgeConfigSpec.IntValue maxOutput;
+            public ForgeConfigSpec.LongValue maxOutput;
 
             private Tier(ForgeConfigSpec.Builder builder, int storage, int in, int out) {
                 this.storage = builder
                         .comment("The amount of energy the charger can hold")
                         .worldRestart()
-                        .defineInRange("storage", storage, 0, Integer.MAX_VALUE);
+                        .defineInRange("storage", storage, 0, Long.MAX_VALUE);
 
                 this.maxInput = builder
                         .comment("The amount of energy/tick that can be inserted")
                         .worldRestart()
-                        .defineInRange("max_input", in, 0, Integer.MAX_VALUE);
+                        .defineInRange("max_input", in, 0, Long.MAX_VALUE);
 
                 this.maxOutput = builder
                         .comment("The amount of energy/tick that can be extracted", "This is the max speed items would be charged at, actual speed could be slower depending on item")
                         .worldRestart()
-                        .defineInRange("max_output", out, 0, Integer.MAX_VALUE);
+                        .defineInRange("max_output", out, 0, Long.MAX_VALUE);
             }
         }
 
         public static class Wireless {
 
-            public ForgeConfigSpec.IntValue storage;
-            public ForgeConfigSpec.IntValue maxInput;
-            public ForgeConfigSpec.IntValue maxOutput;
+            public ForgeConfigSpec.LongValue storage;
+            public ForgeConfigSpec.LongValue maxInput;
+            public ForgeConfigSpec.LongValue maxOutput;
             public ForgeConfigSpec.IntValue range;
 
             protected Wireless(ForgeConfigSpec.Builder builder, int storage, int in, int out, int range) {
                 this.storage = builder
                         .comment("The amount of energy the wireless charger can hold")
                         .worldRestart()
-                        .defineInRange("storage", storage, 0, Integer.MAX_VALUE);
+                        .defineInRange("storage", storage, 0, Long.MAX_VALUE);
 
                 this.maxInput = builder
                         .comment("The amount of energy/tick that can be inserted")
                         .worldRestart()
-                        .defineInRange("max_input", in, 0, Integer.MAX_VALUE);
+                        .defineInRange("max_input", in, 0, Long.MAX_VALUE);
 
                 this.maxOutput = builder
                         .comment("The amount of energy/tick that can be extracted", "This is the max speed items would be charged at, actual speed could be slower depending on item")
                         .worldRestart()
-                        .defineInRange("max_output", out, 0, Integer.MAX_VALUE);
+                        .defineInRange("max_output", out, 0, Long.MAX_VALUE);
 
                 this.range = builder
                         .comment("The range from the charger that item will be charged")

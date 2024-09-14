@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -12,33 +11,36 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import se.gory_moon.chargers.inventory.ChargerData;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 public abstract class EnergyHolderBlockEntity extends BlockEntity {
+
+    public static final String STORAGE_TAG = "Storage";
 
     @Nullable
     private CustomEnergyStorage storage = null;
     private LazyOptional<CustomEnergyStorage> lazyStorage = LazyOptional.of(() -> storage);
-    protected final ContainerData energyData = new ContainerData() {
-        public int get(int index) {
+    protected final ChargerData energyData = new ChargerData() {
+        public long get(int index) {
             return switch (index) {
-                case 0 -> storage.getEnergyStored();
-                case 1 -> storage.getMaxEnergyStored();
+                case 0 -> storage.getLongEnergyStored();
+                case 1 -> storage.getLongMaxEnergyStored();
                 case 2 -> storage.getMaxInput();
                 case 3 -> storage.getMaxOutput();
-                case 4 -> Math.round(storage.getAverageIn());
-                case 5 -> Math.round(storage.getAverageOut());
+                case 4 -> storage.getAverageIn();
+                case 5 -> storage.getAverageOut();
+                case 6 -> storage.isCreative() ? 1: 0;
                 default -> 0;
             };
         }
 
-        public void set(int index, int value) {}
+        public void set(int index, long value) {}
 
         public int getCount() {
-            return 6;
+            return 7;
         }
     };
 
@@ -63,16 +65,17 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag compound) {
+    public void load(@NotNull CompoundTag compound) {
         super.load(compound);
         if (storage != null)
-            storage.deserializeNBT(compound.getCompound("Storage"));
+            storage.deserializeNBT(compound.getCompound(STORAGE_TAG));
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(@NotNull CompoundTag tag) {
+        super.saveAdditional(tag);
         if (storage != null)
-            tag.put("Storage", storage.serializeNBT());
+            tag.put(STORAGE_TAG, storage.serializeNBT());
     }
 
     @Nullable
@@ -82,13 +85,13 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag() {
+    public @NotNull CompoundTag getUpdateTag() {
         return saveWithoutMetadata();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ENERGY)
             return lazyStorage.cast();
         return super.getCapability(cap, side);

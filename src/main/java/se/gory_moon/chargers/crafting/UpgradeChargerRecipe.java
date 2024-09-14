@@ -12,8 +12,9 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.item.ChargerBlockItem;
+import se.gory_moon.chargers.power.CustomEnergyStorage;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class UpgradeChargerRecipe extends ShapedRecipe {
     public UpgradeChargerRecipe(ResourceLocation id, String group, CraftingBookCategory category, int width, int height, NonNullList<Ingredient> ingredients, ItemStack output) {
@@ -30,17 +31,21 @@ public class UpgradeChargerRecipe extends ShapedRecipe {
         var out = getResultItem(access).copy();
 
         if (out.getItem() instanceof ChargerBlockItem) {
-            AtomicInteger energy = new AtomicInteger();
+            AtomicLong energy = new AtomicLong();
 
             for (int i = 0; i < inv.getContainerSize(); i++) {
                 ItemStack item = inv.getItem(i);
                 if (!item.isEmpty() && item.getItem() instanceof ChargerBlockItem)
-                    item.getCapability(ForgeCapabilities.ENERGY, null).ifPresent(storage -> energy.addAndGet(storage.getEnergyStored()));
+                    item.getCapability(ForgeCapabilities.ENERGY, null).ifPresent(storage -> {
+                        if (storage instanceof CustomEnergyStorage customEnergyStorage)
+                            energy.addAndGet(customEnergyStorage.getLongEnergyStored());
+                        else
+                            energy.addAndGet(storage.getEnergyStored());
+                    });
             }
 
-            out.getCapability(ForgeCapabilities.ENERGY, null).ifPresent(storage -> {
-                out.getOrCreateTag().putInt("Energy", Math.min(energy.get(), storage.getMaxEnergyStored()));
-            });
+            out.getCapability(ForgeCapabilities.ENERGY, null).ifPresent(storage ->
+                    out.getOrCreateTag().putLong(CustomEnergyStorage.ENERGY_TAG, Math.min(energy.get(), ((CustomEnergyStorage) storage).getLongMaxEnergyStored())));
             return out;
         }
         return super.assemble(inv, access);
