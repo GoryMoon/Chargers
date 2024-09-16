@@ -48,7 +48,7 @@ public class CustomEnergyStorage implements IEnergyStorage, INBTSerializable<Tag
         energyOut = BigInteger.ZERO;
     }
 
-    private void setEnergy(long energy) {
+    public void setEnergy(long energy) {
         if (energy > 0)
             energyIn = energyIn.add(BigInteger.valueOf(energy));
         else
