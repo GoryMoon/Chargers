@@ -54,7 +54,7 @@ public class Curios {
     public boolean chargeItems(Player player, WirelessChargerBlockEntity charger) {
         AtomicBoolean result = new AtomicBoolean(false);
         if (isLoaded()) {
-            LazyOptional<ICuriosItemHandler> lazyOptional = CuriosApi.getCuriosHelper().getCuriosHandler(player);
+            LazyOptional<ICuriosItemHandler> lazyOptional = CuriosApi.getCuriosInventory(player);
             lazyOptional.ifPresent(handler -> {
                 NonNullList<ItemStack> chargeList = NonNullList.create();
                 chargeList.add(ItemStack.EMPTY);

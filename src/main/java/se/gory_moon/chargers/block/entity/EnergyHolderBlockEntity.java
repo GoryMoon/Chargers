@@ -1,5 +1,6 @@
 package se.gory_moon.chargers.block.entity;
 
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -11,10 +12,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import se.gory_moon.chargers.compat.bc.BrandonsCoreCompat;
 import se.gory_moon.chargers.inventory.ChargerData;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class EnergyHolderBlockEntity extends BlockEntity {
 
@@ -23,6 +30,9 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
     @Nullable
     private CustomEnergyStorage storage = null;
     private LazyOptional<CustomEnergyStorage> lazyStorage = LazyOptional.of(() -> storage);
+
+    private final Map<Capability<?>, Pair<IEnergyStorage, LazyOptional<IEnergyStorage>>> compatWrappers = new HashMap<>();
+
     protected final ChargerData energyData = new ChargerData() {
         public long get(int index) {
             return switch (index) {
@@ -32,12 +42,13 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
                 case 3 -> storage.getMaxOutput();
                 case 4 -> storage.getAverageIn();
                 case 5 -> storage.getAverageOut();
-                case 6 -> storage.isCreative() ? 1: 0;
+                case 6 -> storage.isCreative() ? 1 : 0;
                 default -> 0;
             };
         }
 
-        public void set(int index, long value) {}
+        public void set(int index, long value) {
+        }
 
         public int getCount() {
             return 7;
@@ -52,6 +63,10 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
         this.storage = storage;
         lazyStorage.invalidate();
         lazyStorage = LazyOptional.of(() -> storage);
+
+        if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
+            BrandonsCoreCompat.INSTANCE.createOpWrapper(storage, compatWrappers);
+        }
     }
 
     @Nullable
@@ -92,8 +107,13 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+
+        if (BrandonsCoreCompat.INSTANCE.isOpCapability(cap))
+            return compatWrappers.get(cap).second().cast();
+
         if (cap == ForgeCapabilities.ENERGY)
             return lazyStorage.cast();
+
         return super.getCapability(cap, side);
     }
 

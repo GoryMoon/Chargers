@@ -124,18 +124,12 @@ tasks.jarJar.finalizedBy('reobfJarJar')
 
 repositories {
     mavenCentral()
+    maven { url = "https://maven.covers1624.net/" }
     maven { // curios
         url "https://maven.theillusivec4.top/"
     }
     maven { // Registrate
         url "https://maven.tterrag.com/"
-    }
-    maven { // Immersive Engineering
-        url "https://modmaven.dev/"
-        content {
-            includeGroup 'blusunrize.immersiveengineering'
-            includeGroup 'malte0811'
-        }
     }
 }
 
@@ -148,10 +142,12 @@ dependencies {
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
 
+    runtimeOnly fg.deobf("io.codechicken:CodeChickenLib:${mc_version}-${ccl_version}:universal")
+    runtimeOnly fg.deobf("com.brandon3055.draconicevolution:Draconic-Evolution:${mc_version}-3.1.2.588:universal")
+    implementation fg.deobf("com.brandon3055.brandonscore:BrandonsCore:${mc_version}-${brandon_core_version}:universal")
+
     implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
     jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "[MC1.20,MC1.21)")
-
-    //runtimeOnly fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.19.4-9.4.0-166.4")
 }
 
 reobf {

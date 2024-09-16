@@ -28,6 +28,13 @@ A mod that adds item charger blocks in tiers and a wireless one'''
     side="BOTH"
 
 [[dependencies.chargers]]
+    modId="brandonscore"
+    mandatory=false
+    versionRange="[3.2.1.+,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.chargers]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.20,1.21)"

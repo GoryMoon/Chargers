@@ -4,8 +4,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
+import se.gory_moon.chargers.compat.bc.BrandonsCoreCompat;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -98,6 +100,13 @@ public class ChargeCompat {
             return customEnergyStorage.extractLongEnergy(extractAmount, false);
         }
 
+        if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
+            Optional<Long> amount = BrandonsCoreCompat.INSTANCE.extractAmount(storage, extractAmount);
+            if (amount.isPresent()) {
+                return amount.get();
+            }
+        }
+
         return storage.extractEnergy(cap(extractAmount), false);
     }
 
@@ -112,6 +121,13 @@ public class ChargeCompat {
             return customEnergyStorage.receiveLongEnergy(receiveAmount, false);
         }
 
+        if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
+            Optional<Long> amount = BrandonsCoreCompat.INSTANCE.receiveAmount(storage, receiveAmount);
+            if (amount.isPresent()) {
+                return amount.get();
+            }
+        }
+
         return storage.receiveEnergy(cap(receiveAmount), false);
     }
 
@@ -123,6 +139,13 @@ public class ChargeCompat {
     private boolean isStorageFull(IEnergyStorage storage) {
         if (storage instanceof CustomEnergyStorage customEnergyStorage) {
             return customEnergyStorage.getLongEnergyStored() >= customEnergyStorage.getLongMaxEnergyStored();
+        }
+
+        if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
+            Optional<Boolean> isFull = BrandonsCoreCompat.INSTANCE.isStorageFull(storage);
+            if (isFull.isPresent()) {
+                return isFull.get();
+            }
         }
 
         return storage.getEnergyStored() >= storage.getMaxEnergyStored();
