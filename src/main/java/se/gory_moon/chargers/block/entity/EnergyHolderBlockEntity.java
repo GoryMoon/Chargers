@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import se.gory_moon.chargers.compat.bc.BrandonsCoreCompat;
+import se.gory_moon.chargers.compat.fn.FluxNetworksCompat;
 import se.gory_moon.chargers.inventory.ChargerData;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
@@ -67,6 +68,21 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
         if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
             BrandonsCoreCompat.INSTANCE.createOpWrapper(storage, compatWrappers);
         }
+
+        if (FluxNetworksCompat.INSTANCE.isLoaded()) {
+            FluxNetworksCompat.INSTANCE.createFNWrapper(storage, compatWrappers);
+        }
+    }
+
+    @Override
+    public void invalidateCaps() {
+        if (lazyStorage != null)
+            lazyStorage.invalidate();
+        lazyStorage = null;
+        compatWrappers.forEach((capability, lazyOptionalPair) -> lazyOptionalPair.second().invalidate());
+        compatWrappers.clear();
+
+        super.invalidateCaps();
     }
 
     @Nullable
@@ -109,6 +125,9 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
 
         if (BrandonsCoreCompat.INSTANCE.isOpCapability(cap))
+            return compatWrappers.get(cap).second().cast();
+
+        if (FluxNetworksCompat.INSTANCE.isOpCapability(cap))
             return compatWrappers.get(cap).second().cast();
 
         if (cap == ForgeCapabilities.ENERGY)
