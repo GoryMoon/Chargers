@@ -154,6 +154,9 @@ dependencies {
 
     implementation fg.deobf("curse.maven:flux-networks-248020:${flux_version}")
 
+    implementation fg.deobf("curse.maven:titanium-287342:5468426")
+    implementation fg.deobf("curse.maven:industrial-foregoing-266515:${if_version}")
+
     implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
     jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "[MC1.20,MC1.21)")
 }
