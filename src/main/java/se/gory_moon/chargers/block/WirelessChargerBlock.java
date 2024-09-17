@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.LangKeys;
 import se.gory_moon.chargers.Utils;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
@@ -33,7 +34,7 @@ public class WirelessChargerBlock extends EnergyBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
+    public InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult result) {
         if (level.isClientSide)
             return InteractionResult.SUCCESS;
 
@@ -41,9 +42,17 @@ public class WirelessChargerBlock extends EnergyBlock {
         if (blockEntity instanceof WirelessChargerBlockEntity changerEntity && changerEntity.getStorage() != null) {
             if (player.isShiftKeyDown())
                 return InteractionResult.FAIL;
+
             boolean powered = changerEntity.isPowered();
-            Component status = Component.translatable((powered ? LangKeys.CHAT_DISABLED.key(): LangKeys.CHAT_ENABLED.key())).setStyle(Style.EMPTY.withColor(powered ? ChatFormatting.RED: ChatFormatting.GREEN));
-            player.displayClientMessage(Component.translatable(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),  status, Utils.formatAndClean(changerEntity.getStorage().getLongEnergyStored()), Utils.formatAndClean(changerEntity.getStorage().getLongMaxEnergyStored())), true);
+            Component status = Component.translatable((powered ? LangKeys.CHAT_DISABLED.key() : LangKeys.CHAT_ENABLED.key()))
+                    .setStyle(Style.EMPTY.withColor(powered ? ChatFormatting.RED : ChatFormatting.GREEN));
+
+            var storage = changerEntity.getStorage();
+            var text = Component.translatable(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),
+                    status,
+                    Utils.formatAndClean(storage.getLongEnergyStored()),
+                    Utils.formatAndClean(storage.getLongMaxEnergyStored()));
+            player.displayClientMessage(text, true);
         }
 
         return InteractionResult.SUCCESS;

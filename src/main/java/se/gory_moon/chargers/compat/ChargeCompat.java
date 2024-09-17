@@ -5,9 +5,9 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.IEnergyStorage;
 import se.gory_moon.chargers.compat.bc.BrandonsCoreCompat;
+import se.gory_moon.chargers.compat.industrial.IndustrialForegoingCompat;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -74,11 +74,11 @@ public class ChargeCompat {
 
         LazyOptional<IEnergyStorage> capability = stack.getCapability(ForgeCapabilities.ENERGY);
         capability.ifPresent(itemStorage -> {
-            long transferRequest = overrideTransfer;
+            var transferRequest = overrideTransfer;
             if (transferRequest < 0)
                 transferRequest = blockStorage.extractLongEnergy(blockStorage.getLongMaxEnergyStored(), true);
 
-            long transferred = receiveAmount(itemStorage, transferRequest);
+            var transferred = receiveAmount(itemStorage, transferRequest);
             if (transferred > 0) {
                 transferredCallback.accept(transferred);
             }
@@ -101,7 +101,7 @@ public class ChargeCompat {
         }
 
         if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
-            Optional<Long> amount = BrandonsCoreCompat.INSTANCE.extractAmount(storage, extractAmount);
+            var amount = BrandonsCoreCompat.INSTANCE.extractAmount(storage, extractAmount);
             if (amount.isPresent()) {
                 return amount.get();
             }
@@ -122,7 +122,14 @@ public class ChargeCompat {
         }
 
         if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
-            Optional<Long> amount = BrandonsCoreCompat.INSTANCE.receiveAmount(storage, receiveAmount);
+            var amount = BrandonsCoreCompat.INSTANCE.receiveAmount(storage, receiveAmount);
+            if (amount.isPresent()) {
+                return amount.get();
+            }
+        }
+
+        if (IndustrialForegoingCompat.INSTANCE.isLoaded()) {
+            var amount = IndustrialForegoingCompat.INSTANCE.receiveAmount(storage, receiveAmount);
             if (amount.isPresent()) {
                 return amount.get();
             }
@@ -142,7 +149,14 @@ public class ChargeCompat {
         }
 
         if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
-            Optional<Boolean> isFull = BrandonsCoreCompat.INSTANCE.isStorageFull(storage);
+            var isFull = BrandonsCoreCompat.INSTANCE.isStorageFull(storage);
+            if (isFull.isPresent()) {
+                return isFull.get();
+            }
+        }
+
+        if (IndustrialForegoingCompat.INSTANCE.isLoaded()) {
+            var isFull = IndustrialForegoingCompat.INSTANCE.isStorageFull(storage);
             if (isFull.isPresent()) {
                 return isFull.get();
             }
