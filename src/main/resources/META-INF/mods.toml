@@ -23,7 +23,7 @@ A mod that adds item charger blocks in tiers and a wireless one'''
 [[dependencies.chargers]]
     modId="curios"
     mandatory=false
-    versionRange="[5.2.0-beta,)"
+    versionRange="[5.10.0,)"
     ordering="BEFORE"
     side="BOTH"
 
@@ -31,6 +31,13 @@ A mod that adds item charger blocks in tiers and a wireless one'''
     modId="brandonscore"
     mandatory=false
     versionRange="[3.2.1.+,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.chargers]]
+    modId="fluxnetworks"
+    mandatory=false
+    versionRange="[7.2,)"
     ordering="AFTER"
     side="BOTH"
 
