@@ -3,6 +3,7 @@ package se.gory_moon.chargers.crafting;
 import com.google.gson.JsonObject;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -26,7 +27,7 @@ public class UpgradeChargerRecipeBuilder extends ShapedRecipeBuilder {
     }
 
     @Override
-    public void save(@NotNull Consumer<FinishedRecipe> finishedRecipeConsumer, @NotNull ResourceLocation recipeId) {
+    public void save(@NotNull RecipeOutput recipeOutput, @NotNull ResourceLocation id) {
         Consumer<FinishedRecipe> dummyConsumer = recipe -> finishedRecipeConsumer.accept(new Result(recipe));
         super.save(dummyConsumer, recipeId);
     }

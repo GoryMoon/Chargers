@@ -1,7 +1,10 @@
 package se.gory_moon.chargers.crafting;
 
 import com.google.gson.JsonObject;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -9,6 +12,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class UpgradeChargerRecipeSerializer implements RecipeSerializer<UpgradeChargerRecipe> {
+
+    @Override
+    public MapCodec<UpgradeChargerRecipe> codec() {
+        return null;
+    }
+
+    @Override
+    public StreamCodec<RegistryFriendlyByteBuf, UpgradeChargerRecipe> streamCodec() {
+        return null;
+    }
+
     @Override
     public @NotNull UpgradeChargerRecipe fromJson(@NotNull ResourceLocation recipeId, @NotNull JsonObject json) {
         ShapedRecipe basic = RecipeSerializer.SHAPED_RECIPE.fromJson(recipeId, json);

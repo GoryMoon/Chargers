@@ -14,7 +14,9 @@ public enum LangKeys {
     GUI_IO("gui.io"),
     GUI_DETAILS_IN("gui.details.in"),
     GUI_DETAILS_OUT("gui.details.out"),
-    GUI_IO_MORE("gui.io.more");
+    GUI_IO_MORE("gui.io.more"),
+
+    PACK_DESCRIPTION("pack.player_mobs.description");
 
 
     private final String key;

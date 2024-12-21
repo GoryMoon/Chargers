@@ -1,180 +1,128 @@
 plugins {
+    id 'java-library'
     id 'eclipse'
+    id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle' version '[6.0,6.2)'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'net.neoforged.gradle.userdev' version '7.0.163'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
+    // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
+    // documentation attached on cursor hover of gradle classes and methods. However, this comes with increased
+    // file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.
+    // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
+    distributionType = Wrapper.DistributionType.BIN
 }
 
 version = mod_version
-group = "se.gory_moon" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Chargers-$mc_version"
-
-// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-if (System.getenv().GITHUB_RUN_NUMBER  != null) { //adds the build number to the end of the version string if on a build server
-    version += ".${System.getenv().GITHUB_RUN_NUMBER}"
-}
-
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-minecraft {
-    mappings channel: mappings_channel, version: mappings_version
-
-    //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    runs {
-        client {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'CORE,LOADING,REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'chargers'
-
-            // Make mixins work on dependencies
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            mods {
-                chargers {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'CORE,LOADING,REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'chargers'
-
-            // Make mixins work on dependencies
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            mods {
-                chargers {
-                    source sourceSets.main
-                }
-            }
-        }
-
-
-        gameTestServer {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            property 'forge.enabledGameTestNamespaces', 'chargers'
-
-            // Make mixins work on dependencies
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            mods {
-                chargers {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'chargers', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            // Make mixins work on dependencies
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            mods {
-                chargers {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
-}
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-
-jarJar.enable()
-tasks.jarJar.finalizedBy('reobfJarJar')
+group = mod_group_id
 
 repositories {
-    mavenCentral()
+    mavenLocal()
     maven { url = "https://maven.covers1624.net/" }
-    maven { // curios
-        url "https://maven.theillusivec4.top/"
-    }
-    maven { // Registrate
-        url "https://maven.tterrag.com/"
-    }
     maven {
-        url "https://cursemaven.com"
-        content {
+        name = "OctoStudios"
+        url = uri("https://maven.octo-studios.com/releases")
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                url "https://cursemaven.com"
+            }
+        }
+        filter {
             includeGroup "curse.maven"
         }
     }
 }
 
+base {
+    archivesName = "Chargers-$minecraft_version"
+}
+
+java {
+    withSourcesJar()
+
+    // Mojang ships Java 21 to end users starting in 1.20.5, so mods should target Java 21.
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+if (System.getenv().GITHUB_RUN_NUMBER  != null) { //adds the build number to the end of the version string if on a build server
+    version += ".${System.getenv().GITHUB_RUN_NUMBER}"
+}
+
+runs {
+    configureEach {
+        // Recommended logging data for a userdev environment
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+
+        // Recommended logging level for the console
+        systemProperty 'forge.logging.console.level', 'debug'
+
+        modSource project.sourceSets.main
+    }
+
+    client {
+        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+
+        devLogin {
+            enabled true
+        }
+    }
+
+    server {
+
+        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+        arguments '--nogui'
+    }
+
+    // This run config launches GameTestServer and runs all registered gametests, then exits.
+    // By default, the server will crash when no gametests are provided.
+    // The gametest system is also enabled by default for other run configs under the /test command.
+    gameTestServer {
+        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+// Include resources generated by data generators.
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+// Sets up a dependency configuration called 'localRuntime'.
+// This configuration should be used instead of 'runtimeOnly' to declare
+// a dependency that will be present for runtime testing but that is
+// "optional", meaning it will not be pulled by dependents of this mod.
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft "net.neoforged:forge:${mc_version}-${neo_version}"
+    // Specify the version of Minecraft to use.
+    // Depending on the plugin applied there are several options. We will assume you applied the userdev plugin as shown above.
+    // The group for userdev is net.neoforged, the module name is neoforge, and the version is the same as the neoforge version.
+    // You can however also use the vanilla plugin (net.neoforged.gradle.vanilla) to use a version of Minecraft without the neoforge loader.
+    // And its provides the option to then use net.minecraft as the group, and one of; client, server or joined as the module name, plus the game version as version.
+    // For all intends and purposes: You can treat this dependency as if it is a normal library you would use.
+    implementation "net.neoforged:neoforge:${neo_version}"
 
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    localRuntime "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
 
-    runtimeOnly fg.deobf("io.codechicken:CodeChickenLib:${mc_version}-${ccl_version}:universal")
-    runtimeOnly fg.deobf("com.brandon3055.draconicevolution:Draconic-Evolution:${mc_version}-3.1.2.588:universal")
-    implementation fg.deobf("com.brandon3055.brandonscore:BrandonsCore:${mc_version}-${brandon_core_version}:universal")
+    // localRuntime "io.codechicken:CodeChickenLib:${mc_version}-${ccl_version}:universal"
+    // localRuntime "com.brandon3055.draconicevolution:Draconic-Evolution:${minecraft_version}-3.1.2.588:universal"
+    // implementation "com.brandon3055.brandonscore:BrandonsCore:${minecraft_version}-${bc_version}:universal"
 
-    implementation fg.deobf("curse.maven:flux-networks-248020:${flux_version}")
+    // implementation "curse.maven:flux-networks-248020:${flux_version}"
 
-    implementation fg.deobf("curse.maven:titanium-287342:5468426")
-    implementation fg.deobf("curse.maven:industrial-foregoing-266515:${if_version}")
-
-    implementation fg.deobf("com.tterrag.registrate:Registrate:${registrate_version}")
-    jarJar(group: 'com.tterrag.registrate', name: 'Registrate', version: "[MC1.20,MC1.21)")
-}
-
-reobf {
-    jarJar {}
-}
-
-tasks.jarJar.configure {
-    // remove '-all' from jarJar jar file
-    archiveClassifier.set('')
-}
-
-tasks.register('sourcesJar', Jar) {
-    dependsOn classes
-    description = 'Creates a JAR containing the source code.'
-    from sourceSets.main.allSource
-    archiveClassifier.set('sources')
+    implementation "curse.maven:titanium-287342:${titanium_version}"
+    implementation "curse.maven:industrial-foregoing-266515:${if_version}"
 }
 
 tasks.register('deobfJar', Jar) {
@@ -183,31 +131,38 @@ tasks.register('deobfJar', Jar) {
     archiveClassifier.set('deobf')
 }
 
-tasks.register('forgelibJar', Jar) {
-    description = 'Creates a compiled JAR which also contains raw sources.'
-    from sourceSets.main.output
-    from sourceSets.main.allJava
-    archiveClassifier.set('forgelib')
-}
-
 artifacts {
     archives sourcesJar
     archives deobfJar
-    archives forgelibJar
 }
 
-jar {
-    archiveClassifier.set('slim')
-    manifest {
-        attributes([
-            "Specification-Title": "Chargers",
-            "Specification-Vendor": "Gory_Moon",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": project.jar.archiveVersion,
-            "Implementation-Vendor" :"Gory_Moon",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+// This block of code expands all declared replace properties in the specified resource targets.
+// A missing property will result in an error. Properties are expanded using ${} Groovy notation.
+// When "copyIdeResources" is enabled, this will also run before the game launches in IDE environments.
+// See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            neo_version_range      : neo_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+
+            curios_version_range   : curios_version_range,
+            if_version_range       : if_version_range,/*
+            bc_version_range       : bc_version_range,
+            flux_version_range     : flux_version_range*/
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand replaceProperties
     }
 }
 
@@ -215,23 +170,10 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-// Jar Signing
-import net.minecraftforge.gradle.common.tasks.SignJar
-tasks.register('signJar', SignJar) {
-    onlyIf {
-        project.hasProperty('keyStore')
-    }
-
-    if (project.hasProperty('keyStore')) {
-        project.logger.info("Signing jar ${tasks.jarJar.archiveFileName.get()}");
-
-        keyStore = project.findProperty('keyStore')
-        alias = project.findProperty('keyStoreAlias')
-        storePass = project.findProperty('keyStorePass')
-        keyPass = project.findProperty('keyStorePass')
-        inputFile = tasks.jarJar.archiveFile.get()
-        outputFile = tasks.jarJar.archiveFile.get()
-    } else {
-        project.logger.log(LogLevel.WARN, "Could not sign ${tasks.jarJar.archiveFileName.get()}. No keyStore property could be found")
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
 }

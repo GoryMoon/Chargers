@@ -1,24 +1,24 @@
 package se.gory_moon.chargers;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID)
+@EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public class Configs {
 
     public static final Server SERVER;
-    public static final ForgeConfigSpec serverSpec;
+    public static final ModConfigSpec serverSpec;
 
     public static final Common COMMON;
-    public static final ForgeConfigSpec commonSpec;
+    public static final ModConfigSpec commonSpec;
 
     static {
-        Pair<Server, ForgeConfigSpec> configSpecPairServer = new ForgeConfigSpec.Builder().configure(Server::new);
+        Pair<Server, ModConfigSpec> configSpecPairServer = new ModConfigSpec.Builder().configure(Server::new);
         serverSpec = configSpecPairServer.getRight();
         SERVER = configSpecPairServer.getLeft();
 
-        Pair<Common, ForgeConfigSpec> configSpecPairCommon = new ForgeConfigSpec.Builder().configure(Common::new);
+        Pair<Common, ModConfigSpec> configSpecPairCommon = new ModConfigSpec.Builder().configure(Common::new);
         commonSpec = configSpecPairCommon.getRight();
         COMMON = configSpecPairCommon.getLeft();
     }
@@ -30,7 +30,7 @@ public class Configs {
         public Tier tier4;
         public Wireless wireless;
 
-        Server(ForgeConfigSpec.Builder builder) {
+        Server(ModConfigSpec.Builder builder) {
             builder.comment("Chargers configs")
                     .push("chargers");
 
@@ -56,13 +56,13 @@ public class Configs {
         }
 
         public static class Tier {
-            public ForgeConfigSpec.LongValue storage;
+            public ModConfigSpec.LongValue storage;
 
-            public ForgeConfigSpec.LongValue maxInput;
+            public ModConfigSpec.LongValue maxInput;
 
-            public ForgeConfigSpec.LongValue maxOutput;
+            public ModConfigSpec.LongValue maxOutput;
 
-            private Tier(ForgeConfigSpec.Builder builder, int storage, int in, int out) {
+            private Tier(ModConfigSpec.Builder builder, int storage, int in, int out) {
                 this.storage = builder
                         .comment("The amount of energy the charger can hold")
                         .worldRestart()
@@ -82,12 +82,12 @@ public class Configs {
 
         public static class Wireless {
 
-            public ForgeConfigSpec.LongValue storage;
-            public ForgeConfigSpec.LongValue maxInput;
-            public ForgeConfigSpec.LongValue maxOutput;
-            public ForgeConfigSpec.IntValue range;
+            public ModConfigSpec.LongValue storage;
+            public ModConfigSpec.LongValue maxInput;
+            public ModConfigSpec.LongValue maxOutput;
+            public ModConfigSpec.IntValue range;
 
-            protected Wireless(ForgeConfigSpec.Builder builder, int storage, int in, int out, int range) {
+            protected Wireless(ModConfigSpec.Builder builder, int storage, int in, int out, int range) {
                 this.storage = builder
                         .comment("The amount of energy the wireless charger can hold")
                         .worldRestart()
@@ -111,9 +111,9 @@ public class Configs {
     }
 
     public static class Common {
-        public ForgeConfigSpec.BooleanValue curiosCompat;
+        public ModConfigSpec.BooleanValue curiosCompat;
 
-        Common(ForgeConfigSpec.Builder builder) {
+        Common(ModConfigSpec.Builder builder) {
             builder.comment("Common configs")
                     .push("common");
 

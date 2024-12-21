@@ -2,7 +2,6 @@ package se.gory_moon.chargers.network;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
 import se.gory_moon.chargers.inventory.ChargerMenu;
 
 import java.util.List;

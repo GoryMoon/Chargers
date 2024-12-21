@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 public class Constants {
     public static final String MOD_ID = "chargers";
 
-    public static ResourceLocation NET_ID = new ResourceLocation(MOD_ID, "net");
+    public static ResourceLocation NET_ID = ResourceLocation.fromNamespaceAndPath(MOD_ID, "net");
 
     public static final String CHARGER_T1_BLOCK = "charger_t1";
     public static final String CHARGER_T1_NAME = "Charger Tier I";

@@ -2,7 +2,8 @@ package se.gory_moon.chargers;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
 import java.text.NumberFormat;
@@ -19,7 +20,9 @@ public class Utils {
     }
 
     public static void addEnergyTooltip(ItemStack stack, List<Component> tooltip) {
-        stack.getCapability(ForgeCapabilities.ENERGY, null).ifPresent(energyStorage -> {
+        IEnergyStorage energyStorage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (energyStorage != null) {
+
             String stored;
             String max;
             if (energyStorage instanceof CustomEnergyStorage storage) {
@@ -30,6 +33,6 @@ public class Utils {
                 max = formatAndClean(energyStorage.getMaxEnergyStored());
             }
             tooltip.add(Component.translatable(LangKeys.CHAT_STORED_INFO.key(), stored, max));
-        });
+        }
     }
 }

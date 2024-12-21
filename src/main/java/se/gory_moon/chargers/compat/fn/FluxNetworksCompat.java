@@ -1,13 +1,10 @@
 package se.gory_moon.chargers.compat.fn;
 
 import it.unimi.dsi.fastutil.Pair;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
-import sonar.fluxnetworks.api.FluxCapabilities;
 
 import java.util.Map;
 

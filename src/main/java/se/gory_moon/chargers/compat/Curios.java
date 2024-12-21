@@ -3,10 +3,9 @@ package se.gory_moon.chargers.compat;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.SlotItemHandler;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -54,7 +53,7 @@ public class Curios {
     public boolean chargeItems(Player player, WirelessChargerBlockEntity charger) {
         AtomicBoolean result = new AtomicBoolean(false);
         if (isLoaded()) {
-            LazyOptional<ICuriosItemHandler> lazyOptional = CuriosApi.getCuriosInventory(player);
+            var lazyOptional = CuriosApi.getCuriosInventory(player);
             lazyOptional.ifPresent(handler -> {
                 NonNullList<ItemStack> chargeList = NonNullList.create();
                 chargeList.add(ItemStack.EMPTY);

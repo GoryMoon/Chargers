@@ -9,9 +9,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.Constants;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
@@ -20,7 +20,7 @@ import se.gory_moon.chargers.compat.Curios;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID)
+@EventBusSubscriber(modid = Constants.MOD_ID)
 public class WirelessHandler {
 
     public static WirelessHandler INSTANCE = new WirelessHandler();
@@ -40,11 +40,11 @@ public class WirelessHandler {
     }
 
     @SubscribeEvent
-    public static void playerTick(TickEvent.PlayerTickEvent event) {
-        if (event.side.isClient() || event.phase != TickEvent.Phase.START || event.player.isSpectator()) {
+    public static void playerTick(PlayerTickEvent.Pre event) {
+        if (event.getEntity().level().isClientSide() || event.getEntity().isSpectator()) {
             return;
         }
-        INSTANCE.chargeItems(event.player);
+        INSTANCE.chargeItems(event.getEntity());
     }
 
     public void chargeItems(Player player) {
@@ -71,7 +71,6 @@ public class WirelessHandler {
 
     @Nullable
     private WirelessChargerBlockEntity getCharger(Level level, BlockPos pos) {
-        //noinspection deprecation
         if (level.isAreaLoaded(pos, 1)) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof WirelessChargerBlockEntity)

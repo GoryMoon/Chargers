@@ -1,9 +1,7 @@
 package se.gory_moon.chargers.compat;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import se.gory_moon.chargers.compat.bc.BrandonsCoreCompat;
 import se.gory_moon.chargers.compat.industrial.IndustrialForegoingCompat;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
