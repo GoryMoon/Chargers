@@ -25,7 +25,7 @@ public class Curios {
     }
 
     public static boolean isLoaded() {
-        return loaded && Configs.COMMON.curiosCompat.get();
+        return loaded && Configs.SERVER.curiosCompat.get();
     }
 
     // TODO Curios inventory for gui

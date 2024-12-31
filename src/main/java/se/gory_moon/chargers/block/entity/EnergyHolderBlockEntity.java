@@ -1,6 +1,5 @@
 package se.gory_moon.chargers.block.entity;
 
-import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -9,17 +8,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.ItemCapability;
-import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import se.gory_moon.chargers.compat.bc.BrandonsCoreCompat;
-import se.gory_moon.chargers.compat.fn.FluxNetworksCompat;
 import se.gory_moon.chargers.inventory.ChargerData;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class EnergyHolderBlockEntity extends BlockEntity {
 
@@ -27,8 +19,6 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
 
     @Nullable
     private CustomEnergyStorage storage = null;
-
-    private final Map<ItemCapability<IEnergyStorage, Void>, Pair<IEnergyStorage, IEnergyStorage>> compatWrappers = new HashMap<>();
 
     protected final ChargerData energyData = new ChargerData() {
         public long get(int index) {
@@ -58,15 +48,6 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
 
     public void setStorage(CustomEnergyStorage storage) {
         this.storage = storage;
-
-        if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
-            BrandonsCoreCompat.INSTANCE.createOpWrapper(storage, compatWrappers);
-        }
-
-        if (FluxNetworksCompat.INSTANCE.isLoaded()) {
-            FluxNetworksCompat.INSTANCE.createFNWrapper(storage, compatWrappers);
-        }
-
         invalidateCapabilities();
     }
 
@@ -105,6 +86,7 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
         CompoundTag tag = new CompoundTag();
         saveAdditional(tag, registries);
         return tag;
+        // TODO test this
         //return saveWithoutMetadata(registries);
     }
 

@@ -34,7 +34,7 @@ public final class BlockEntityRegistry {
             ).build(null)
     );
 
-    public static final Supplier<MenuType<ChargerMenu>> CHARGER_CONTAINER = MENU_TYPES.register(
+    public static final Supplier<MenuType<ChargerMenu>> CHARGER_MENU = MENU_TYPES.register(
             Constants.CHARGER_BLOCK,
             () -> new MenuType<>(ChargerMenu::new, FeatureFlags.DEFAULT_FLAGS));
 

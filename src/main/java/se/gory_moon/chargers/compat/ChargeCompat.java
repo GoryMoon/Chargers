@@ -2,8 +2,10 @@ package se.gory_moon.chargers.compat;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import se.gory_moon.chargers.compat.bc.BrandonsCoreCompat;
+import se.gory_moon.chargers.compat.fn.FluxNetworksCompat;
 import se.gory_moon.chargers.compat.industrial.IndustrialForegoingCompat;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
@@ -23,6 +25,20 @@ public class ChargeCompat {
      */
     private int cap(long value) {
         return value > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) value;
+    }
+
+    /**
+     * Registers capabilities for compatibility with other mods
+     * @param event The passed event used to register
+     */
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
+            BrandonsCoreCompat.INSTANCE.registerOPCapability(event);
+        }
+
+        if (FluxNetworksCompat.INSTANCE.isLoaded()) {
+            FluxNetworksCompat.INSTANCE.registerFNCapability(event);
+        }
     }
 
     /**

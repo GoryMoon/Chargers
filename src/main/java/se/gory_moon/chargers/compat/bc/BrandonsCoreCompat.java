@@ -1,14 +1,11 @@
 package se.gory_moon.chargers.compat.bc;
 
-import it.unimi.dsi.fastutil.Pair;
 import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
-import java.util.Map;
 import java.util.Optional;
 
 public class BrandonsCoreCompat {
@@ -84,13 +81,14 @@ public class BrandonsCoreCompat {
      * Creates a wrapper around the provided storage, invalidates any previous lazy optionals if available.
      *
      * @param storage        The storage to wrap
-     * @param compatWrappers The map holding the wrappers
+     * @return Returns a wrapped energy storage
      */
-    public void createOpWrapper(CustomEnergyStorage storage, Map<ItemCapability<IEnergyStorage, Void>, Pair<IEnergyStorage, IEnergyStorage>> compatWrappers) {
+    private IEnergyStorage createOpWrapper(CustomEnergyStorage storage) {
         /*if (compatWrappers.containsKey(CapabilityOP.OP)) {
             compatWrappers.get(CapabilityOP.OP).second().invalidate();
         }
         var opWrapper = new OpStorageWrapper(storage);
         compatWrappers.put(CapabilityOP.OP, Pair.of(opWrapper, LazyOptional.of(() -> opWrapper)));*/
+        return null;
     }
 }

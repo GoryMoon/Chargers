@@ -15,7 +15,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import se.gory_moon.chargers.block.BlockRegistry;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.crafting.RecipeSerializers;
@@ -31,9 +30,7 @@ import java.util.concurrent.CompletableFuture;
 @Mod(Constants.MOD_ID)
 public class ChargersMod {
 
-
     public ChargersMod(IEventBus modBus, ModContainer container) {
-
         modBus.addListener(this::gatherData);
         modBus.addListener(PayloadRegister::onPayloadRegister);
         modBus.addListener(CapabilityRegistrationHandler::registerCapabilities);
@@ -48,7 +45,6 @@ public class ChargersMod {
 
         RecipeSerializers.RECIPE_SERIALIZER.register(modBus);
         container.registerConfig(ModConfig.Type.SERVER, Configs.serverSpec);
-        container.registerConfig(ModConfig.Type.COMMON, Configs.commonSpec);
     }
 
     private void gatherData(GatherDataEvent event) {

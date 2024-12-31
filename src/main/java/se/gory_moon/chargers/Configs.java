@@ -8,17 +8,10 @@ public class Configs {
     public static final Server SERVER;
     public static final ModConfigSpec serverSpec;
 
-    public static final Common COMMON;
-    public static final ModConfigSpec commonSpec;
-
     static {
         Pair<Server, ModConfigSpec> configSpecPairServer = new ModConfigSpec.Builder().configure(Server::new);
         serverSpec = configSpecPairServer.getRight();
         SERVER = configSpecPairServer.getLeft();
-
-        Pair<Common, ModConfigSpec> configSpecPairCommon = new ModConfigSpec.Builder().configure(Common::new);
-        commonSpec = configSpecPairCommon.getRight();
-        COMMON = configSpecPairCommon.getLeft();
     }
 
     public static class Server {
@@ -27,6 +20,8 @@ public class Configs {
         public Tier tier3;
         public Tier tier4;
         public Wireless wireless;
+
+        public ModConfigSpec.BooleanValue curiosCompat;
 
         Server(ModConfigSpec.Builder builder) {
             builder.comment("Chargers configs")
@@ -51,6 +46,15 @@ public class Configs {
             builder.push("wireless");
                 wireless = new Wireless(builder, 200000, 4000, 4000, 24);
             builder.pop(2);
+
+            builder.comment("Compat configs")
+                    .push("compat");
+
+            curiosCompat = builder
+                    .comment("If the wireless charger should charge curios items")
+                    .define("curios_compat", true);
+
+            builder.pop();
         }
 
         public static class Tier {
@@ -105,24 +109,6 @@ public class Configs {
                         .comment("The range from the charger that item will be charged")
                         .defineInRange("range", range, 0, 128);
             }
-        }
-    }
-
-    public static class Common {
-        public ModConfigSpec.BooleanValue curiosCompat;
-
-        Common(ModConfigSpec.Builder builder) {
-            builder.comment("Common configs")
-                    .push("common");
-
-            builder.comment("Compat configs")
-                    .push("compat");
-
-            curiosCompat = builder
-                    .comment("If the wireless charger should charge curios items")
-                    .define("curios_compat", true);
-
-            builder.pop(2);
         }
     }
 }

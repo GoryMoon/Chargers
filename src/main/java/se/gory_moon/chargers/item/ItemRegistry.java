@@ -49,9 +49,9 @@ public final class ItemRegistry {
                     .rarity(Rarity.EPIC)
                     .component(ChargerDataComponents.ENERGY, Long.MAX_VALUE)));
 
-    public static final DeferredItem<ChargerBlockItem> CHARGER_WIRELESS_ITEM = ITEMS.register(
+    public static final DeferredItem<WirelessChargerBlockItem> CHARGER_WIRELESS_ITEM = ITEMS.register(
             Constants.WIRELESS_CHARGER_BLOCK,
-            () -> new ChargerBlockItem(BlockRegistry.WIRELESS_CHARGER.get(), new Item.Properties()
+            () -> new WirelessChargerBlockItem(BlockRegistry.WIRELESS_CHARGER.get(), new Item.Properties()
                     .component(ChargerDataComponents.ENERGY, 0L)));
 
     private static final Supplier<CreativeModeTab> CHARGERS_TAB = CREATIVE_TABS.register(Constants.MOD_ID, () -> CreativeModeTab.builder()
@@ -66,5 +66,4 @@ public final class ItemRegistry {
                 output.accept(CHARGER_CREATIVE_ITEM.get());
                 output.accept(CHARGER_WIRELESS_ITEM.get());
             }).build());
-
 }

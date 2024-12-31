@@ -21,23 +21,41 @@ public class ChargerLanguageProvider extends LanguageProvider {
         addBlock(BlockRegistry.CHARGER_BLOCK_CREATIVE, "Creative Charger");
         addBlock(BlockRegistry.WIRELESS_CHARGER, "Wireless Charger");
 
-        add(LangKeys.TOOLTIP_WIRELESS_CHARGER.key(), "Can be disabled with redstone power");
-        add(LangKeys.CREATIVE_TAB.key(), "Chargers");
-        add(LangKeys.PACK_DESCRIPTION.key(), "Chargers mod resources");
+        add(LangKeys.TOOLTIP_WIRELESS_CHARGER, "Can be disabled with redstone power");
+        add(LangKeys.CREATIVE_TAB, "Chargers");
+        add(LangKeys.PACK_DESCRIPTION, "Chargers mod resources");
 
-        add(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(), "Status: %s, Power: %s/%s FE");
-        add(LangKeys.CHAT_ENABLED.key(), "Enabled");
-        add(LangKeys.CHAT_DISABLED.key(), "Disabled");
-        add(LangKeys.CHAT_STORED_INFO.key(), "Power: %s/%s FE");
-        add(LangKeys.CHAT_STORED_INFINITE_INFO.key(), "Power: ∞ FE");
+        add(LangKeys.CONFIG_CHARGERS, "Chargers");
+        add(LangKeys.CONFIG_COMPAT, "Compatability");
+        add(LangKeys.CONFIG_CURIOS_COMPAT, "Curios");
+        add(LangKeys.CONFIG_MAX_INPUT, "Max Input");
+        add(LangKeys.CONFIG_MAX_OUTPUT, "Max Output");
+        add(LangKeys.CONFIG_STORAGE, "Storage");
+        add(LangKeys.CONFIG_RANGE, "Range");
 
-        add(LangKeys.GUI_ENERGY.key(), "%s/%s FE");
-        add(LangKeys.GUI_ENERGY_INFINITE.key(), "∞ FE");
-        add(LangKeys.GUI_MAX_IN.key(), "Max In: %s FE/t");
-        add(LangKeys.GUI_MAX_OUT.key(), "Max Out: %s FE/t");
-        add(LangKeys.GUI_IO.key(), "I/O: %s FE/t");
-        add(LangKeys.GUI_IO_MORE.key(), "Hold shift for more I/O details");
-        add(LangKeys.GUI_DETAILS_IN.key(), "In: %s FE/t");
-        add(LangKeys.GUI_DETAILS_OUT.key(), "Out: %s FE/t");
+        add(LangKeys.CONFIG_WIRELESS, "Wireless Charger");
+        add(LangKeys.CONFIG_TIER_1, "Charger Tier 1");
+        add(LangKeys.CONFIG_TIER_2, "Charger Tier 2");
+        add(LangKeys.CONFIG_TIER_3, "Charger Tier 3");
+        add(LangKeys.CONFIG_TIER_4, "Charger Tier 4");
+
+        add(LangKeys.CHAT_WIRELESS_CHARGER_INFO, "Status: %s, Power: %s/%s FE");
+        add(LangKeys.CHAT_ENABLED, "Enabled");
+        add(LangKeys.CHAT_DISABLED, "Disabled");
+        add(LangKeys.CHAT_STORED_INFO, "Power: %s/%s FE");
+        add(LangKeys.CHAT_STORED_INFINITE_INFO, "Power: ∞ FE");
+
+        add(LangKeys.GUI_ENERGY, "%s/%s FE");
+        add(LangKeys.GUI_ENERGY_INFINITE, "∞ FE");
+        add(LangKeys.GUI_MAX_IN, "Max In: %s FE/t");
+        add(LangKeys.GUI_MAX_OUT, "Max Out: %s FE/t");
+        add(LangKeys.GUI_IO, "I/O: %s FE/t");
+        add(LangKeys.GUI_IO_MORE, "Hold shift for more I/O details");
+        add(LangKeys.GUI_DETAILS_IN, "In: %s FE/t");
+        add(LangKeys.GUI_DETAILS_OUT, "Out: %s FE/t");
+    }
+
+    private void add(LangKeys key, String text) {
+        add(key.key(), text);
     }
 }

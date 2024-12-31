@@ -5,6 +5,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.block.ChargerBlock;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
+import se.gory_moon.chargers.compat.ChargeCompat;
 import se.gory_moon.chargers.item.ChargerBlockItem;
 import se.gory_moon.chargers.item.ItemRegistry;
 import se.gory_moon.chargers.power.CustomItemEnergyStorage;
@@ -32,8 +33,8 @@ public class CapabilityRegistrationHandler {
                 (entity, side) -> entity.getStorage()
         );
 
-        // TODO register compat capabilities
-
+        // Register compat capabilities
+        ChargeCompat.registerCapabilities(event);
 
         // Items
         event.registerItem(

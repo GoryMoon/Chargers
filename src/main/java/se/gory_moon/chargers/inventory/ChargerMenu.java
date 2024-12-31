@@ -52,7 +52,7 @@ public class ChargerMenu extends AbstractContainerMenu {
     }
 
     public ChargerMenu(int containerId, Inventory playerInventory, ChargerItemStackHandler itemHandler, ChargerData energyData, ContainerLevelAccess access) {
-        super(BlockEntityRegistry.CHARGER_CONTAINER.get(), containerId);
+        super(BlockEntityRegistry.CHARGER_MENU.get(), containerId);
         this.itemHandler = itemHandler;
 
         this.energyData = energyData;

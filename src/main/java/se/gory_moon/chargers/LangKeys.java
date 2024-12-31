@@ -16,6 +16,20 @@ public enum LangKeys {
     GUI_DETAILS_OUT("gui.details.out"),
     GUI_IO_MORE("gui.io.more"),
 
+    CONFIG_CHARGERS("configuration.chargers"),
+    CONFIG_COMPAT("configuration.compat"),
+    CONFIG_CURIOS_COMPAT("configuration.curios_compat"),
+    CONFIG_MAX_INPUT("configuration.max_input"),
+    CONFIG_MAX_OUTPUT("configuration.max_output"),
+    CONFIG_STORAGE("configuration.storage"),
+    CONFIG_RANGE("configuration.range"),
+
+    CONFIG_WIRELESS("configuration.wireless"),
+    CONFIG_TIER_1("configuration.tier_1"),
+    CONFIG_TIER_2("configuration.tier_2"),
+    CONFIG_TIER_3("configuration.tier_3"),
+    CONFIG_TIER_4("configuration.tier_4"),
+
     TOOLTIP_WIRELESS_CHARGER("tooltip.wireless_charger"),
 
     CREATIVE_TAB("itemGroup.chargers.chargers", true),
