@@ -1,6 +1,7 @@
 package se.gory_moon.chargers.compat;
 
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import se.gory_moon.chargers.compat.bc.BrandonsCoreCompat;
 import se.gory_moon.chargers.compat.industrial.IndustrialForegoingCompat;
@@ -32,16 +33,16 @@ public class ChargeCompat {
      * @param callback A callback that is called when the
      */
     public void dischargeItem(ItemStack stack, CustomEnergyStorage blockStorage, Runnable callback) {
-        LazyOptional<IEnergyStorage> capability = stack.getCapability(ForgeCapabilities.ENERGY);
-        capability.ifPresent(energyStorage -> {
+        IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (storage != null) {
             long extractAmount = Math.min(blockStorage.getLongMaxEnergyStored() - blockStorage.getLongEnergyStored(), blockStorage.getMaxInput());
 
-            long transferred = extractAmount(energyStorage, extractAmount);
+            long transferred = extractAmount(storage, extractAmount);
             if (transferred > 0) {
                 blockStorage.receiveLongEnergy(transferred, false);
                 callback.run();
             }
-        });
+        }
     }
 
     /**
@@ -70,19 +71,19 @@ public class ChargeCompat {
     public boolean chargeItem(ItemStack stack, CustomEnergyStorage blockStorage, long overrideTransfer, Consumer<Long> transferredCallback) {
         AtomicBoolean charged = new AtomicBoolean(false);
 
-        LazyOptional<IEnergyStorage> capability = stack.getCapability(ForgeCapabilities.ENERGY);
-        capability.ifPresent(itemStorage -> {
+        IEnergyStorage storage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        if (storage != null) {
             var transferRequest = overrideTransfer;
             if (transferRequest < 0)
                 transferRequest = blockStorage.extractLongEnergy(blockStorage.getLongMaxEnergyStored(), true);
 
-            var transferred = receiveAmount(itemStorage, transferRequest);
+            var transferred = receiveAmount(storage, transferRequest);
             if (transferred > 0) {
                 transferredCallback.accept(transferred);
             }
 
-            charged.set(isStorageFull(itemStorage));
-        });
+            charged.set(isStorageFull(storage));
+        }
 
         return charged.get();
     }

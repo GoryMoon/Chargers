@@ -9,7 +9,6 @@ import net.neoforged.neoforge.items.SlotItemHandler;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 

@@ -2,20 +2,17 @@ package se.gory_moon.chargers.block.entity;
 
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.capabilities.ItemCapability;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import se.gory_moon.chargers.compat.bc.BrandonsCoreCompat;
 import se.gory_moon.chargers.compat.fn.FluxNetworksCompat;
 import se.gory_moon.chargers.inventory.ChargerData;
@@ -30,9 +27,8 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
 
     @Nullable
     private CustomEnergyStorage storage = null;
-    private LazyOptional<CustomEnergyStorage> lazyStorage = LazyOptional.of(() -> storage);
 
-    private final Map<Capability<?>, Pair<IEnergyStorage, LazyOptional<IEnergyStorage>>> compatWrappers = new HashMap<>();
+    private final Map<ItemCapability<IEnergyStorage, Void>, Pair<IEnergyStorage, IEnergyStorage>> compatWrappers = new HashMap<>();
 
     protected final ChargerData energyData = new ChargerData() {
         public long get(int index) {
@@ -62,8 +58,6 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
 
     public void setStorage(CustomEnergyStorage storage) {
         this.storage = storage;
-        lazyStorage.invalidate();
-        lazyStorage = LazyOptional.of(() -> storage);
 
         if (BrandonsCoreCompat.INSTANCE.isLoaded()) {
             BrandonsCoreCompat.INSTANCE.createOpWrapper(storage, compatWrappers);
@@ -72,17 +66,8 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
         if (FluxNetworksCompat.INSTANCE.isLoaded()) {
             FluxNetworksCompat.INSTANCE.createFNWrapper(storage, compatWrappers);
         }
-    }
 
-    @Override
-    public void invalidateCaps() {
-        if (lazyStorage != null)
-            lazyStorage.invalidate();
-        lazyStorage = null;
-        compatWrappers.forEach((capability, lazyOptionalPair) -> lazyOptionalPair.second().invalidate());
-        compatWrappers.clear();
-
-        super.invalidateCaps();
+        invalidateCapabilities();
     }
 
     @Nullable
@@ -96,17 +81,17 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(@NotNull CompoundTag compound) {
-        super.load(compound);
+    public void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         if (storage != null)
-            storage.deserializeNBT(compound.getCompound(STORAGE_TAG));
+            storage.deserializeNBT(registries, tag.getCompound(STORAGE_TAG));
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         if (storage != null)
-            tag.put(STORAGE_TAG, storage.serializeNBT());
+            tag.put(STORAGE_TAG, storage.serializeNBT(registries));
     }
 
     @Nullable
@@ -116,24 +101,11 @@ public abstract class EnergyHolderBlockEntity extends BlockEntity {
     }
 
     @Override
-    public @NotNull CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
-    }
-
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-
-        if (BrandonsCoreCompat.INSTANCE.isOpCapability(cap))
-            return compatWrappers.get(cap).second().cast();
-
-        if (FluxNetworksCompat.INSTANCE.isOpCapability(cap))
-            return compatWrappers.get(cap).second().cast();
-
-        if (cap == ForgeCapabilities.ENERGY)
-            return lazyStorage.cast();
-
-        return super.getCapability(cap, side);
+    public @NotNull CompoundTag getUpdateTag(@NotNull HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag, registries);
+        return tag;
+        //return saveWithoutMetadata(registries);
     }
 
     public static void tickServer(Level level, BlockPos pos, BlockState state, EnergyHolderBlockEntity blockEntity) {

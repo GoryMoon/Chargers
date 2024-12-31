@@ -13,16 +13,17 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import se.gory_moon.chargers.block.BlockRegistry;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.crafting.RecipeSerializers;
-import se.gory_moon.chargers.data.ChargerLanguageProvider;
+import se.gory_moon.chargers.data.*;
+import se.gory_moon.chargers.handler.CapabilityRegistrationHandler;
+import se.gory_moon.chargers.item.ChargerDataComponents;
 import se.gory_moon.chargers.item.ItemRegistry;
-import se.gory_moon.chargers.network.PacketHandler;
+import se.gory_moon.chargers.network.PayloadRegister;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -33,21 +34,22 @@ public class ChargersMod {
 
     public ChargersMod(IEventBus modBus, ModContainer container) {
 
-        modBus.addListener(this::setup);
         modBus.addListener(this::buildTabContents);
         modBus.addListener(this::gatherData);
+        modBus.addListener(PayloadRegister::onPayloadRegister);
+        modBus.addListener(CapabilityRegistrationHandler::registerCapabilities);
 
-        BlockRegistry.init();
-        BlockEntityRegistry.init();
-        ItemRegistry.init();
+        BlockRegistry.BLOCKS.register(modBus);;
+        BlockRegistry.BLOCK_TYPES.register(modBus);
+        BlockEntityRegistry.BlOCK_ENTITIES.register(modBus);
+        BlockEntityRegistry.MENU_TYPES.register(modBus);
+        ItemRegistry.ITEMS.register(modBus);
+        ItemRegistry.CREATIVE_TABS.register(modBus);
+        ChargerDataComponents.DATA_COMPONENTS.register(modBus);
 
-        RecipeSerializers.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        RecipeSerializers.RECIPE_SERIALIZER.register(modBus);
         container.registerConfig(ModConfig.Type.SERVER, Configs.serverSpec);
         container.registerConfig(ModConfig.Type.COMMON, Configs.commonSpec);
-    }
-
-    private void setup(FMLCommonSetupEvent event) {
-        PacketHandler.init();
     }
 
     private void gatherData(GatherDataEvent event) {
@@ -63,6 +65,11 @@ public class ChargersMod {
                         Optional.of(new InclusiveRange<>(0, Integer.MAX_VALUE)))));
 
         gen.addProvider(event.includeClient(), new ChargerLanguageProvider(packOutput));
+        gen.addProvider(event.includeClient(), new ChargerBlockStateProvider(packOutput, existingFileHelper));
+        gen.addProvider(event.includeClient(), new ChargerItemModelProvider(packOutput, existingFileHelper));
+
+        gen.addProvider(event.includeServer(), new ChargerRecipeProvider(packOutput, lookupProvider));
+        gen.addProvider(event.includeServer(), new ChargerLootTableProvider(packOutput, lookupProvider));
     }
 
     public void buildTabContents(BuildCreativeModeTabContentsEvent event) {

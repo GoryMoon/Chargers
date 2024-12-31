@@ -14,7 +14,16 @@ public class ChargerLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        addTooltip(BlockRegistry.WIRELESS_CHARGER, "Can be disabled with redstone power");
+        add(BlockRegistry.CHARGER_BLOCK_T1.get(), "Charger Tier I");
+        add(BlockRegistry.CHARGER_BLOCK_T2.get(), "Charger Tier II");
+        add(BlockRegistry.CHARGER_BLOCK_T3.get(), "Charger Tier III");
+        add(BlockRegistry.CHARGER_BLOCK_T4.get(), "Charger Tier IV");
+        add(BlockRegistry.CHARGER_BLOCK_CREATIVE.get(), "Creative Charger");
+        add(BlockRegistry.WIRELESS_CHARGER.get(), "Wireless Charger");
+
+        add(LangKeys.TOOLTIP_WIRELESS_CHARGER.key(), "Can be disabled with redstone power");
+        add(LangKeys.CREATIVE_TAB.key(), "Chargers");
+
         add(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(), "Status: %s, Power: %s/%s FE");
         add(LangKeys.CHAT_ENABLED.key(), "Enabled");
         add(LangKeys.CHAT_DISABLED.key(), "Disabled");

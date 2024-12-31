@@ -22,7 +22,6 @@ public class Utils {
     public static void addEnergyTooltip(ItemStack stack, List<Component> tooltip) {
         IEnergyStorage energyStorage = stack.getCapability(Capabilities.EnergyStorage.ITEM);
         if (energyStorage != null) {
-
             String stored;
             String max;
             if (energyStorage instanceof CustomEnergyStorage storage) {

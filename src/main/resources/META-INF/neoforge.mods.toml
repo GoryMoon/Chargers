@@ -26,19 +26,19 @@ versionRange = "${curios_version_range}"
 ordering = "BEFORE"
 side = "BOTH"
 
-[[dependencies.${ mod_id }]]
-modId = "brandonscore"
-type = "optional"
-versionRange = "$(bc_version_range)"
-ordering = "AFTER"
-side = "BOTH"
+#[[dependencies.${ mod_id }]]
+#modId = "brandonscore"
+#type = "optional"
+#versionRange = "${bc_version_range}"
+#ordering = "AFTER"
+#side = "BOTH"
 
-[[dependencies.${ mod_id }]]
-modId = "fluxnetworks"
-type = "optional"
-versionRange = "${flux_version_range}"
-ordering = "AFTER"
-side = "BOTH"
+#[[dependencies.${ mod_id }]]
+#modId = "fluxnetworks"
+#type = "optional"
+#versionRange = "${flux_version_range}"
+#ordering = "AFTER"
+#side = "BOTH"
 
 [[dependencies.${ mod_id }]]
 modId = "industrialforegoing"

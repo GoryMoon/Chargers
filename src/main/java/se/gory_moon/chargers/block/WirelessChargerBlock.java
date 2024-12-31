@@ -1,13 +1,14 @@
 package se.gory_moon.chargers.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -26,6 +27,11 @@ import javax.annotation.Nullable;
 
 public class WirelessChargerBlock extends EnergyBlock {
 
+    @Override
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
+        return BlockRegistry.WIRELESS_CHARGER_CODEC.value();
+    }
+
     public static BooleanProperty POWERED = BooleanProperty.create("powered");
 
     public WirelessChargerBlock(Block.Properties properties) {
@@ -34,7 +40,7 @@ public class WirelessChargerBlock extends EnergyBlock {
     }
 
     @Override
-    public InteractionResult use(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult result) {
+    public @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult result) {
         if (level.isClientSide)
             return InteractionResult.SUCCESS;
 
@@ -65,13 +71,13 @@ public class WirelessChargerBlock extends EnergyBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return BlockEntityRegistry.WIRELESS_CHARGER_BE.create(pos, state);
+    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return BlockEntityRegistry.WIRELESS_CHARGER_BE.get().create(pos, state);
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         return createEnergyTicker(level, type, BlockEntityRegistry.WIRELESS_CHARGER_BE.get());
     }
 }

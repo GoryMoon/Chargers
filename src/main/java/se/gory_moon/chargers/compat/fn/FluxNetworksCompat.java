@@ -2,6 +2,8 @@ package se.gory_moon.chargers.compat.fn;
 
 import it.unimi.dsi.fastutil.Pair;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.capabilities.ItemCapability;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
@@ -27,18 +29,14 @@ public class FluxNetworksCompat {
     }
 
     /**
-     * Checks if Flux Networks is loaded and that the provided capability is an FNEnergy cap
+     * Registers the FNEnergy cap to the different chargers
      *
-     * @param cap The cap to check
-     * @param <T> The cap type
-     * @return If the provided cap is a FNEnergy cap
+     * @param event The event used to register capabilities
      */
-    public <T> boolean isOpCapability(@NotNull Capability<T> cap) {
+    public void registerFNCapability(@NotNull RegisterCapabilitiesEvent event) {
         if (loaded) {
-            return cap == FluxCapabilities.FN_ENERGY_STORAGE;
+            // TODO
         }
-
-        return false;
     }
 
     /**
@@ -47,11 +45,11 @@ public class FluxNetworksCompat {
      * @param storage        The storage to wrap
      * @param compatWrappers The map holding the wrappers
      */
-    public void createFNWrapper(CustomEnergyStorage storage, Map<Capability<?>, Pair<IEnergyStorage, LazyOptional<IEnergyStorage>>> compatWrappers) {
-        if (compatWrappers.containsKey(FluxCapabilities.FN_ENERGY_STORAGE)) {
+    public void createFNWrapper(CustomEnergyStorage storage, Map<ItemCapability<IEnergyStorage, Void>, Pair<IEnergyStorage, IEnergyStorage>> compatWrappers) {
+        /*if (compatWrappers.containsKey(FluxCapabilities.FN_ENERGY_STORAGE)) {
             compatWrappers.get(FluxCapabilities.FN_ENERGY_STORAGE).second().invalidate();
         }
         var fnWrapper = new FNStorageWrapper(storage);
-        compatWrappers.put(FluxCapabilities.FN_ENERGY_STORAGE, Pair.of(fnWrapper, LazyOptional.of(() -> fnWrapper)));
+        compatWrappers.put(FluxCapabilities.FN_ENERGY_STORAGE, Pair.of(fnWrapper, LazyOptional.of(() -> fnWrapper)));*/
     }
 }

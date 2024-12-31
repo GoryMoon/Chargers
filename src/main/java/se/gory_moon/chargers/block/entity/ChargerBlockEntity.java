@@ -1,7 +1,7 @@
 package se.gory_moon.chargers.block.entity;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -12,11 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import se.gory_moon.chargers.block.ChargerBlock;
@@ -33,21 +29,29 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
     public static final int OUTPUT_SLOT = 1;
     public static final int CHARGE_SLOT = 2;
 
-    public ChargerItemStackHandler inventoryHandler;
-    private final LazyOptional<ChargerItemStackHandler> lazyInventory = LazyOptional.of(() -> inventoryHandler);
+    private final ChargerItemStackHandler inventoryHandler;
     private ChargerBlock.Tier tier = ChargerBlock.Tier.I;
 
     @Nullable
     private Component customName;
 
-    public ChargerBlockEntity(BlockEntityType<ChargerBlockEntity> blockEntityType, BlockPos pos, BlockState state) {
-        super(blockEntityType, pos, state);
+    public ChargerBlockEntity(BlockPos pos, BlockState state, ChargerBlock.Tier tier) {
+        this(pos, state);
+        setTier(tier);
+    }
+
+    public ChargerBlockEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.CHARGER_BE.get(), pos, state);
         inventoryHandler = new ChargerItemStackHandler() {
             @Override
             protected void onContentsChanged(int slot) {
                 setChanged();
             }
         };
+    }
+
+    public ChargerItemStackHandler getInventoryHandler() {
+        return inventoryHandler;
     }
 
     public void setTier(ChargerBlock.Tier tier) {
@@ -85,30 +89,22 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
     }
 
     @Override
-    public void load(@NotNull CompoundTag compound) {
-        inventoryHandler.deserializeNBT(compound.getCompound(INVENTORY_TAG));
+    public void loadAdditional(@NotNull CompoundTag compound, @NotNull HolderLookup.Provider registries) {
+        inventoryHandler.deserializeNBT(registries, compound.getCompound(INVENTORY_TAG));
         setTier(ChargerBlock.Tier.byID(compound.getInt(TIER_TAG)));
         if (compound.contains(CUSTOM_NAME_TAG, Tag.TAG_STRING))
-            this.customName = Component.Serializer.fromJson(compound.getString(CUSTOM_NAME_TAG));
+            this.customName = Component.Serializer.fromJson(compound.getString(CUSTOM_NAME_TAG), registries);
 
-        super.load(compound);
+        super.loadAdditional(compound, registries);
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag) {
-        super.saveAdditional(tag);
-        tag.put(INVENTORY_TAG, inventoryHandler.serializeNBT());
+    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.put(INVENTORY_TAG, inventoryHandler.serializeNBT(registries));
         tag.putInt(TIER_TAG, tier.getId());
         if (this.customName != null)
-            tag.putString(CUSTOM_NAME_TAG, Component.Serializer.toJson(this.customName));
-    }
-
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER)
-            return lazyInventory.cast();
-        return super.getCapability(cap, side);
+            tag.putString(CUSTOM_NAME_TAG, Component.Serializer.toJson(this.customName, registries));
     }
 
     public void setCustomName(@Nullable Component name) {
@@ -144,6 +140,6 @@ public class ChargerBlockEntity extends EnergyHolderBlockEntity implements Namea
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player playerEntity) {
-        return new ChargerMenu(BlockEntityRegistry.CHARGER_CONTAINER.get(), containerId, playerInventory, inventoryHandler, energyData, ContainerLevelAccess.create(getLevel(), getBlockPos()));
+        return new ChargerMenu(containerId, playerInventory, inventoryHandler, energyData, ContainerLevelAccess.create(getLevel(), getBlockPos()));
     }
 }

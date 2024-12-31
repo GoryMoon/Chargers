@@ -136,25 +136,14 @@ public class CustomEnergyStorage implements IEnergyStorage, INBTSerializable<Tag
     @Override
     public void deserializeNBT(@NotNull HolderLookup.Provider provider, @NotNull Tag nbt) {
         if (nbt instanceof CompoundTag compound) {
-            if (compound.contains(ENERGY_TAG, Tag.TAG_INT))
-                energy = compound.getInt(ENERGY_TAG);
-            else
-                energy = compound.getLong(ENERGY_TAG);
-
-            if (compound.contains(IN_TAG, Tag.TAG_FLOAT))
-                averageIn = (long) compound.getFloat(IN_TAG);
-            else
-                averageIn = compound.getLong(IN_TAG);
-
-            if (compound.contains(IN_TAG, Tag.TAG_FLOAT))
-                averageOut = (long) compound.getFloat(OUT_TAG);
-            else
-                averageOut = compound.getLong(OUT_TAG);
+            energy = compound.getLong(ENERGY_TAG);
+            averageIn = compound.getLong(IN_TAG);
+            averageOut = compound.getLong(OUT_TAG);
         }
     }
 
     @Override
-    public @UnknownNullability Tag serializeNBT(@NotNull HolderLookup.Provider provider) {
+    public @UnknownNullability Tag serializeNBT(@NotNull HolderLookup.Provider registries) {
         CompoundTag compound = new CompoundTag();
         compound.putLong(ENERGY_TAG, this.getLongEnergyStored());
         compound.putLong(IN_TAG, in.getAverage());

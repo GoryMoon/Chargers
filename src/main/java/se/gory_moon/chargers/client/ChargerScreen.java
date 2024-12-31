@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
 
-    private static final ResourceLocation CHARGER_GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/charger.png");
+    private static final ResourceLocation CHARGER_GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/charger.png");
 
     public ChargerScreen(ChargerMenu container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
@@ -36,7 +36,7 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
 
     @Override
     public void render(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
-        this.renderBackground(graphics);
+        this.renderBackground(graphics, pMouseX, pMouseY, pPartialTick);
         super.render(graphics, pMouseX, pMouseY, pPartialTick);
 
         if (pMouseX >= leftPos + 44 && pMouseX <= leftPos + 44 + 16 && pMouseY >= topPos + 14 && pMouseY <= topPos + 84) {

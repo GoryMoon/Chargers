@@ -16,6 +16,9 @@ public enum LangKeys {
     GUI_DETAILS_OUT("gui.details.out"),
     GUI_IO_MORE("gui.io.more"),
 
+    TOOLTIP_WIRELESS_CHARGER("tooltip.chargers.wireless_charger"),
+
+    CREATIVE_TAB("itemGroup.chargers.chargers"),
     PACK_DESCRIPTION("pack.player_mobs.description");
 
 

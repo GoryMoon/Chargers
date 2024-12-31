@@ -121,7 +121,7 @@ public class Configs {
                     .push("compat");
 
             curiosCompat = builder
-                    .comment("If curios compat should be enabled")
+                    .comment("If the wireless charger should charge curios items")
                     .define("curios_compat", true);
 
             builder.pop(2);
