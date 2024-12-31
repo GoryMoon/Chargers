@@ -3,16 +3,16 @@
   "category": "redstone",
   "key": {
     "B": {
-      "tag": "forge:storage_blocks/redstone"
+      "tag": "c:storage_blocks/redstone"
     },
     "C": {
       "item": "chargers:charger_t1"
     },
     "G": {
-      "tag": "forge:ingots/gold"
+      "tag": "c:ingots/gold"
     },
     "R": {
-      "tag": "forge:dusts/redstone"
+      "tag": "c:dusts/redstone"
     }
   },
   "pattern": [
@@ -21,7 +21,7 @@
     "GCG"
   ],
   "result": {
-    "item": "chargers:charger_t2"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "chargers:charger_t2"
+  }
 }

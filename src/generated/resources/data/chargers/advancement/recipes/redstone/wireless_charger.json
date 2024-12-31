@@ -5,7 +5,17 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:dusts/redstone"
+            "items": "#c:dusts/redstone"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_ender_pearls": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#c:ender_pearls"
           }
         ]
       },
@@ -15,7 +25,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:ingots/iron"
+            "items": "#c:ingots/iron"
           }
         ]
       },
@@ -25,7 +35,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:storage_blocks/redstone"
+            "items": "#c:storage_blocks/redstone"
           }
         ]
       },
@@ -33,23 +43,23 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "chargers:charger_t1"
+        "recipe": "chargers:wireless_charger"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
   },
   "requirements": [
     [
+      "has_the_recipe",
+      "has_ender_pearls",
       "has_ingots_iron",
       "has_dusts_redstone",
-      "has_storage_blocks_redstone",
-      "has_the_recipe"
+      "has_storage_blocks_redstone"
     ]
   ],
   "rewards": {
     "recipes": [
-      "chargers:charger_t1"
+      "chargers:wireless_charger"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

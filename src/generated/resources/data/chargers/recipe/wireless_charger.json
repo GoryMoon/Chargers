@@ -3,16 +3,16 @@
   "category": "redstone",
   "key": {
     "B": {
-      "tag": "forge:storage_blocks/redstone"
+      "tag": "c:storage_blocks/redstone"
     },
     "E": {
-      "tag": "forge:ender_pearls"
+      "tag": "c:ender_pearls"
     },
     "I": {
-      "tag": "forge:ingots/iron"
+      "tag": "c:ingots/iron"
     },
     "R": {
-      "tag": "forge:dusts/redstone"
+      "tag": "c:dusts/redstone"
     }
   },
   "pattern": [
@@ -21,7 +21,7 @@
     "IRI"
   ],
   "result": {
-    "item": "chargers:wireless_charger"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "chargers:wireless_charger"
+  }
 }

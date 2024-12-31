@@ -1,0 +1,5 @@
+// 1.21.1	2024-12-31T12:33:14.326789587	Tags for minecraft:block mod id chargers
+9596b69eed507a7c84470fb89813addc3bb046e2 data/minecraft/tags/block/mineable/pickaxe.json
+6620d130a62bf575f058803e24e7cb739222acd3 data/minecraft/tags/block/needs_diamond_tool.json
+2832bc540df3fe30f4f5fca04a116987d8f869e1 data/minecraft/tags/block/needs_iron_tool.json
+3886d5089b5c880b453d1273311b88b3b9def584 data/minecraft/tags/block/needs_stone_tool.json

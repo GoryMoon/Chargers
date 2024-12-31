@@ -16,16 +16,19 @@ public enum LangKeys {
     GUI_DETAILS_OUT("gui.details.out"),
     GUI_IO_MORE("gui.io.more"),
 
-    TOOLTIP_WIRELESS_CHARGER("tooltip.chargers.wireless_charger"),
+    TOOLTIP_WIRELESS_CHARGER("tooltip.wireless_charger"),
 
-    CREATIVE_TAB("itemGroup.chargers.chargers"),
-    PACK_DESCRIPTION("pack.player_mobs.description");
-
+    CREATIVE_TAB("itemGroup.chargers.chargers", true),
+    PACK_DESCRIPTION("pack.chargers.description", true);
 
     private final String key;
 
     LangKeys(String key) {
-        this.key = Constants.MOD_ID + "." + key;
+        this(key, false);
+    }
+
+    LangKeys(String key, boolean raw) {
+        this.key = raw ? key : Constants.MOD_ID + "." + key;
     }
 
     public String key() {

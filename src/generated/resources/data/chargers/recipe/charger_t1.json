@@ -3,13 +3,13 @@
   "category": "redstone",
   "key": {
     "B": {
-      "tag": "forge:storage_blocks/redstone"
+      "tag": "c:storage_blocks/redstone"
     },
     "I": {
-      "tag": "forge:ingots/iron"
+      "tag": "c:ingots/iron"
     },
     "R": {
-      "tag": "forge:dusts/redstone"
+      "tag": "c:dusts/redstone"
     }
   },
   "pattern": [
@@ -18,7 +18,7 @@
     "IRI"
   ],
   "result": {
-    "item": "chargers:charger_t1"
-  },
-  "show_notification": true
+    "count": 1,
+    "id": "chargers:charger_t1"
+  }
 }

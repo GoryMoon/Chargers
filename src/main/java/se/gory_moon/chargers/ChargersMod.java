@@ -34,7 +34,6 @@ public class ChargersMod {
 
     public ChargersMod(IEventBus modBus, ModContainer container) {
 
-        modBus.addListener(this::buildTabContents);
         modBus.addListener(this::gatherData);
         modBus.addListener(PayloadRegister::onPayloadRegister);
         modBus.addListener(CapabilityRegistrationHandler::registerCapabilities);
@@ -68,11 +67,8 @@ public class ChargersMod {
         gen.addProvider(event.includeClient(), new ChargerBlockStateProvider(packOutput, existingFileHelper));
         gen.addProvider(event.includeClient(), new ChargerItemModelProvider(packOutput, existingFileHelper));
 
+        gen.addProvider(event.includeServer(), new ChargerBlockTagsProvider(packOutput, lookupProvider, existingFileHelper));
         gen.addProvider(event.includeServer(), new ChargerRecipeProvider(packOutput, lookupProvider));
         gen.addProvider(event.includeServer(), new ChargerLootTableProvider(packOutput, lookupProvider));
-    }
-
-    public void buildTabContents(BuildCreativeModeTabContentsEvent event) {
-
     }
 }

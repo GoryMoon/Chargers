@@ -14,12 +14,12 @@ public class ChargerItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        withExistingParent(ItemRegistry.CHARGER_T1_ITEM.getId().toString(), modLoc("block/charger_t1"));
-        withExistingParent(ItemRegistry.CHARGER_T2_ITEM.getId().toString(), modLoc("block/charger_t2"));
-        withExistingParent(ItemRegistry.CHARGER_T3_ITEM.getId().toString(), modLoc("block/charger_t3"));
-        withExistingParent(ItemRegistry.CHARGER_T4_ITEM.getId().toString(), modLoc("block/charger_t4"));
+        withExistingParent(ItemRegistry.CHARGER_T1_ITEM.getId().toString(), modLoc("block/charger_tier_1"));
+        withExistingParent(ItemRegistry.CHARGER_T2_ITEM.getId().toString(), modLoc("block/charger_tier_2"));
+        withExistingParent(ItemRegistry.CHARGER_T3_ITEM.getId().toString(), modLoc("block/charger_tier_3"));
+        withExistingParent(ItemRegistry.CHARGER_T4_ITEM.getId().toString(), modLoc("block/charger_tier_4"));
         withExistingParent(ItemRegistry.CHARGER_CREATIVE_ITEM.getId().toString(), modLoc("block/charger_creative"));
 
-        withExistingParent(ItemRegistry.CHARGER_WIRELESS_ITEM.getId().toString(), modLoc("block/charger_wireless_disabled"));
+        withExistingParent(ItemRegistry.CHARGER_WIRELESS_ITEM.getId().toString(), modLoc("block/wireless_charger_disabled"));
     }
 }

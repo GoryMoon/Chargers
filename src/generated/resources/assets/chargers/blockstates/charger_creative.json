@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "chargers:block/creative_charger"
+      "model": "chargers:block/charger_creative"
     }
   }
 }

@@ -5,9 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": [
-              "chargers:charger_t3"
-            ]
+            "items": "chargers:charger_t3"
           }
         ]
       },
@@ -22,14 +20,13 @@
   },
   "requirements": [
     [
-      "has_charger_t3",
-      "has_the_recipe"
+      "has_the_recipe",
+      "has_charger_t3"
     ]
   ],
   "rewards": {
     "recipes": [
       "chargers:charger_t4"
     ]
-  },
-  "sends_telemetry_event": false
+  }
 }

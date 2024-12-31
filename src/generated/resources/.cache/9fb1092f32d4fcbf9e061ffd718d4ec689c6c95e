@@ -1,0 +1,11 @@
+// 1.21.1	2024-12-31T12:24:49.412746019	Recipes
+2cfd79292eaa78b08cbc69102a42d27224b975fd data/chargers/advancement/recipes/redstone/charger_t1.json
+96307402e0ad6c679ee3ba76e3023cc0820899ac data/chargers/advancement/recipes/redstone/charger_t2.json
+4b0330c71f59dcdf0773e0478bb24c66dc91f9b0 data/chargers/advancement/recipes/redstone/charger_t3.json
+572e570005ae9c03a0d3414aa545c4036dd54040 data/chargers/advancement/recipes/redstone/charger_t4.json
+0f235969d9fbe44f8030cbf9e06424094da19387 data/chargers/advancement/recipes/redstone/wireless_charger.json
+e80d338fbaa6dc80c23ebdde7cb4b7988680a0db data/chargers/recipe/charger_t1.json
+0da181dcde4b6d204d2e8b222d9f11599c4fef96 data/chargers/recipe/charger_t2.json
+c3ce375ae00b93ac31d4d84810f393113f3c9f67 data/chargers/recipe/charger_t3.json
+5a532df7cf3b5d3b1c4efb830a56feafba88ec0b data/chargers/recipe/charger_t4.json
+2ad261b18c5ac5922c02f4eae3925fe09f340545 data/chargers/recipe/wireless_charger.json

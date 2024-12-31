@@ -47,7 +47,7 @@ public class ChargerRecipeProvider extends RecipeProvider {
                 .pattern("IRI").pattern("IBI").pattern("IRI")
                 .unlockedBy("has_ingots_iron", has(Tags.Items.INGOTS_IRON))
                 .unlockedBy("has_dusts_redstone", has(Tags.Items.DUSTS_REDSTONE))
-                .unlockedBy("has_blocks_redstone", has(Tags.Items.STORAGE_BLOCKS_REDSTONE))
+                .unlockedBy("has_storage_blocks_redstone", has(Tags.Items.STORAGE_BLOCKS_REDSTONE))
                 .save(output);
 
         // T2 Charger
@@ -90,7 +90,7 @@ public class ChargerRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_ender_pearls", has(Tags.Items.ENDER_PEARLS))
                 .unlockedBy("has_ingots_iron", has(Tags.Items.INGOTS_IRON))
                 .unlockedBy("has_dusts_redstone", has(Tags.Items.DUSTS_REDSTONE))
-                .unlockedBy("has_blocks_redstone", has(Tags.Items.STORAGE_BLOCKS_REDSTONE))
+                .unlockedBy("has_storage_blocks_redstone", has(Tags.Items.STORAGE_BLOCKS_REDSTONE))
                 .save(output);
     }
 }
