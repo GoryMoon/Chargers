@@ -41,20 +41,20 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
         if (pMouseX >= leftPos + 44 && pMouseX <= leftPos + 44 + 16 && pMouseY >= topPos + 14 && pMouseY <= topPos + 84) {
             List<Component> list = new ArrayList<>();
             if (menu.isCreative())
-                list.add(Component.translatable(LangKeys.GUI_ENERGY_INFINITE.key()));
+                list.add(Component.translatable(LangKeys.GUI_ENERGY_INFINITE.key(), ChatFormatting.DARK_AQUA + "FE"));
             else
-                list.add(Component.translatable(LangKeys.GUI_ENERGY.key(), Utils.formatAndClean(menu.getEnergy()), Utils.formatAndClean(menu.getEnergyMax()) + ChatFormatting.GRAY));
+                list.add(Utils.formatFilledCapacity(menu.getEnergy(), menu.getEnergyMax()));
 
-            list.add(Component.translatable(LangKeys.GUI_MAX_IN.key(), Utils.formatAndClean(menu.getMaxIn()) + ChatFormatting.GRAY));
-            list.add(Component.translatable(LangKeys.GUI_MAX_OUT.key(), Utils.formatAndClean(menu.getMaxOut()) + ChatFormatting.GRAY));
+            list.add(Component.translatable(LangKeys.GUI_MAX_IN.key(), Utils.formatEnergyPerTick(menu.getMaxIn())).withStyle(ChatFormatting.GOLD));
+            list.add(Component.translatable(LangKeys.GUI_MAX_OUT.key(), Utils.formatEnergyPerTick(menu.getMaxOut())).withStyle(ChatFormatting.GOLD));
 
             if (menu.getAverageIn() > 0 || menu.getAverageOut() > 0) {
                 if (hasShiftDown()) {
-                    list.add(Component.translatable(LangKeys.GUI_DETAILS_IN.key(), ChatFormatting.GREEN + "+" + Utils.formatAndClean(menu.getAverageIn()) + ChatFormatting.GRAY));
-                    list.add(Component.translatable(LangKeys.GUI_DETAILS_OUT.key(), ChatFormatting.RED + "-" + Utils.formatAndClean(menu.getAverageOut()) + ChatFormatting.GRAY));
+                    list.add(Component.translatable(LangKeys.GUI_DETAILS_IN.key(), ChatFormatting.GREEN + "+" + Utils.formatEnergyPerTick(menu.getAverageIn()) + ChatFormatting.GRAY).withStyle(ChatFormatting.GOLD));
+                    list.add(Component.translatable(LangKeys.GUI_DETAILS_OUT.key(), ChatFormatting.RED + "-" + Utils.formatEnergyPerTick(menu.getAverageOut()) + ChatFormatting.GRAY).withStyle(ChatFormatting.GOLD));
                 } else {
                     if (menu.getEnergyDiff() != 0)
-                        list.add(Component.translatable(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? ChatFormatting.GREEN + "+" : ChatFormatting.RED.toString()) + Utils.formatAndClean(menu.getEnergyDiff()) + ChatFormatting.GRAY));
+                        list.add(Component.translatable(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? ChatFormatting.GREEN + "+" : ChatFormatting.RED.toString()) + Utils.formatEnergyPerTick(menu.getEnergyDiff()) + ChatFormatting.GRAY).withStyle(ChatFormatting.GOLD));
                     list.add(Component.translatable(LangKeys.GUI_IO_MORE.key()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
                 }
             }

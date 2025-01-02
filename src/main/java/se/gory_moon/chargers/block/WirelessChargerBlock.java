@@ -57,8 +57,8 @@ public class WirelessChargerBlock extends EnergyBlock {
             var storage = changerEntity.getStorage();
             var text = Component.translatable(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),
                     status,
-                    Utils.formatAndClean(storage.getLongEnergyStored()),
-                    Utils.formatAndClean(storage.getLongMaxEnergyStored()));
+                    Utils.formatFilledCapacity(storage.getLongEnergyStored(), storage.getLongMaxEnergyStored()))
+                    .withStyle(ChatFormatting.GOLD);
             player.displayClientMessage(text, true);
         }
 

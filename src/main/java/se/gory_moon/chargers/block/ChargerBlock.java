@@ -2,6 +2,7 @@ package se.gory_moon.chargers.block;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -73,7 +74,7 @@ public class ChargerBlock extends EnergyBlock {
     public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag tooltipFlag) {
         Tier tier = getTier();
         if (tier.isCreative())
-            tooltip.add(Component.translatable(LangKeys.CHAT_STORED_INFINITE_INFO.key()));
+            tooltip.add(Component.translatable(LangKeys.CHAT_STORED_INFINITE_INFO.key(), ChatFormatting.DARK_AQUA + "FE").withStyle(ChatFormatting.GOLD));
         else
             Utils.addEnergyTooltip(stack, tooltip);
     }
