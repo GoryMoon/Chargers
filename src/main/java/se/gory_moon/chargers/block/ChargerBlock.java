@@ -3,13 +3,15 @@ package se.gory_moon.chargers.block;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -20,10 +22,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.Configs;
+import se.gory_moon.chargers.LangKeys;
+import se.gory_moon.chargers.Utils;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.block.entity.ChargerBlockEntity;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class ChargerBlock extends EnergyBlock {
@@ -42,11 +47,10 @@ public class ChargerBlock extends EnergyBlock {
 
     @Override
     public @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult result) {
-        if (level.isClientSide)
-            return InteractionResult.SUCCESS;
+        if (!level.isClientSide && player instanceof ServerPlayer)
+            player.openMenu(state.getMenuProvider(level, pos));
 
-        player.openMenu(state.getMenuProvider(level, pos));
-        return InteractionResult.CONSUME;
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
@@ -66,14 +70,12 @@ public class ChargerBlock extends EnergyBlock {
     }
 
     @Override
-    public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        if (stack.has(DataComponents.CUSTOM_NAME)) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity instanceof ChargerBlockEntity) {
-                ((ChargerBlockEntity)blockEntity).setCustomName(stack.getHoverName());
-            }
-        }
-        super.setPlacedBy(level, pos, state, placer, stack);
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag tooltipFlag) {
+        Tier tier = getTier();
+        if (tier.isCreative())
+            tooltip.add(Component.translatable(LangKeys.CHAT_STORED_INFINITE_INFO.key()));
+        else
+            Utils.addEnergyTooltip(stack, tooltip);
     }
 
     @Nullable

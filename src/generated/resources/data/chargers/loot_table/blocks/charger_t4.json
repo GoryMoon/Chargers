@@ -11,6 +11,16 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:custom_name",
+                "chargers:energy"
+              ],
+              "source": "block_entity"
+            }
+          ],
           "name": "chargers:charger_t4"
         }
       ],

@@ -1,12 +1,12 @@
 package se.gory_moon.chargers.handler;
 
+import net.minecraft.world.item.BlockItem;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.block.ChargerBlock;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.compat.ChargeCompat;
-import se.gory_moon.chargers.item.ChargerBlockItem;
 import se.gory_moon.chargers.item.ItemRegistry;
 import se.gory_moon.chargers.power.CustomItemEnergyStorage;
 
@@ -40,7 +40,7 @@ public class CapabilityRegistrationHandler {
         event.registerItem(
                 Capabilities.EnergyStorage.ITEM,
                 (stack, context) -> {
-                    ChargerBlock block = (ChargerBlock) ((ChargerBlockItem) stack.getItem()).getBlock();
+                    ChargerBlock block = (ChargerBlock) ((BlockItem) stack.getItem()).getBlock();
                     ChargerBlock.Tier tier = block.getTier();
                     return new CustomItemEnergyStorage(stack, tier.getStorage(), tier.getMaxIn(), tier.getMaxOut(), tier.isCreative());
                 },

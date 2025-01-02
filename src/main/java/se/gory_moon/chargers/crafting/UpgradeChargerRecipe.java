@@ -1,11 +1,12 @@
 package se.gory_moon.chargers.crafting;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import org.jetbrains.annotations.NotNull;
-import se.gory_moon.chargers.item.ChargerBlockItem;
+import se.gory_moon.chargers.block.EnergyBlock;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -24,12 +25,12 @@ public class UpgradeChargerRecipe extends ShapedRecipe {
     public @NotNull ItemStack assemble(@NotNull CraftingInput input, HolderLookup.@NotNull Provider registries) {
         var out = getResultItem(registries).copy();
 
-        if (out.getItem() instanceof ChargerBlockItem) {
+        if (out.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof EnergyBlock) {
             AtomicLong energy = new AtomicLong();
 
             for (int i = 0; i < input.size(); i++) {
                 ItemStack item = input.getItem(i);
-                if (!item.isEmpty() && item.getItem() instanceof ChargerBlockItem) {
+                if (!item.isEmpty() && item.getItem() instanceof BlockItem blockItem1 && blockItem1.getBlock() instanceof EnergyBlock) {
                     var storage = item.getCapability(Capabilities.EnergyStorage.ITEM);
                     if (storage != null) {
                         if (storage instanceof CustomEnergyStorage customEnergyStorage)

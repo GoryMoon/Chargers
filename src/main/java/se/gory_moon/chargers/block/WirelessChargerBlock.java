@@ -7,6 +7,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -24,6 +27,7 @@ import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class WirelessChargerBlock extends EnergyBlock {
 
@@ -46,9 +50,6 @@ public class WirelessChargerBlock extends EnergyBlock {
 
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof WirelessChargerBlockEntity changerEntity && changerEntity.getStorage() != null) {
-            if (player.isShiftKeyDown())
-                return InteractionResult.FAIL;
-
             boolean powered = changerEntity.isPowered();
             Component status = Component.translatable((powered ? LangKeys.CHAT_DISABLED.key() : LangKeys.CHAT_ENABLED.key()))
                     .setStyle(Style.EMPTY.withColor(powered ? ChatFormatting.RED : ChatFormatting.GREEN));
@@ -65,6 +66,12 @@ public class WirelessChargerBlock extends EnergyBlock {
     }
 
     @Override
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag tooltipFlag) {
+        Utils.addEnergyTooltip(stack, tooltip);
+        tooltip.add(Component.translatable(LangKeys.TOOLTIP_WIRELESS_CHARGER.key()));
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(POWERED);
     }
@@ -72,7 +79,7 @@ public class WirelessChargerBlock extends EnergyBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return BlockEntityRegistry.WIRELESS_CHARGER_BE.get().create(pos, state);
+        return new WirelessChargerBlockEntity(pos, state);
     }
 
     @Nullable
