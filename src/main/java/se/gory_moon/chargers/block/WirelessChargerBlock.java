@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.LangKeys;
-import se.gory_moon.chargers.Utils;
+import se.gory_moon.chargers.EnergyFormatting;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.block.entity.WirelessChargerBlockEntity;
 
@@ -57,7 +57,7 @@ public class WirelessChargerBlock extends EnergyBlock {
             var storage = changerEntity.getStorage();
             var text = Component.translatable(LangKeys.CHAT_WIRELESS_CHARGER_INFO.key(),
                     status,
-                    Utils.formatFilledCapacity(storage.getLongEnergyStored(), storage.getLongMaxEnergyStored()))
+                    EnergyFormatting.formatFilledCapacity(storage.getLongEnergyStored(), storage.getLongMaxEnergyStored()))
                     .withStyle(ChatFormatting.GOLD);
             player.displayClientMessage(text, true);
         }
@@ -67,7 +67,7 @@ public class WirelessChargerBlock extends EnergyBlock {
 
     @Override
     public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag tooltipFlag) {
-        Utils.addEnergyTooltip(stack, tooltip);
+        EnergyFormatting.addEnergyTooltip(stack, tooltip);
         tooltip.add(Component.translatable(LangKeys.TOOLTIP_WIRELESS_CHARGER.key()));
     }
 

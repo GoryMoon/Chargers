@@ -76,7 +76,7 @@ runs {
 
         // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
         systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
+        arguments.add '--nogui'
     }
 
     // This run config launches GameTestServer and runs all registered gametests, then exits.

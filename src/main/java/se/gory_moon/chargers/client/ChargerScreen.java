@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.Constants;
 import se.gory_moon.chargers.LangKeys;
-import se.gory_moon.chargers.Utils;
+import se.gory_moon.chargers.EnergyFormatting;
 import se.gory_moon.chargers.inventory.ChargerMenu;
 
 import java.util.ArrayList;
@@ -41,20 +41,21 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
         if (pMouseX >= leftPos + 44 && pMouseX <= leftPos + 44 + 16 && pMouseY >= topPos + 14 && pMouseY <= topPos + 84) {
             List<Component> list = new ArrayList<>();
             if (menu.isCreative())
-                list.add(Component.translatable(LangKeys.GUI_ENERGY_INFINITE.key(), ChatFormatting.DARK_AQUA + "FE"));
+                list.add(Component.translatable(LangKeys.POWER_INFO.key(), Component.translatable(LangKeys.ENERGY_INFINITE.key(), EnergyFormatting.FE).withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.GOLD));
             else
-                list.add(Utils.formatFilledCapacity(menu.getEnergy(), menu.getEnergyMax()));
+                list.add(EnergyFormatting.formatFilledCapacity(menu.getEnergy(), menu.getEnergyMax()));
 
-            list.add(Component.translatable(LangKeys.GUI_MAX_IN.key(), Utils.formatEnergyPerTick(menu.getMaxIn())).withStyle(ChatFormatting.GOLD));
-            list.add(Component.translatable(LangKeys.GUI_MAX_OUT.key(), Utils.formatEnergyPerTick(menu.getMaxOut())).withStyle(ChatFormatting.GOLD));
+            list.add(Component.translatable(LangKeys.GUI_MAX_IN.key(), EnergyFormatting.formatEnergyPerTick(menu.getMaxIn())).withStyle(ChatFormatting.GOLD));
+            list.add(Component.translatable(LangKeys.GUI_MAX_OUT.key(), EnergyFormatting.formatEnergyPerTick(menu.getMaxOut())).withStyle(ChatFormatting.GOLD));
 
             if (menu.getAverageIn() > 0 || menu.getAverageOut() > 0) {
-                if (hasShiftDown()) {
-                    list.add(Component.translatable(LangKeys.GUI_DETAILS_IN.key(), ChatFormatting.GREEN + "+" + Utils.formatEnergyPerTick(menu.getAverageIn()) + ChatFormatting.GRAY).withStyle(ChatFormatting.GOLD));
-                    list.add(Component.translatable(LangKeys.GUI_DETAILS_OUT.key(), ChatFormatting.RED + "-" + Utils.formatEnergyPerTick(menu.getAverageOut()) + ChatFormatting.GRAY).withStyle(ChatFormatting.GOLD));
+                list.add(Component.empty());
+                if (hasShiftDown() || menu.getEnergyDiff() == 0) {
+                    list.add(Component.translatable(LangKeys.GUI_DETAILS_IN.key(), EnergyFormatting.POSITIVE.copy().append(EnergyFormatting.formatEnergyPerTick(menu.getAverageIn()))).withStyle(ChatFormatting.GOLD));
+                    list.add(Component.translatable(LangKeys.GUI_DETAILS_OUT.key(), EnergyFormatting.NEGATIVE.copy().append(EnergyFormatting.formatEnergyPerTick(menu.getAverageOut()))).withStyle(ChatFormatting.GOLD));
                 } else {
                     if (menu.getEnergyDiff() != 0)
-                        list.add(Component.translatable(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? ChatFormatting.GREEN + "+" : ChatFormatting.RED.toString()) + Utils.formatEnergyPerTick(menu.getEnergyDiff()) + ChatFormatting.GRAY).withStyle(ChatFormatting.GOLD));
+                        list.add(Component.translatable(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? EnergyFormatting.POSITIVE : EnergyFormatting.NEGATIVE).copy().append(EnergyFormatting.formatEnergyPerTick(menu.getEnergyDiff()))).withStyle(ChatFormatting.GOLD));
                     list.add(Component.translatable(LangKeys.GUI_IO_MORE.key()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
                 }
             }

@@ -24,7 +24,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.LangKeys;
-import se.gory_moon.chargers.Utils;
+import se.gory_moon.chargers.EnergyFormatting;
 import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.block.entity.ChargerBlockEntity;
 
@@ -74,9 +74,9 @@ public class ChargerBlock extends EnergyBlock {
     public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag tooltipFlag) {
         Tier tier = getTier();
         if (tier.isCreative())
-            tooltip.add(Component.translatable(LangKeys.CHAT_STORED_INFINITE_INFO.key(), ChatFormatting.DARK_AQUA + "FE").withStyle(ChatFormatting.GOLD));
+            tooltip.add(Component.translatable(LangKeys.POWER_INFO.key(), Component.translatable(LangKeys.ENERGY_INFINITE.key(), ChatFormatting.DARK_AQUA + "FE")).withStyle(ChatFormatting.GOLD));
         else
-            Utils.addEnergyTooltip(stack, tooltip);
+            EnergyFormatting.addEnergyTooltip(stack, tooltip);
     }
 
     @Nullable

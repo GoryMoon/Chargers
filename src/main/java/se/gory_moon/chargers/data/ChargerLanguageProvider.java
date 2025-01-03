@@ -39,13 +39,13 @@ public class ChargerLanguageProvider extends LanguageProvider {
         add(LangKeys.CONFIG_TIER_3, "Charger Tier 3");
         add(LangKeys.CONFIG_TIER_4, "Charger Tier 4");
 
-        add(LangKeys.CHAT_WIRELESS_CHARGER_INFO, "Status: %s, Power: %s");
+        add(LangKeys.CHAT_WIRELESS_CHARGER_INFO, "Status: %s, %s");
         add(LangKeys.CHAT_ENABLED, "Enabled");
         add(LangKeys.CHAT_DISABLED, "Disabled");
-        add(LangKeys.CHAT_STORED_INFO, "Power: %s");
-        add(LangKeys.CHAT_STORED_INFINITE_INFO, "Power: ∞ %s");
 
-        add(LangKeys.GUI_ENERGY_INFINITE, "∞ %s");
+        add(LangKeys.POWER_INFO, "Power: %s");
+        add(LangKeys.ENERGY_INFINITE, "∞ %s");
+
         add(LangKeys.GUI_MAX_IN, "Max In: %s");
         add(LangKeys.GUI_MAX_OUT, "Max Out: %s");
         add(LangKeys.GUI_IO, "I/O: %s");
