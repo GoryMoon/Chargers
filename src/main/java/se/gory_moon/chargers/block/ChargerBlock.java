@@ -74,7 +74,7 @@ public class ChargerBlock extends EnergyBlock {
     public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag tooltipFlag) {
         Tier tier = getTier();
         if (tier.isCreative())
-            tooltip.add(Component.translatable(LangKeys.POWER_INFO.key(), Component.translatable(LangKeys.ENERGY_INFINITE.key(), ChatFormatting.DARK_AQUA + "FE")).withStyle(ChatFormatting.GOLD));
+            tooltip.add(Component.translatable(LangKeys.POWER_INFO.key(), EnergyFormatting.INFINITE).withStyle(ChatFormatting.GOLD));
         else
             EnergyFormatting.addEnergyTooltip(stack, tooltip);
     }

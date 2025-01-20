@@ -41,7 +41,7 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
         if (pMouseX >= leftPos + 44 && pMouseX <= leftPos + 44 + 16 && pMouseY >= topPos + 14 && pMouseY <= topPos + 84) {
             List<Component> list = new ArrayList<>();
             if (menu.isCreative())
-                list.add(Component.translatable(LangKeys.POWER_INFO.key(), Component.translatable(LangKeys.ENERGY_INFINITE.key(), EnergyFormatting.FE).withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.GOLD));
+                list.add(Component.translatable(LangKeys.POWER_INFO.key(), EnergyFormatting.INFINITE).withStyle(ChatFormatting.GOLD));
             else
                 list.add(EnergyFormatting.formatFilledCapacity(menu.getEnergy(), menu.getEnergyMax()));
 

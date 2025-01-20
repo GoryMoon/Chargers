@@ -17,6 +17,7 @@ public class EnergyFormatting {
     public static Component FE_TICK = FE.copy().append(SLASH).append(Component.literal("t").withStyle(ChatFormatting.DARK_AQUA));
     public static Component POSITIVE = Component.literal("+").withStyle(ChatFormatting.GREEN);
     public static Component NEGATIVE = Component.literal("-").withStyle(ChatFormatting.RED);
+    public static Component INFINITE = Component.literal("∞").withStyle(ChatFormatting.WHITE).append(FE);
 
     public static Component formatAndClean(long number) {
         return Component.literal(new DecimalFormat().format(number)).withStyle(ChatFormatting.WHITE);

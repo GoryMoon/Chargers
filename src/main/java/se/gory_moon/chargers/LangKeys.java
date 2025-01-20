@@ -6,7 +6,6 @@ public enum LangKeys {
     CHAT_DISABLED("chat.disabled"),
 
     POWER_INFO("misc.power.info"),
-    ENERGY_INFINITE("misc.energy.infinite"),
 
     GUI_MAX_IN("gui.max_in"),
     GUI_MAX_OUT("gui.max_out"),

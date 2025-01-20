@@ -44,7 +44,6 @@ public class ChargerLanguageProvider extends LanguageProvider {
         add(LangKeys.CHAT_DISABLED, "Disabled");
 
         add(LangKeys.POWER_INFO, "Power: %s");
-        add(LangKeys.ENERGY_INFINITE, "∞ %s");
 
         add(LangKeys.GUI_MAX_IN, "Max In: %s");
         add(LangKeys.GUI_MAX_OUT, "Max Out: %s");
