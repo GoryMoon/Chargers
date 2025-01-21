@@ -107,7 +107,6 @@ public class ChargerBlock extends EnergyBlock {
         private final Supplier<Configs.Server.Tier> tierSupplier;
         @Nullable
         private Configs.Server.Tier tier = null;
-        private static final ChargerBlock.Tier[] ID_LOOKUP = new ChargerBlock.Tier[values().length];
 
         public static final Codec<Tier> CODEC = StringRepresentable.fromEnum(Tier::values);
 
@@ -146,20 +145,6 @@ public class ChargerBlock extends EnergyBlock {
         @Override
         public @NotNull String getSerializedName() {
             return name;
-        }
-
-        public static Tier byID(int id) {
-            if (id < 0 || id >= ID_LOOKUP.length) {
-                id = 0;
-            }
-
-            return ID_LOOKUP[id];
-        }
-
-        static {
-            for (Tier tier : values()) {
-                ID_LOOKUP[tier.getId()] = tier;
-            }
         }
     }
 }
