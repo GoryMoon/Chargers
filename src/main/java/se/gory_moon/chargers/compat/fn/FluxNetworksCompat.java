@@ -2,8 +2,8 @@ package se.gory_moon.chargers.compat.fn;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.Configs;
@@ -40,21 +40,32 @@ public class FluxNetworksCompat {
      */
     public void registerFNCapability(@NotNull RegisterCapabilitiesEvent event) {
         if (loaded) {
+            // Separated to its own class to fix class loading with lambdas
+            CapabilityRegister.registerFNCapability(event);
+        }
+    }
+
+    private static final class CapabilityRegister {
+        private static void registerFNCapability(@NotNull RegisterCapabilitiesEvent event) {
             event.registerBlockEntity(
                     FluxCapabilities.BLOCK,
                     BlockEntityRegistry.CHARGER_BE.get(),
-                    this::createFNWrapper
+                    (ICapabilityProvider<EnergyHolderBlockEntity, Direction, IFNEnergyStorage>) (entity, side) -> new FNStorageWrapper(entity.getStorage())
             );
 
             event.registerBlockEntity(
                     FluxCapabilities.BLOCK,
                     BlockEntityRegistry.WIRELESS_CHARGER_BE.get(),
-                    this::createFNWrapper
+                    (ICapabilityProvider<EnergyHolderBlockEntity, Direction, IFNEnergyStorage>) (entity, side) -> new FNStorageWrapper(entity.getStorage())
             );
 
             event.registerItem(
                     FluxCapabilities.ITEM,
-                    this::createFNWrapper,
+                    (stack, context) -> {
+                        ChargerBlock block = (ChargerBlock) ((BlockItem) stack.getItem()).getBlock();
+                        ChargerBlock.Tier tier = block.getTier();
+                        return new FNStorageWrapper(new CustomItemEnergyStorage(stack, tier.getStorage(), tier.getMaxIn(), tier.getMaxOut(), tier.isCreative()));
+                    },
                     ItemRegistry.CHARGER_T1_ITEM,
                     ItemRegistry.CHARGER_T2_ITEM,
                     ItemRegistry.CHARGER_T3_ITEM,
@@ -64,47 +75,12 @@ public class FluxNetworksCompat {
 
             event.registerItem(
                     FluxCapabilities.ITEM,
-                    this::createWirelessFNWrapper,
+                    (stack, context) -> new FNStorageWrapper(new CustomItemEnergyStorage(stack,
+                            Configs.SERVER.wireless.storage.get(),
+                            Configs.SERVER.wireless.maxInput.get(),
+                            Configs.SERVER.wireless.maxOutput.get())),
                     ItemRegistry.CHARGER_WIRELESS_ITEM
             );
         }
-    }
-
-    /**
-     * Creates a wrapper around the provided storage.
-     *
-     * @param entity The entity holding the energy storage
-     * @param side   The side that storage is requested on
-     * @return Returns a wrapped energy storage
-     */
-    private IFNEnergyStorage createFNWrapper(EnergyHolderBlockEntity entity, Direction side) {
-        return new FNStorageWrapper(entity.getStorage());
-    }
-
-    /**
-     * Creates a tier wrapper around the provided stack.
-     *
-     * @param stack The stack to add the capability to
-     * @param context An empty context
-     * @return Returns a wrapped energy storage
-     */
-    private IFNEnergyStorage createFNWrapper(ItemStack stack, Void context) {
-        ChargerBlock block = (ChargerBlock) ((BlockItem) stack.getItem()).getBlock();
-        ChargerBlock.Tier tier = block.getTier();
-        return new FNStorageWrapper(new CustomItemEnergyStorage(stack, tier.getStorage(), tier.getMaxIn(), tier.getMaxOut(), tier.isCreative()));
-    }
-
-    /**
-     * Creates a wireless wrapper around the provided stack.
-     *
-     * @param stack The stack to add the capability to
-     * @param context An empty context
-     * @return Returns a wrapped energy storage
-     */
-    private IFNEnergyStorage createWirelessFNWrapper(ItemStack stack, Void context) {
-        return new FNStorageWrapper(new CustomItemEnergyStorage(stack,
-                Configs.SERVER.wireless.storage.get(),
-                Configs.SERVER.wireless.maxInput.get(),
-                Configs.SERVER.wireless.maxOutput.get()));
     }
 }
