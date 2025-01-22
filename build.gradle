@@ -118,7 +118,10 @@ dependencies {
     // localRuntime "com.brandon3055.draconicevolution:Draconic-Evolution:${minecraft_version}-3.1.2.588:universal"
     // implementation "com.brandon3055.brandonscore:BrandonsCore:${minecraft_version}-${bc_version}:universal"
 
-    // implementation "curse.maven:flux-networks-248020:${flux_version}"
+    // For testing
+    localRuntime "curse.maven:immersive-engineering-231951:5828000"
+
+    implementation "curse.maven:flux-networks-248020:${flux_version}"
 
     implementation "curse.maven:titanium-287342:${titanium_version}"
     implementation "curse.maven:industrial-foregoing-266515:${if_version}"

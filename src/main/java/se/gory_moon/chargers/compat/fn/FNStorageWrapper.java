@@ -1,5 +1,5 @@
 package se.gory_moon.chargers.compat.fn;
-/*
+
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 import sonar.fluxnetworks.api.energy.IFNEnergyStorage;
@@ -56,4 +56,3 @@ public record FNStorageWrapper(CustomEnergyStorage storage) implements IFNEnergy
         return storage.canReceive();
     }
 }
-*/
