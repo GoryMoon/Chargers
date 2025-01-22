@@ -1,8 +1,7 @@
 package se.gory_moon.chargers.power;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
+import se.gory_moon.chargers.item.ChargerDataComponents;
 
 public class CustomItemEnergyStorage extends CustomEnergyStorage {
 
@@ -26,15 +25,14 @@ public class CustomItemEnergyStorage extends CustomEnergyStorage {
     public long getLongEnergyStored() {
         if (this.creative) return Long.MAX_VALUE;
 
-        CompoundTag tag = stack.getOrCreateTag();
-        if (tag.contains(ENERGY_TAG, Tag.TAG_INT))
-            return tag.getInt(ENERGY_TAG);
-        else
-            return tag.getLong(ENERGY_TAG);
+        return stack.getOrDefault(ChargerDataComponents.ENERGY, 0L);
     }
 
     @Override
     protected void setEnergyInternal(long energy) {
-        stack.getOrCreateTag().putLong(ENERGY_TAG, getLongEnergyStored() + energy);
+        stack.update(
+                ChargerDataComponents.ENERGY,
+                0L,
+                e -> e + energy);
     }
 }

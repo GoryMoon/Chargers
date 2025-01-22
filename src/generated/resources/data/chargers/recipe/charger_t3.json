@@ -1,0 +1,27 @@
+{
+  "type": "chargers:upgrade_charger",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "C": {
+      "item": "chargers:charger_t2"
+    },
+    "D": {
+      "tag": "c:gems/diamond"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "DRD",
+    "DBD",
+    "DCD"
+  ],
+  "result": {
+    "count": 1,
+    "id": "chargers:charger_t3"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "E": {
+      "tag": "c:ender_pearls"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "IEI",
+    "IBI",
+    "IRI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "chargers:wireless_charger"
+  }
+}

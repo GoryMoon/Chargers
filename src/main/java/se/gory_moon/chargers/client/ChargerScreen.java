@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.Constants;
 import se.gory_moon.chargers.LangKeys;
-import se.gory_moon.chargers.Utils;
+import se.gory_moon.chargers.EnergyFormatting;
 import se.gory_moon.chargers.inventory.ChargerMenu;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
 
-    private static final ResourceLocation CHARGER_GUI_TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/charger.png");
+    private static final ResourceLocation CHARGER_GUI_TEXTURE = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/gui/charger.png");
 
     public ChargerScreen(ChargerMenu container, Inventory playerInventory, Component title) {
         super(container, playerInventory, title);
@@ -36,26 +36,26 @@ public class ChargerScreen extends AbstractContainerScreen<ChargerMenu> {
 
     @Override
     public void render(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
-        this.renderBackground(graphics);
         super.render(graphics, pMouseX, pMouseY, pPartialTick);
 
         if (pMouseX >= leftPos + 44 && pMouseX <= leftPos + 44 + 16 && pMouseY >= topPos + 14 && pMouseY <= topPos + 84) {
             List<Component> list = new ArrayList<>();
             if (menu.isCreative())
-                list.add(Component.translatable(LangKeys.GUI_ENERGY_INFINITE.key()));
+                list.add(Component.translatable(LangKeys.POWER_INFO.key(), EnergyFormatting.INFINITE).withStyle(ChatFormatting.GOLD));
             else
-                list.add(Component.translatable(LangKeys.GUI_ENERGY.key(), Utils.formatAndClean(menu.getEnergy()), Utils.formatAndClean(menu.getEnergyMax()) + ChatFormatting.GRAY));
+                list.add(EnergyFormatting.formatFilledCapacity(menu.getEnergy(), menu.getEnergyMax()));
 
-            list.add(Component.translatable(LangKeys.GUI_MAX_IN.key(), Utils.formatAndClean(menu.getMaxIn()) + ChatFormatting.GRAY));
-            list.add(Component.translatable(LangKeys.GUI_MAX_OUT.key(), Utils.formatAndClean(menu.getMaxOut()) + ChatFormatting.GRAY));
+            list.add(Component.translatable(LangKeys.GUI_MAX_IN.key(), EnergyFormatting.formatEnergyPerTick(menu.getMaxIn())).withStyle(ChatFormatting.GOLD));
+            list.add(Component.translatable(LangKeys.GUI_MAX_OUT.key(), EnergyFormatting.formatEnergyPerTick(menu.getMaxOut())).withStyle(ChatFormatting.GOLD));
 
             if (menu.getAverageIn() > 0 || menu.getAverageOut() > 0) {
-                if (hasShiftDown()) {
-                    list.add(Component.translatable(LangKeys.GUI_DETAILS_IN.key(), ChatFormatting.GREEN + "+" + Utils.formatAndClean(menu.getAverageIn()) + ChatFormatting.GRAY));
-                    list.add(Component.translatable(LangKeys.GUI_DETAILS_OUT.key(), ChatFormatting.RED + "-" + Utils.formatAndClean(menu.getAverageOut()) + ChatFormatting.GRAY));
+                list.add(Component.empty());
+                if (hasShiftDown() || menu.getEnergyDiff() == 0) {
+                    list.add(Component.translatable(LangKeys.GUI_DETAILS_IN.key(), EnergyFormatting.POSITIVE.copy().append(EnergyFormatting.formatEnergyPerTick(menu.getAverageIn()))).withStyle(ChatFormatting.GOLD));
+                    list.add(Component.translatable(LangKeys.GUI_DETAILS_OUT.key(), EnergyFormatting.NEGATIVE.copy().append(EnergyFormatting.formatEnergyPerTick(menu.getAverageOut()))).withStyle(ChatFormatting.GOLD));
                 } else {
                     if (menu.getEnergyDiff() != 0)
-                        list.add(Component.translatable(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? ChatFormatting.GREEN + "+" : ChatFormatting.RED.toString()) + Utils.formatAndClean(menu.getEnergyDiff()) + ChatFormatting.GRAY));
+                        list.add(Component.translatable(LangKeys.GUI_IO.key(), (menu.getEnergyDiff() > 0 ? EnergyFormatting.POSITIVE : EnergyFormatting.NEGATIVE).copy().append(EnergyFormatting.formatEnergyPerTick(menu.getEnergyDiff()))).withStyle(ChatFormatting.GOLD));
                     list.add(Component.translatable(LangKeys.GUI_IO_MORE.key()).setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY)));
                 }
             }

@@ -1,9 +1,12 @@
 package se.gory_moon.chargers.power;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.math.BigInteger;
 
@@ -131,27 +134,16 @@ public class CustomEnergyStorage implements IEnergyStorage, INBTSerializable<Tag
     }
 
     @Override
-    public void deserializeNBT(Tag nbt) {
+    public void deserializeNBT(@NotNull HolderLookup.Provider provider, @NotNull Tag nbt) {
         if (nbt instanceof CompoundTag compound) {
-            if (compound.contains(ENERGY_TAG, Tag.TAG_INT))
-                energy = compound.getInt(ENERGY_TAG);
-            else
-                energy = compound.getLong(ENERGY_TAG);
-
-            if (compound.contains(IN_TAG, Tag.TAG_FLOAT))
-                averageIn = (long) compound.getFloat(IN_TAG);
-            else
-                averageIn = compound.getLong(IN_TAG);
-
-            if (compound.contains(IN_TAG, Tag.TAG_FLOAT))
-                averageOut = (long) compound.getFloat(OUT_TAG);
-            else
-                averageOut = compound.getLong(OUT_TAG);
+            energy = compound.getLong(ENERGY_TAG);
+            averageIn = compound.getLong(IN_TAG);
+            averageOut = compound.getLong(OUT_TAG);
         }
     }
 
     @Override
-    public Tag serializeNBT() {
+    public @UnknownNullability Tag serializeNBT(@NotNull HolderLookup.Provider registries) {
         CompoundTag compound = new CompoundTag();
         compound.putLong(ENERGY_TAG, this.getLongEnergyStored());
         compound.putLong(IN_TAG, in.getAverage());

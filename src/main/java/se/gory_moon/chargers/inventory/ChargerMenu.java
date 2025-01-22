@@ -7,38 +7,36 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.Constants;
 import se.gory_moon.chargers.block.BlockRegistry;
+import se.gory_moon.chargers.block.entity.BlockEntityRegistry;
 import se.gory_moon.chargers.block.entity.ChargerItemStackHandler;
-import se.gory_moon.chargers.network.PacketHandler;
-import se.gory_moon.chargers.network.WindowPropPacket;
-import se.gory_moon.chargers.network.WindowPropPacket.SyncPair;
+import se.gory_moon.chargers.network.WindowPropPayload;
+import se.gory_moon.chargers.network.WindowPropPayload.SyncPair;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.world.inventory.InventoryMenu.*;
 
-@Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public class ChargerMenu extends AbstractContainerMenu {
 
     private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = new ResourceLocation[]{EMPTY_ARMOR_SLOT_BOOTS, EMPTY_ARMOR_SLOT_LEGGINGS, EMPTY_ARMOR_SLOT_CHESTPLATE, EMPTY_ARMOR_SLOT_HELMET};
     private static final EquipmentSlot[] EQUIPMENT_SLOTS = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-    public static final ResourceLocation EMPTY_CHARGE_SLOT = new ResourceLocation(Constants.MOD_ID, "item/empty_charge_slot");
+    public static final ResourceLocation EMPTY_CHARGE_SLOT = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "item/empty_charge_slot");
 
     private final IItemHandler itemHandler;
     private final ChargerData energyData;
@@ -49,12 +47,12 @@ public class ChargerMenu extends AbstractContainerMenu {
     private final Slot outputSlot;
     private final Slot chargeSlot;
 
-    public ChargerMenu(MenuType<ChargerMenu> containerType, int containerId, Inventory inventory) {
-        this(containerType, containerId, inventory, new ChargerItemStackHandler(), new SimpleChargerData(7), ContainerLevelAccess.NULL);
+    public ChargerMenu(int containerId, Inventory inventory) {
+        this(containerId, inventory, new ChargerItemStackHandler(), new SimpleChargerData(7), ContainerLevelAccess.NULL);
     }
 
-    public ChargerMenu(MenuType<ChargerMenu> container, int containerId, Inventory playerInventory, ChargerItemStackHandler itemHandler, ChargerData energyData, ContainerLevelAccess access) {
-        super(container, containerId);
+    public ChargerMenu(int containerId, Inventory playerInventory, ChargerItemStackHandler itemHandler, ChargerData energyData, ContainerLevelAccess access) {
+        super(BlockEntityRegistry.CHARGER_MENU.get(), containerId);
         this.itemHandler = itemHandler;
 
         this.energyData = energyData;
@@ -81,13 +79,13 @@ public class ChargerMenu extends AbstractContainerMenu {
                 }
 
                 @Override
-                public boolean mayPlace(ItemStack stack) {
+                public boolean mayPlace(@NotNull ItemStack stack) {
                     return stack.canEquip(slot, playerInventory.player);
                 }
 
-                public boolean mayPickup(Player player) {
+                public boolean mayPickup(@NotNull Player player) {
                     ItemStack itemstack = this.getItem();
-                    return (itemstack.isEmpty() || player.isCreative() || !EnchantmentHelper.hasBindingCurse(itemstack)) && super.mayPickup(player);
+                    return (itemstack.isEmpty() || player.isCreative() || !EnchantmentHelper.has(itemstack, EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE)) && super.mayPickup(player);
                 }
             }.setBackground(InventoryMenu.BLOCK_ATLAS, ARMOR_SLOT_TEXTURES[slot.getIndex()]));
         }
@@ -107,8 +105,10 @@ public class ChargerMenu extends AbstractContainerMenu {
         }
 
         if (!toSync.isEmpty()) {
-            PacketDistributor.PacketTarget target = PacketDistributor.NMLIST.with(usingPlayers.stream().map(serverPlayer -> serverPlayer.connection.connection)::toList);
-            PacketHandler.INSTANCE.send(target, new WindowPropPacket(this.containerId, toSync));
+            var payload = new WindowPropPayload(this.containerId, toSync);
+            for (ServerPlayer player : usingPlayers) {
+                PacketDistributor.sendToPlayer(player, payload);
+            }
         }
 
         super.broadcastChanges();
@@ -124,7 +124,7 @@ public class ChargerMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public ItemStack quickMoveStack(Player player, int index) {
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = slots.get(index);
 
@@ -174,7 +174,7 @@ public class ChargerMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T1.get()) ||
                 stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T2.get()) ||
                 stillValid(access, player, BlockRegistry.CHARGER_BLOCK_T3.get()) ||
@@ -233,7 +233,7 @@ public class ChargerMenu extends AbstractContainerMenu {
             for (int i = 0; i < menu.customTracked.size(); ++i)
                 toSync.add(new SyncPair(i, menu.customTracked.get(i).get()));
 
-            PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new WindowPropPacket(menu.containerId, toSync));
+            PacketDistributor.sendToPlayer(serverPlayer, new WindowPropPayload(menu.containerId, toSync));
         }
     }
 

@@ -1,8 +1,8 @@
 package se.gory_moon.chargers.compat.industrial;
 
 import com.buuz135.industrial.item.infinity.InfinityEnergyStorage;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import java.util.Optional;
 

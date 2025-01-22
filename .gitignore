@@ -20,4 +20,7 @@ build
 # other
 eclipse
 run
-classes
+runs
+run-data
+
+repo

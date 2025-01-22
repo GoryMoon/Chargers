@@ -1,7 +1,6 @@
 package se.gory_moon.chargers.compat.bc;
 
-import com.brandon3055.brandonscore.api.power.IOInfo;
-import com.brandon3055.brandonscore.api.power.IOPStorage;
+/*
 import org.jetbrains.annotations.Nullable;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
@@ -97,3 +96,4 @@ public class OpStorageWrapper implements IOPStorage {
         }
     }
 }
+*/

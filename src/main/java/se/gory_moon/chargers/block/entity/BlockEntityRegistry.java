@@ -1,32 +1,41 @@
 package se.gory_moon.chargers.block.entity;
 
-import com.tterrag.registrate.Registrate;
-import com.tterrag.registrate.util.entry.BlockEntityEntry;
-import com.tterrag.registrate.util.entry.MenuEntry;
-import net.minecraftforge.registries.ForgeRegistries;
-import se.gory_moon.chargers.ChargersMod;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import se.gory_moon.chargers.Constants;
-import se.gory_moon.chargers.client.ChargerScreen;
+import se.gory_moon.chargers.block.BlockRegistry;
 import se.gory_moon.chargers.inventory.ChargerMenu;
 
-import static se.gory_moon.chargers.Constants.CHARGER_BLOCK_ENTITY;
-import static se.gory_moon.chargers.Constants.WIRELESS_CHARGER_BLOCK_ENTITY;
-import static se.gory_moon.chargers.block.BlockRegistry.*;
+import java.util.function.Supplier;
 
 public final class BlockEntityRegistry {
-    private static final Registrate REGISTRATE = ChargersMod.getRegistrate();
+    public static final DeferredRegister<BlockEntityType<?>> BlOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, Constants.MOD_ID);
+    public static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(BuiltInRegistries.MENU, Constants.MOD_ID);
 
-    public static final BlockEntityEntry<ChargerBlockEntity> CHARGER_BE = REGISTRATE.object(CHARGER_BLOCK_ENTITY)
-            .blockEntity(ChargerBlockEntity::new)
-            .validBlocks(CHARGER_BLOCK_T1, CHARGER_BLOCK_T2, CHARGER_BLOCK_T3, CHARGER_BLOCK_T4, CHARGER_BLOCK_CREATIVE)
-            .register();
+    public static final Supplier<BlockEntityType<ChargerBlockEntity>> CHARGER_BE = BlOCK_ENTITIES.register(
+            Constants.CHARGER_BLOCK,
+            () -> BlockEntityType.Builder.of(
+                    ChargerBlockEntity::new,
+                    BlockRegistry.CHARGER_BLOCK_T1.get(),
+                    BlockRegistry.CHARGER_BLOCK_T2.get(),
+                    BlockRegistry.CHARGER_BLOCK_T3.get(),
+                    BlockRegistry.CHARGER_BLOCK_T4.get(),
+                    BlockRegistry.CHARGER_BLOCK_CREATIVE.get()
+            ).build(null));
 
-    public static final BlockEntityEntry<WirelessChargerBlockEntity> WIRELESS_CHARGER_BE = BlockEntityEntry.cast(REGISTRATE.get(WIRELESS_CHARGER_BLOCK_ENTITY, ForgeRegistries.Keys.BLOCK_ENTITY_TYPES));
+    public static final Supplier<BlockEntityType<WirelessChargerBlockEntity>> WIRELESS_CHARGER_BE = BlOCK_ENTITIES.register(
+            Constants.WIRELESS_CHARGER_BLOCK,
+            () -> BlockEntityType.Builder.of(
+                    WirelessChargerBlockEntity::new,
+                    BlockRegistry.WIRELESS_CHARGER.get()
+            ).build(null)
+    );
 
-    public static final MenuEntry<ChargerMenu> CHARGER_CONTAINER = REGISTRATE.object(Constants.CHARGER_CONTAINER)
-            .menu(ChargerMenu::new, () -> ChargerScreen::new)
-            .register();
+    public static final Supplier<MenuType<ChargerMenu>> CHARGER_MENU = MENU_TYPES.register(
+            Constants.CHARGER_BLOCK,
+            () -> new MenuType<>(ChargerMenu::new, FeatureFlags.DEFAULT_FLAGS));
 
-    private BlockEntityRegistry() {}
-    public static void init() {}
 }

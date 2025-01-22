@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "IRI",
+    "IBI",
+    "IRI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "chargers:charger_t1"
+  }
+}

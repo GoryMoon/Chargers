@@ -3,10 +3,7 @@ package se.gory_moon.chargers.block.entity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.PacketDistributor;
 import se.gory_moon.chargers.Configs;
 import se.gory_moon.chargers.block.WirelessChargerBlock;
 import se.gory_moon.chargers.compat.ChargeCompat;
@@ -21,8 +18,8 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
     private long lastPowered = -1;
     private long availableEnergy;
 
-    public WirelessChargerBlockEntity(BlockEntityType<WirelessChargerBlockEntity> blockEntityType, BlockPos pos, BlockState state) {
-        super(blockEntityType, pos, state);
+    public WirelessChargerBlockEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.WIRELESS_CHARGER_BE.get(), pos, state);
         setStorage(new CustomEnergyStorage(
                 Configs.SERVER.wireless.storage.get(),
                 Configs.SERVER.wireless.maxInput.get(),
@@ -32,44 +29,37 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
     @Override
     public void setRemoved() {
         super.setRemoved();
-        WirelessHandler.INSTANCE.unregister(this, getLevel());
         registered = false;
     }
 
     @Override
     public void setChanged() {
-        Level level = getLevel();
-        if (level != null)
-        {
+        if (level != null) {
             final BlockState state = level.getBlockState(getBlockPos());
-            level.sendBlockUpdated(getBlockPos(), state, state, 2);
+            level.sendBlockUpdated(getBlockPos(), state, state, WirelessChargerBlock.UPDATE_CLIENTS);
         }
         super.setChanged();
     }
 
     @Override
     public void tickServer() {
-        Level level = getLevel();
-        if (level == null)
-            return;
+        if (level == null) return;
 
-        if (!level.isClientSide && !registered) {
+        if (!registered) {
             WirelessHandler.INSTANCE.register(this, level);
             registered = true;
         }
-        if (!level.isClientSide) {
-            Boolean powered = getBlockState().getValue(WirelessChargerBlock.POWERED);
-            if (canCharge() != powered) {
-                getLevel().setBlockAndUpdate(getBlockPos(), getBlockState().setValue(WirelessChargerBlock.POWERED, canCharge()));
-            }
-        }
 
+        var powered = getBlockState().getValue(WirelessChargerBlock.POWERED);
+        if (canCharge() != powered) {
+            level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(WirelessChargerBlock.POWERED, canCharge()));
+        }
         super.tickServer();
-        if (getStorage() != null && (lastPowered == -1 || (lastPowered == 0 && getStorage().getLongEnergyStored() > 0) || (lastPowered > 0 && getStorage().getLongEnergyStored() == 0))) {
-           if (!level.isClientSide) {
-               PacketDistributor.TRACKING_CHUNK.with(() -> getLevel().getChunkAt(getBlockPos())).send(getUpdatePacket());
-           }
-            lastPowered = getStorage().getLongEnergyStored();
+
+        CustomEnergyStorage storage = getStorage();
+        if (storage != null && (lastPowered == -1 || (lastPowered == 0 && storage.getLongEnergyStored() > 0) || (lastPowered > 0 && storage.getLongEnergyStored() == 0))) {
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), WirelessChargerBlock.UPDATE_CLIENTS);
+            lastPowered = storage.getLongEnergyStored();
             setChanged();
         }
     }
@@ -86,6 +76,7 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
                 ItemStack stack = items.get(i);
                 if (!stack.isEmpty()) {
                     ChargeCompat.INSTANCE.chargeItem(stack, getStorage(), availableEnergy, (transferred) -> {
+                        getStorage().extractLongEnergy(transferred, false);
                         availableEnergy -= transferred;
                         charged.set(true);
                     });
@@ -96,12 +87,11 @@ public class WirelessChargerBlockEntity extends EnergyHolderBlockEntity {
     }
 
     public boolean canCharge() {
-        return getStorage() != null && getStorage().getLongMaxEnergyStored() > 0 && !isPowered();
+        return getStorage() != null && getStorage().getLongEnergyStored() > 0 && !isPowered();
     }
 
     public boolean isPowered() {
-        //noinspection deprecation
-        return getLevel() != null && getLevel().isAreaLoaded(getBlockPos(), 1) && getLevel().getBestNeighborSignal(getBlockPos()) > 0;
+        return level != null && level.isAreaLoaded(getBlockPos(), 1) && level.getBestNeighborSignal(getBlockPos()) > 0;
     }
 
     public long getAvailableEnergy() {

@@ -1,16 +1,11 @@
 package se.gory_moon.chargers.compat.bc;
 
-import com.brandon3055.brandonscore.api.power.IOPStorage;
-import com.brandon3055.brandonscore.capability.CapabilityOP;
-import it.unimi.dsi.fastutil.Pair;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import se.gory_moon.chargers.power.CustomEnergyStorage;
 
-import java.util.Map;
 import java.util.Optional;
 
 public class BrandonsCoreCompat {
@@ -38,9 +33,9 @@ public class BrandonsCoreCompat {
      * @return The amount that was successfully extracted, or empty if the storage wasn't an IOPStorage
      */
     public Optional<Long> extractAmount(IEnergyStorage storage, long extractAmount) {
-        if (storage instanceof IOPStorage opStorage) {
+        /* if (storage instanceof IOPStorage opStorage) {
             return Optional.of(opStorage.extractOP(extractAmount, false));
-        }
+        }*/
         return Optional.empty();
     }
 
@@ -52,9 +47,9 @@ public class BrandonsCoreCompat {
      * @return The amount that was successfully inserted, or empty if the storage wasn't an IOPStorage
      */
     public Optional<Long> receiveAmount(IEnergyStorage storage, long receiveAmount) {
-        if (storage instanceof IOPStorage opStorage) {
+        /*if (storage instanceof IOPStorage opStorage) {
             return Optional.of(opStorage.receiveOP(receiveAmount, false));
-        }
+        }*/
         return Optional.empty();
     }
 
@@ -65,38 +60,35 @@ public class BrandonsCoreCompat {
      * @return If the storage is full or not, or empty if the storage wasn't an IOPStorage
      */
     public Optional<Boolean> isStorageFull(IEnergyStorage storage) {
-        if (storage instanceof IOPStorage opStorage) {
+        /*if (storage instanceof IOPStorage opStorage) {
             return Optional.of(opStorage.getOPStored() >= opStorage.getMaxOPStored());
-        }
+        }*/
         return Optional.empty();
     }
 
     /**
-     * Checks if BrandonsCore is loaded and that the provided capability is an OP cap
+     * Registers the OP cap to the different chargers
      *
-     * @param cap The cap to check
-     * @param <T> The cap type
-     * @return If the provided cap is a OP cap
+     * @param event The event used to register capabilities
      */
-    public <T> boolean isOpCapability(@NotNull Capability<T> cap) {
+    public void registerOPCapability(@NotNull RegisterCapabilitiesEvent event) {
         if (loaded) {
-            return cap == CapabilityOP.OP;
+            // TODO
         }
-
-        return false;
     }
 
     /**
      * Creates a wrapper around the provided storage, invalidates any previous lazy optionals if available.
      *
      * @param storage        The storage to wrap
-     * @param compatWrappers The map holding the wrappers
+     * @return Returns a wrapped energy storage
      */
-    public void createOpWrapper(CustomEnergyStorage storage, Map<Capability<?>, Pair<IEnergyStorage, LazyOptional<IEnergyStorage>>> compatWrappers) {
-        if (compatWrappers.containsKey(CapabilityOP.OP)) {
+    private IEnergyStorage createOpWrapper(CustomEnergyStorage storage) {
+        /*if (compatWrappers.containsKey(CapabilityOP.OP)) {
             compatWrappers.get(CapabilityOP.OP).second().invalidate();
         }
         var opWrapper = new OpStorageWrapper(storage);
-        compatWrappers.put(CapabilityOP.OP, Pair.of(opWrapper, LazyOptional.of(() -> opWrapper)));
+        compatWrappers.put(CapabilityOP.OP, Pair.of(opWrapper, LazyOptional.of(() -> opWrapper)));*/
+        return null;
     }
 }

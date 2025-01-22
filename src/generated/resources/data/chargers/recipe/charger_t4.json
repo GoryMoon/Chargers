@@ -1,0 +1,27 @@
+{
+  "type": "chargers:upgrade_charger",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "tag": "c:storage_blocks/redstone"
+    },
+    "C": {
+      "item": "chargers:charger_t3"
+    },
+    "N": {
+      "tag": "c:ingots/netherite"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "pattern": [
+    "NRN",
+    "NBN",
+    "NCN"
+  ],
+  "result": {
+    "count": 1,
+    "id": "chargers:charger_t4"
+  }
+}
